@@ -1,0 +1,3 @@
+username: Alexander N. Skovpen
+fidoconfig: /etc/ftn/hpt/config
+log: ./app.log
