@@ -18,6 +18,13 @@ before_build:
   - go get github.com/smartystreets/goconvey/convey
 
 build_script:
+  - set GOOS=linux
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-lnx64.zip goated.exe
+  - set GOARCH=386 
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-lnx32.zip goated.exe
+  - set GOOS=windows
   - set GOARCH=386 
   - go build -v -ldflags "-w -s"
   - 7z a goated-win32.zip goated.exe
