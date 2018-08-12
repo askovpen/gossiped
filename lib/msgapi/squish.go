@@ -42,9 +42,7 @@ type sqd_h struct {
 
 func (s *Squish) GetMsg(position uint32) (*Message, error) {
   if len(s.indexStructure)==0 { return nil, errors.New("Empty Area") }
-  if position==0 {
-    position=1
-  }
+  if position==0 { position=1 }
   f, err := os.Open(s.AreaPath+".sqd")
   if err!=nil {
     return nil, err
