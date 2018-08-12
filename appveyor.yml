@@ -20,10 +20,16 @@ before_build:
 build_script:
   - set GOOS=linux
   - go build -v -ldflags "-w -s"
-  - 7z a goated-lnx64.zip goated.exe
+  - 7z a goated-lnx64.zip goated
   - set GOARCH=386 
   - go build -v -ldflags "-w -s"
-  - 7z a goated-lnx32.zip goated.exe
+  - 7z a goated-lnx32.zip goated
+  - set GOOS=darwin
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-osx32.zip goated
+  - set GOARCH=amd64
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-osx64.zip goated
   - set GOOS=windows
   - set GOARCH=386 
   - go build -v -ldflags "-w -s"
