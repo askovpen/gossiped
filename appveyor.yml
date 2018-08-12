@@ -39,7 +39,7 @@ build_script:
   - 7z a goated-win64.zip goated.exe config.example.yml
 
 test_script:
-  - go test ./... -cover -race
+  - go test ./... -v -cover -race
 
 artifacts:
   - path: "*.zip"
