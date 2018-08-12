@@ -1,0 +1,53 @@
+version: "{build}"
+clone_folder: c:\gopath\src\github.com\askovpen\goated
+clone_depth: 1
+
+branches:
+  only:
+    - master
+    - /^goated-.*/
+
+environment:
+  GOPATH: c:\gopath
+  GOVERSION: 1.10
+
+before_build:
+  - go get github.com/rivo/tview
+  - go get golang.org/x/text/transform
+  - go get gopkg.in/yaml.v2
+  - go get github.com/smartystreets/goconvey/convey
+
+build_script:
+  - set GOOS=linux
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-lnx64.zip goated config.example.yml
+  - set GOARCH=386 
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-lnx32.zip goated config.example.yml
+  - set GOOS=darwin
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-osx32.zip goated config.example.yml
+  - set GOARCH=amd64
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-osx64.zip goated config.example.yml
+  - set GOOS=windows
+  - set GOARCH=386 
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-win32.zip goated.exe config.example.yml
+  - set GOARCH=amd64
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-win64.zip goated.exe config.example.yml
+
+test_script:
+  - go test ./... -v -cover -race
+
+artifacts:
+  - path: "*.zip"
+    name: dist
+
+deploy:
+  provider: GitHub
+  artifact: dist
+  auth_token: $(GITHUB_OAUTH_TOKEN)
+  on:
+    appveyor_repo_tag: true

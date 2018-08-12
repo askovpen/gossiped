@@ -1,0 +1,10 @@
+language: go
+
+branches:
+  only:
+    - master
+    - /^goated-.*/
+
+script: 
+  - go build
+  - go test -v -cover -race ./...
