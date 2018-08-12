@@ -18,11 +18,12 @@ before_build:
   - go get github.com/smartystreets/goconvey/convey
 
 build_script:
-  - go build -v -ldflags "-w -s"
-  - 7z a goated-win64.zip goated.exe
   - set GOARCH=386 
   - go build -v -ldflags "-w -s"
   - 7z a goated-win32.zip goated.exe
+  - set GOARCH=amd64
+  - go build -v -ldflags "-w -s"
+  - 7z a goated-win64.zip goated.exe
 
 test_script:
   - go test ./... -v -cover -race
