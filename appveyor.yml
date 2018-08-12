@@ -29,5 +29,5 @@ test_script:
   - go test ./... -v -cover -race
 
 artifacts:
-  - path: "*.7z"
+  - path: "*.zip"
     name: dist
