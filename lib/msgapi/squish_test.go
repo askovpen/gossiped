@@ -2,16 +2,17 @@ package msgapi
 
 import(
   "testing"
+  . "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSquishBufHash32(t *testing.T) {
-  if bufHash32("")!=0x0 {
-    t.Errorf("got 0x%08x; want 0x00000000", bufHash32(""))
-  }
-  if bufHash32("Alexander N. Skovpen")!=0x00efd7be {
-    t.Errorf("got 0x%08x; want 0x00efd7be", bufHash32("Alexander N. Skovpen"))
-  }
-  if bufHash32("Serg Ageev")!=0x0967dfc6 {
-    t.Errorf("got 0x%08x; want 0x0967dfc6", bufHash32("Serg Ageev"))
-  }
+  Convey("Check Squish bufHash32()", t, func() {
+    Convey("calculates correct Sqush bufhash-32 of an empty string", func() {
+      So(0x0, ShouldEqual, bufHash32(""))
+    })
+    Convey("calculates correct Sqush bufhash-32 of the string 'Alexander N. Skovpen'", func() {
+      So(0x00efd7be, ShouldEqual, bufHash32("Alexander N. Skovpen"))
+    })
+  })
+
 }
