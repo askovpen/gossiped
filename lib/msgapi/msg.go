@@ -48,7 +48,7 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
   if len(m.messageNums)==0 { return nil, errors.New("Empty Area") }
   if position==0 { position=1 }
   log.Printf("%v",m.messageNums[position-1])
-  f, err:= os.Open(filepath.Join(m.AreaPath, strconv.FormatUint(uint64(position),10)+".msg"))
+  f, err:= os.Open(filepath.Join(m.AreaPath, strconv.FormatUint(uint64(m.messageNums[position-1]),10)+".msg"))
   if err!=nil {
     return nil, err
   }
