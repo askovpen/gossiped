@@ -20,23 +20,23 @@ before_build:
 build_script:
   - set GOOS=linux
   - go build -v -ldflags "-w -s"
-  - 7z a goated-lnx64.zip goated
+  - 7z a goated-lnx64.zip goated config.example.yml
   - set GOARCH=386 
   - go build -v -ldflags "-w -s"
-  - 7z a goated-lnx32.zip goated
+  - 7z a goated-lnx32.zip goated config.example.yml
   - set GOOS=darwin
   - go build -v -ldflags "-w -s"
-  - 7z a goated-osx32.zip goated
+  - 7z a goated-osx32.zip goated config.example.yml
   - set GOARCH=amd64
   - go build -v -ldflags "-w -s"
-  - 7z a goated-osx64.zip goated
+  - 7z a goated-osx64.zip goated config.example.yml
   - set GOOS=windows
   - set GOARCH=386 
   - go build -v -ldflags "-w -s"
-  - 7z a goated-win32.zip goated.exe
+  - 7z a goated-win32.zip goated.exe config.example.yml
   - set GOARCH=amd64
   - go build -v -ldflags "-w -s"
-  - 7z a goated-win64.zip goated.exe
+  - 7z a goated-win64.zip goated.exe config.example.yml
 
 test_script:
   - go test ./... -v -cover -race

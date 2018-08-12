@@ -11,6 +11,7 @@ import (
   "log"
   "os"
   "strings"
+  "time"
 )
 
 type Squish struct {
@@ -33,7 +34,8 @@ type sqd_h struct {
   Subject [72]byte
   FromZone, FromNet, FromNode , FromPoint uint16
   ToZone, ToNet, ToNode, ToPoint uint16
-  DateWritten, DateArrived, Utc uint16
+  DateWritten, DateArrived uint32
+  Utc uint16
   ReplyTo uint32
   Replies [9]uint32
   UMsgId  uint32
@@ -72,6 +74,8 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
   rm.ToAddr=types.AddrFromNum(sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint)
   rm.Subject=strings.Trim(string(sqdh.Subject[:]),"\x00")
   rm.Body=string(body[:])
+  rm.DateWritten=getTime(sqdh.DateWritten)
+  rm.DateArrived=getTime(sqdh.DateArrived)
   kla:=strings.Split(rm.Body[1:sqdh.CLen],"\x01")
   rm.Body="\x01"+strings.Join(kla,"\x0d\x01")+"\x0d"+rm.Body[sqdh.CLen+1:]
   if strings.Index(rm.Body,"\x00")!=-1 {
@@ -149,6 +153,17 @@ func (s *Squish) GetName() string {
   return s.AreaName
 }
 
+func getTime (t uint32) time.Time {
+  return time.Date(
+    int(t>>9 & 127)+1980,
+    time.Month(int(t>>5 & 15)),
+    int(t & 31),
+    int(t>>27 & 31),
+    int(t>>21 & 63),
+    int(t>>16 & 31)*2,
+    0,
+    time.Local)
+}
 func bufHash32(str string) (h uint32) {
   h=0
   for _, b:=range strings.ToLower(str) {
