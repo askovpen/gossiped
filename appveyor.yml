@@ -44,3 +44,10 @@ test_script:
 artifacts:
   - path: "*.zip"
     name: dist
+
+deploy:
+  provider: GitHub
+  artifact: dist
+  auth_token: $(GITHUB_OAUTH_TOKEN)
+  on:
+    appveyor_repo_tag: true
