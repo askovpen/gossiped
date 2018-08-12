@@ -1,4 +1,6 @@
 # goated
+[![Build Status](https://travis-ci.org/askovpen/goated.svg?branch=master)](https://travis-ci.org/askovpen/goated)
+[![Build status](https://ci.appveyor.com/api/projects/status/b04rcghch4pskvmu/branch/master?svg=true)](https://ci.appveyor.com/project/askovpen/goated/branch/master)
 
 *goated* - ftn message editor (as yet viewer)
 
