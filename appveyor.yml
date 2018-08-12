@@ -19,11 +19,14 @@ before_build:
 
 build_script:
   - go build -v -ldflags "-w -s"
-  - 7z a goated-win64 goated
+  - 7z a goated-win64.zip goated.exe
   - set GOARCH=386 
   - go build -v -ldflags "-w -s"
-  - 7z a goated-win32 goated
+  - 7z a goated-win32.zip goated.exe
 
 test_script:
   - go test ./... -v -cover -race
 
+artifacts:
+  - path: *.7z
+  - name: dist
