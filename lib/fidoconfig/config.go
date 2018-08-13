@@ -2,8 +2,10 @@ package fidoconfig
 
 import(
   "bufio"
+  "errors"
   "io/ioutil"
   "log"
+  "path/filepath"
   "os"
   "regexp"
   "github.com/askovpen/goated/lib/config"
@@ -26,10 +28,24 @@ func Read() {
   })
 }
 
+func checkIncludePath(fn string) (string, error) {
+  if _, err := os.Stat(fn); err == nil {
+    return fn, nil
+  }
+  if _, err := os.Stat(filepath.Join(filepath.Dir(config.Config.FidoConfig),fn) ); err == nil {
+    return filepath.Join(filepath.Dir(config.Config.FidoConfig),fn), nil
+  }
+  return "",errors.New(fn+" not found")
+}
 
 func readFile(fn string) {
   re := regexp.MustCompile("(\\w+?)\\s+(.*)")
-  file, err := os.Open(fn)
+  nfn, err:=checkIncludePath(fn)
+  if err!=nil {
+    log.Print(err)
+    return
+  }
+  file, err := os.Open(nfn)
   if err!=nil {
     log.Print(err)
     return
