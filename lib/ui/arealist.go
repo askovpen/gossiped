@@ -2,73 +2,106 @@ package ui
 
 import (
   "fmt"
-  "github.com/gdamore/tcell"
-  "github.com/rivo/tview"
   "github.com/askovpen/goated/lib/msgapi"
-  "log"
+  "github.com/jroimartin/gocui"
   "strconv"
+  "log"
 )
 
-var (
-  areaSelected=1
-)
-
-func AreaList() (string, tview.Primitive, bool, bool) {
-  table:= tview.NewTable().
-    SetFixed(1,0).
-    SetSelectable(true, false).
-    Select(areaSelected,0).
-    SetSelectionChangedFunc(func(row int, column int) {
-      if row<1 { row=1 }
-      areaSelected=row
-      Status.SetText(fmt.Sprintf(" [::b]%s: %d msgs, %d unread", msgapi.Areas[row-1].GetName(), msgapi.Areas[row-1].GetCount(), msgapi.Areas[row-1].GetCount() -  msgapi.Areas[row-1].GetLast()))
-    })
-  table.SetSelectedFunc(func(row int, column int) {
-      log.Printf("selected %d %d", row, column)
-      if row<1 { row=1 }
-      if Pages.HasPage(fmt.Sprintf("%s-%d", msgapi.Areas[row-1].GetName(), msgapi.Areas[row-1].GetLast())) {
-        Pages.SwitchToPage(fmt.Sprintf("%s-%d", msgapi.Areas[row-1].GetName(), msgapi.Areas[row-1].GetLast()))
-      } else {
-        Pages.AddPage(ViewMsg(row-1,msgapi.Areas[row-1].GetLast()))
-        Pages.SwitchToPage(fmt.Sprintf("%s-%d", msgapi.Areas[row-1].GetName(), msgapi.Areas[row-1].GetLast()))
-      }
-    })
-  table.SetBorder(true).
-    SetBorderAttributes(tcell.AttrBold).
-    SetBorderColor(tcell.ColorBlue)
-  
-  table.SetCell(
-    0,0,tview.NewTableCell(" Area").
-      SetTextColor(tcell.ColorYellow).
-      SetAttributes(tcell.AttrBold).
-      SetSelectable(false))
-  table.SetCell(
-    0,1,tview.NewTableCell("EchoID").
-      SetTextColor(tcell.ColorYellow).
-      SetAttributes(tcell.AttrBold).
-      SetExpansion(1).
-      SetSelectable(false))
-  table.SetCell(
-    0,2,tview.NewTableCell("Msgs").
-      SetTextColor(tcell.ColorYellow).
-      SetAttributes(tcell.AttrBold).
-      SetSelectable(false).
-      SetAlign(tview.AlignRight))
-  table.SetCell(
-    0,3,tview.NewTableCell("   New").
-      SetTextColor(tcell.ColorYellow).
-      SetAttributes(tcell.AttrBold).
-      SetSelectable(false).
-      SetAlign(tview.AlignRight))
-  for i, a := range msgapi.Areas {
-    if a.GetCount()-a.GetLast()>0 {
-      table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i),10)+"[::b]+").SetAlign(tview.AlignRight))
-    } else {
-      table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i),10)+" ").SetAlign(tview.AlignRight))
-    }
-    table.SetCell(i+1, 1, tview.NewTableCell(a.GetName()))
-    table.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(a.GetCount()),10)).SetAlign(tview.AlignRight))
-    table.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(a.GetCount()-a.GetLast()),10)).SetAlign(tview.AlignRight))
+func getAreaNew(m msgapi.AreaPrimitive) string {
+  if m.GetCount()-m.GetLast()>0 {
+    return "\033[37;1m+\033[0m"
+  } else {
+    return " "
   }
-  return "AreaList", table, true, true
+}
+func areaNext(g *gocui.Gui, v *gocui.View) error {
+  if v != nil {
+    cx, cy := v.Cursor()
+    if cy==len(msgapi.Areas) {
+      return nil
+    }
+    if err := v.SetCursor(cx, cy+1); err != nil {
+      ox, oy := v.Origin()
+      if cy+oy==len(msgapi.Areas) {
+        return nil
+      }
+      if err := v.SetOrigin(ox, oy+1); err != nil {
+        return err
+      }
+    }
+  }
+  return nil
+}
+
+func areaPrev(g *gocui.Gui, v *gocui.View) error {
+  if v != nil {
+    ox, oy := v.Origin()
+    cx, cy := v.Cursor()
+    log.Printf("cy: %d, oy: %d",cy,oy)
+    if cy>1 {
+      if err := v.SetCursor(cx, cy-1); err != nil  {
+        log.Print(err)
+        return err
+      }
+    } else if oy>0 {
+      if err := v.SetOrigin(ox, oy-1); err != nil {
+        log.Print(err)
+        return err
+      }
+    }
+  }
+  return nil
+}
+
+func viewArea(g *gocui.Gui, v *gocui.View) error {
+    _, oy := v.Origin()
+    _, cy := v.Cursor()
+    log.Printf("view %d",oy+cy)
+    viewMsg(cy+oy-1,msgapi.Areas[cy+oy-1].GetLast())
+    if _, err := g.SetCurrentView("MsgHeader"); err != nil {
+      log.Print(err)
+      return err
+    }
+    App.SetCurrentView("MsgHeader")
+    App.SetCurrentView("MsgBody")
+    return nil
+}
+
+func CreateAreaList() error {
+  maxX, maxY := App.Size()
+  AreaList, err:= App.SetView("AreaList", 0, 0, maxX-1, maxY-2);
+  if err!=nil && err!=gocui.ErrUnknownView { 
+    return err
+  }
+  AreaList.Wrap=false
+  AreaList.Highlight = true
+  AreaList.SelBgColor = gocui.ColorBlue
+  AreaList.SelFgColor = gocui.ColorWhite | gocui.AttrBold
+  AreaList.Clear()
+  fmt.Fprintf(AreaList, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23),10)+"s %6s %6s \033[0m\n",
+    "EchoID","Msgs","New")
+  for i, a := range msgapi.Areas {
+    fmt.Fprintf(AreaList, "%4d%s %-"+strconv.FormatInt(int64(maxX-23),10)+"s %6d %6d \n",
+      i+1,
+      getAreaNew(a),
+      a.GetName(),
+      a.GetCount(),
+      a.GetCount()-a.GetLast())
+  }
+//  AreaList.SetCursor(0,1)
+/*
+  if _, err = setCurrentViewOnTop("AreaList"); err != nil {
+    return err
+  }
+*/
+   App.SetCurrentView("AreaList")
+  _, cy := AreaList.Cursor()
+  if cy==0 {
+   areaNext(App,AreaList)
+  }
+//  if err := App.SetKeybinding("AreaList", gocui.KeyArrowDown, gocui.ModNone, AreaNext); err != nil {
+//    return err
+//  }
+  return nil
 }
