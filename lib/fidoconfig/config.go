@@ -39,7 +39,7 @@ func checkIncludePath(fn string) (string, error) {
 }
 
 func readFile(fn string) {
-  re := regexp.MustCompile("(\\w+?) (.*)")
+  re := regexp.MustCompile("(\\w+?)\\s+(.*)")
   nfn, err:=checkIncludePath(fn)
   if err!=nil {
     log.Print(err)
