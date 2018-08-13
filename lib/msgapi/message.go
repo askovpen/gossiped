@@ -35,14 +35,22 @@ func (m *Message) ParseRaw() error {
       m.kludges["TOPT"]=l[6:]
     } else if len(l)>5 && l[0:6]=="\x01FMPT " {
       m.kludges["FMPT"]=l[6:]
+    } else if len(l)>8 && l[0:9]=="\x01REPLYTO " {
+      m.kludges["REPLYTO"]=l[9:]
+    } else if len(l)>7 && l[0:8]=="\x01MSGID: " {
+      m.kludges["MSGID"]=l[8:]
     }
   }
-  log.Printf("%#v", m.kludges)
+  log.Printf("KLUDGES: %#v", m.kludges)
   if _, ok := m.kludges["INTL"]; ok {
     m.ToAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[0])
     m.FromAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[1])
+  } else if _, ok := m.kludges["REPLYTO"]; ok {
+    m.FromAddr=types.AddrFromString(strings.Split(m.kludges["REPLYTO"]," ")[0])
+  } else if _, ok := m.kludges["MSGID"]; ok {
+    m.FromAddr=types.AddrFromString(strings.Split(m.kludges["MSGID"]," ")[0])
   }
-  //log.Printf("%#v", m)
+  log.Printf("%#v", m)
   if m.FromAddr==nil {
     return errors.New("FromAddr not defined")
   }
