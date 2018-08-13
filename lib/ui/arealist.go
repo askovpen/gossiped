@@ -38,7 +38,7 @@ func areaPrev(g *gocui.Gui, v *gocui.View) error {
   if v != nil {
     ox, oy := v.Origin()
     cx, cy := v.Cursor()
-    log.Printf("cy: %d, oy: %d",cy,oy)
+    log.Printf("cy: %d, oy: %d %s",cy,oy, App.CurrentView().Name())
     if cy>1 {
       if err := v.SetCursor(cx, cy-1); err != nil  {
         log.Print(err)
@@ -58,13 +58,24 @@ func viewArea(g *gocui.Gui, v *gocui.View) error {
     _, oy := v.Origin()
     _, cy := v.Cursor()
     log.Printf("view %d",oy+cy)
-    viewMsg(cy+oy-1,msgapi.Areas[cy+oy-1].GetLast())
-    if _, err := g.SetCurrentView("MsgHeader"); err != nil {
+    err:=viewMsg(cy+oy-1,msgapi.Areas[cy+oy-1].GetLast())
+    if err!=nil {
+      return nil
+    }
+    /*
+    if _, err := g.SetViewOnTop("MsgHeader"); err != nil {
       log.Print(err)
       return err
     }
-    App.SetCurrentView("MsgHeader")
-    App.SetCurrentView("MsgBody")
+    */
+    g.SetCurrentView("MsgBody")
+//    setCurrentViewOnTop(g, "MsgHeader")
+//    setCurrentViewOnTop(g, "MsgBody")
+//    App.SetViewOnTop("MsgBody")
+//  if err := App.SetKeybinding("MsgBody", gocui.KeyArrowDown, gocui.ModNone, scrollDown); err != nil {                                                                                                       
+//      return err                                                                                                                                                                                              
+//        }
+    ActiveWindow="MsgBody"
     return nil
 }
 
@@ -95,7 +106,9 @@ func CreateAreaList() error {
     return err
   }
 */
-   App.SetCurrentView("AreaList")
+   //App.SetCurrentView("AreaList")
+//   App.SetViewOnTop("AreaList")
+//    setCurrentViewOnTop(App, "AreaList")
   _, cy := AreaList.Cursor()
   if cy==0 {
    areaNext(App,AreaList)

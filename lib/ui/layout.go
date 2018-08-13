@@ -8,11 +8,11 @@ import (
   "log"
 )
 
-func setCurrentViewOnTop(name string) (*gocui.View, error) {
-  if _, err := App.SetCurrentView(name); err != nil {
+func setCurrentViewOnTop(g *gocui.Gui, name string) (*gocui.View, error) {
+  if _, err := g.SetCurrentView(name); err != nil {
     return nil, err
   }
-  return App.SetViewOnTop(name)
+  return g.SetViewOnTop(name)
 }
 /*
 func getAreaNew(m msgapi.AreaPrimitive) string {
@@ -38,28 +38,7 @@ func Layout(g *gocui.Gui) error {
   if err!=nil {
     log.Print(err)
   }
-/*  AreaList, err:= g.SetView("AreaList", 0, 0, maxX-1, maxY-2);
-  if err!=nil && err!=gocui.ErrUnknownView { 
-    return err
-  }
-  AreaList.Wrap=false
-  AreaList.Highlight = true
-  AreaList.SelBgColor = gocui.ColorBlue
-  AreaList.SelFgColor = gocui.ColorWhite | gocui.AttrBold
-  AreaList.Clear()
-    fmt.Fprintf(AreaList, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23),10)+"s %6s %6s \033[0m\n",
-    "EchoID","Msgs","New")
-  for i, a := range msgapi.Areas {
-    fmt.Fprintf(AreaList, "%4d%s %-"+strconv.FormatInt(int64(maxX-23),10)+"s %6d %6d \n",
-      i+1,
-      getAreaNew(a),
-      a.GetName(),
-      a.GetCount(),
-      a.GetCount()-a.GetLast())
-  }
-  AreaList.SetCursor(0,1)
-  if _, err = setCurrentViewOnTop("AreaList"); err != nil {
-    return err
-  }*/
+  setCurrentViewOnTop(g, ActiveWindow)
   return nil
+  
 }

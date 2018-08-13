@@ -35,7 +35,11 @@ func main() {
     log.Panicln(err)
   }
   defer ui.App.Close()
+  ui.App.Highlight = true
+  ui.App.SelFgColor = gocui.ColorBlue | gocui.AttrBold
   ui.App.SetManagerFunc(ui.Layout)
+  //ui.App.SetCurrentView("AreaList")
+  ui.ActiveWindow="AreaList"
   //ui.CreateAreaList()
   if err := ui.App.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, ui.Quit); err != nil {
     log.Panicln(err)

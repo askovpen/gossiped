@@ -9,6 +9,9 @@ var (
   AreaList  *gocui.View
   Status  *gocui.View
   AreaPosition uint16
+  ActiveWindow string
+  curAreaId int
+  curMsgNum uint32
 )
 
 func Quit(g *gocui.Gui, v *gocui.View) error {
