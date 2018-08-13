@@ -1,6 +1,6 @@
 # TODO
 
 - [x] Make readable Areas
-- [ ] Writing LastReads
+- [x] Writing LastReads
 - [ ] Make Message Edit Form
 - [ ] Saving Messages
