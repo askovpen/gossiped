@@ -40,6 +40,7 @@ func (m *Message) ParseRaw() error {
     } else if len(l)>7 && l[0:8]=="\x01MSGID: " {
       m.kludges["MSGID"]=l[8:]
     }
+  }
   log.Printf("%#v", m.kludges)
   if _, ok := m.kludges["INTL"]; ok {
     m.ToAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[0])
