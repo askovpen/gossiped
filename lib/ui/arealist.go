@@ -9,12 +9,18 @@ import (
   "strconv"
 )
 
+var (
+  areaSelected=1
+)
+
 func AreaList() (string, tview.Primitive, bool, bool) {
   table:= tview.NewTable().
     SetFixed(1,0).
     SetSelectable(true, false).
+    Select(areaSelected,0).
     SetSelectionChangedFunc(func(row int, column int) {
       if row<1 { row=1 }
+      areaSelected=row
       Status.SetText(fmt.Sprintf(" [::b]%s: %d msgs, %d unread", msgapi.Areas[row-1].GetName(), msgapi.Areas[row-1].GetCount(), msgapi.Areas[row-1].GetCount() -  msgapi.Areas[row-1].GetLast()))
     })
   table.SetSelectedFunc(func(row int, column int) {

@@ -14,6 +14,7 @@ type AreaPrimitive interface {
   GetMsg(position uint32) (*Message, error)
   GetName() string
   GetType() EchoAreaType
+  SetLast(uint32)
 }
 
 

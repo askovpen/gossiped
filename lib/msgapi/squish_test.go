@@ -2,17 +2,17 @@ package msgapi
 
 import(
   "testing"
-  . "github.com/franela/goblin"
+  . "github.com/smartystreets/goconvey/convey"
 )
 
 func TestSquishBufHash32(t *testing.T) {
-  g := Goblin(t)
-  g.Describe("Check Squish bufHash32()", func() {
-    g.It("calculates correct Sqush bufhash-32 of an empty string", func() {
-      g.Assert(bufHash32("")).Equal(uint32(0x0))
+  Convey("Check Squish bufHash32()", t, func() {
+    Convey("calculates correct Sqush bufhash-32 of an empty string", func() {
+      So(0x0, ShouldEqual, bufHash32(""))
     })
-    g.It("calculates correct Sqush bufhash-32 of the string 'Alexander N. Skovpen'", func() {
-      g.Assert(bufHash32("Alexander N. Skovpen")).Equal(uint32(0x00efd7be))
+    Convey("calculates correct Sqush bufhash-32 of the string 'Alexander N. Skovpen'", func() {
+      So(0x00efd7be, ShouldEqual, bufHash32("Alexander N. Skovpen"))
     })
   })
+
 }
