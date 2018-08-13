@@ -8,6 +8,7 @@ import (
   "fmt"
   "github.com/askovpen/goated/lib/types"
   "github.com/askovpen/goated/lib/utils"
+  "io/ioutil"
   "log"
   "os"
   "strings"
@@ -77,7 +78,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
   rm.DateWritten=getTime(sqdh.DateWritten)
   rm.DateArrived=getTime(sqdh.DateArrived)
   kla:=strings.Split(rm.Body[1:sqdh.CLen],"\x01")
-  rm.Body="\x01"+strings.Join(kla,"\x0d\x01")+"\x0d"+rm.Body[sqdh.CLen+1:]
+  rm.Body="\x01"+strings.Join(kla,"\x0d\x01")+"\x0d"+rm.Body[sqdh.CLen:]
   if strings.Index(rm.Body,"\x00")!=-1 {
     rm.Body=rm.Body[0:strings.Index(rm.Body,"\x00")]
   }
@@ -177,4 +178,17 @@ func bufHash32(str string) (h uint32) {
   }
   h=h & 0x7fffffff
   return
+}
+func (s *Squish) SetLast(l uint32) {
+  if l==0 { l=1 }
+  r:=s.indexStructure[l-1].MessageNum
+  buf := new(bytes.Buffer)
+  err := binary.Write(buf, binary.LittleEndian, r)
+  if err!=nil {
+    log.Print(err)
+  }
+  err = ioutil.WriteFile(s.AreaPath+".sql",buf.Bytes(),0644)
+  if err!=nil {
+    log.Print(err)
+  }
 }

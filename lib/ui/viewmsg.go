@@ -44,12 +44,18 @@ func ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool, bool) {
   body.SetText(msg.ToView(showKludges))
   body.SetDoneFunc(func(key tcell.Key) {
     if key == tcell.KeyEscape {
+      msgapi.Areas[areaId].SetLast(msgNum)
+      Pages=Pages.HidePage("AreaList").RemovePage("AreaList")
+      Pages.AddPage(AreaList())
       Pages.SwitchToPage("AreaList")
     }
   })
   body.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
     if event.Key() == tcell.KeyRight {
       if msgNum==msgapi.Areas[areaId].GetCount() {
+        msgapi.Areas[areaId].SetLast(msgNum)
+        Pages=Pages.HidePage("AreaList").RemovePage("AreaList")
+        Pages.AddPage(AreaList())
         Pages.SwitchToPage("AreaList")
       } else {
         if Pages.HasPage(fmt.Sprintf("%s-%d", msgapi.Areas[areaId].GetName(), msgNum+1)) {
@@ -61,6 +67,9 @@ func ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool, bool) {
       }
     } else if event.Key() == tcell.KeyLeft {
       if msgNum<=1 {
+        msgapi.Areas[areaId].SetLast(msgNum)
+        Pages=Pages.HidePage("AreaList").RemovePage("AreaList")
+        Pages.AddPage(AreaList())
         Pages.SwitchToPage("AreaList")
       } else {
         if Pages.HasPage(fmt.Sprintf("%s-%d", msgapi.Areas[areaId].GetName(), msgNum-1)) {
@@ -76,7 +85,6 @@ func ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool, bool) {
 
     return event
   })
-
   layout := tview.NewFlex().
     SetDirection(tview.FlexRow).
     AddItem(header,6,1,false).

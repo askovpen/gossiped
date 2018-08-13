@@ -47,7 +47,6 @@ func (m *MSG) Init() {
 func (m *MSG) GetMsg(position uint32) (*Message, error) {
   if len(m.messageNums)==0 { return nil, errors.New("Empty Area") }
   if position==0 { position=1 }
-  log.Printf("%v",m.messageNums[position-1])
   f, err:= os.Open(filepath.Join(m.AreaPath, strconv.FormatUint(uint64(m.messageNums[position-1]),10)+".msg"))
   if err!=nil {
     return nil, err
@@ -93,7 +92,6 @@ func (m *MSG) GetName() string {
 
 func (m *MSG) GetCount() uint32 {
   m.readMN()
-//  log.Printf("getCount")
   return uint32(len(m.messageNums))
 }
 
@@ -120,13 +118,12 @@ func (m *MSG) readMN() {
   if err!=nil {
     return
   }
-//  log.Printf("ReadMN fp %d",len(fp))
   for _, fn:=range fp {
     num, err:=strconv.ParseUint(strings.TrimSuffix(filepath.Base(fn),".msg"),10,32)
     if err==nil {
       m.messageNums=append(m.messageNums,uint32(num))
     } else {
-//      log.Printf("err: %s",err)
+      log.Print(err)
     }
   }
   sort.Slice(m.messageNums, func(i, j int) bool { return m.messageNums[i] < m.messageNums[j] })
@@ -136,3 +133,18 @@ func (m *MSG) GetType() EchoAreaType {
   return EchoAreaTypeMSG
 }
 
+func (m *MSG) SetLast(l uint32) {
+  if l==0 { l=1 }
+  r:=m.messageNums[l-1]
+  buf := new(bytes.Buffer)
+  err := binary.Write(buf, binary.LittleEndian, uint16(r))
+  if err!=nil {
+    log.Print(err)
+    return
+  }
+  err = ioutil.WriteFile(filepath.Join(m.AreaPath, "lastread"),buf.Bytes(),0644)
+  if err!=nil {
+    log.Print(err)
+    return 
+  }
+}

@@ -6,6 +6,7 @@ import (
   "encoding/binary"
   "errors"
   "hash/crc32"
+  "io/ioutil"
   "log"
   "os"
   "github.com/askovpen/goated/lib/config"
@@ -92,7 +93,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
   var kl []byte
   kl=make([]byte,jamh.SubfieldLen)
   f.Read(kl)
-  log.Printf("kl: %x", kl)
+  //log.Printf("kl: %x", kl)
   klb:=bytes.NewBuffer(kl)
   for {
     var LoID,HiID uint16
@@ -104,7 +105,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
     var val []byte
     val=make([]byte,datLen)
     binary.Read(klb, binary.LittleEndian, &val)
-    log.Printf("%d, %d (%d): %s",LoID, HiID, datLen, val)
+    //log.Printf("%d, %d (%d): %s",LoID, HiID, datLen, val)
     switch LoID {
       case 0:
         rm.FromAddr=types.AddrFromString(string(val[:]))
@@ -208,7 +209,7 @@ func (j *JAM) readJLR() {
       j.lastRead=append(j.lastRead,jaml)
     }
   }
-  log.Printf("%#v", j.lastRead)
+  //log.Printf("%#v", j.lastRead)
 }
 
 func (j *JAM) GetLast() uint32 {
@@ -240,4 +241,36 @@ func (j *JAM) GetName() string {
 func crc32r(str string) uint32 {
   bstr:=[]byte(strings.ToLower(str))
   return 0xffffffff-crc32.ChecksumIEEE(bstr)
+}
+
+func (j *JAM) SetLast(l uint32) {
+  found:=-1
+  for i,lr:=range j.lastRead {
+    if lr.UserCRC==crc32r(config.Config.Username) {
+      found=i
+    }
+  }
+  if found==-1 {
+    j.lastRead=append(j.lastRead, jam_l{
+      crc32r(config.Config.Username),
+      crc32r(config.Config.Username),
+      l,
+      l})
+  } else {
+    j.lastRead[found].LastReadMsg=l
+    if l>j.lastRead[found].HighReadMsg {
+      j.lastRead[found].HighReadMsg=l
+    }
+  }
+  buf := new(bytes.Buffer)
+  err := binary.Write(buf, binary.LittleEndian, j.lastRead)
+  if err!=nil {
+    log.Print(err)
+    return
+  }
+  err = ioutil.WriteFile(j.AreaPath+".jlr",buf.Bytes(),0644)
+  if err!=nil {
+    log.Print(err)
+    return
+  }
 }

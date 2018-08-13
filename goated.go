@@ -13,16 +13,6 @@ import (
 //  "strconv"
 )
 
-var (
-  el []EchoList
-)
-type EchoList struct {
-  AreaNum uint16
-  Name string
-  Count uint32
-  New   uint32
-}
-
 func main() {
   if len(os.Args)==1 {
     log.Printf("Usage: %s <config.yml>",os.Args[0])
@@ -34,6 +24,7 @@ func main() {
     log.Print(err)
     return
   }
+  log.Printf("%s started",config.LongPID)
   f, _ := os.OpenFile(config.Config.Log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
   defer f.Close()
   log.SetOutput(f)
@@ -43,7 +34,10 @@ func main() {
 
   ui.Pages = tview.NewPages()
   ui.Pages.AddPage(ui.AreaList())
-
+  ui.Pages.SetChangedFunc(func() {
+    ui.App.Draw()
+  })
+  
   ui.Status = tview.NewTextView().SetWrap(false)
   ui.Status.SetBackgroundColor(tcell.ColorBlue)
   ui.Status.SetTextColor(tcell.ColorWhite)

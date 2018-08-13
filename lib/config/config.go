@@ -4,6 +4,7 @@ import (
   "gopkg.in/yaml.v2"
   "io/ioutil"
   "os"
+  "runtime"
 )
 
 type config_s struct {
@@ -13,9 +14,15 @@ type config_s struct {
 }
 var (
   Config config_s
+  Version string
+  PID string
+  LongPID string
 )
 
 func Read() error {
+  Version="0.0.1"
+  PID="ATED+"+runtime.GOOS[0:3]+" "+Version
+  LongPID="GOAtEd "+runtime.GOOS+"/"+runtime.GOARCH+"-"+Version
   yamlFile, err := ioutil.ReadFile(os.Args[1])
   if err != nil {
     return err
