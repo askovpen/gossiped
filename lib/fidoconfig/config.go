@@ -28,7 +28,7 @@ func Read() {
 
 
 func readFile(fn string) {
-  re := regexp.MustCompile("(\\w+?)\\s(.*)")
+  re := regexp.MustCompile("(\\w+?)\\s+(.*)")
   file, err := os.Open(fn)
   if err!=nil {
     log.Print(err)
