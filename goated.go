@@ -6,9 +6,9 @@ import (
   "github.com/rivo/tview"
   "log"
   "os"
-  "github.com/askovpen/goated/lib/config"
-  "github.com/askovpen/goated/lib/fidoconfig"
-  "github.com/askovpen/goated/lib/ui"
+  "github.com/IrvinDitz/goated/lib/config"
+  "github.com/IrvinDitz/goated/lib/fidoconfig"
+  "github.com/IrvinDitz/goated/lib/ui"
   "time"
 //  "strconv"
 )
