@@ -5,6 +5,7 @@ import (
   "bytes"
   "encoding/binary"
   "errors"
+  "fmt"
   "hash/crc32"
   "io/ioutil"
   "log"
@@ -24,6 +25,11 @@ type JAM struct {
 }
 
 type jam_s struct {
+  MessageNum uint32
+  jamsh jam_sh
+}
+
+type jam_sh struct {
   ToCRC uint32
   Offset uint32
 }
@@ -64,7 +70,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
     return nil, err
   }
   defer f.Close()
-  _, err = f.Seek(int64(j.indexStructure[position-1].Offset),0)
+  _, err = f.Seek(int64(j.indexStructure[position-1].jamsh.Offset),0)
   if err!=nil {
     return nil, err
   }
@@ -77,7 +83,9 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
   if err=utils.ReadStructFromBuffer(headerb, &jamh); err!=nil {
     return nil, err
   }
-  if jamh.Signature!=0x4d414a {return nil, errors.New("wrong message signature")}
+  if jamh.Signature!=0x4d414a {
+    return nil, errors.New("wrong message signature")
+  }
   rm:=&Message{}
   rm.Area=j.AreaName
   rm.MsgNum=position
@@ -89,6 +97,10 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
   rm.DateWritten=rm.DateWritten.Add(time.Duration(tofs)* -time.Second)
   rm.DateArrived=rm.DateArrived.Add(time.Duration(tofs)* -time.Second)
   rm.Attr=jamh.Attribute
+  deleted:=false
+  if rm.Attr & 0x80000000>0 {
+    deleted=true
+  }
   rm.Body+=""
   var kl []byte
   kl=make([]byte,jamh.SubfieldLen)
@@ -99,7 +111,9 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
     var LoID,HiID uint16
     var datLen uint32
     err=binary.Read(klb, binary.LittleEndian, &LoID)
-    if err!=nil {break}
+    if err!=nil {
+      break
+    }
     binary.Read(klb, binary.LittleEndian, &HiID)
     binary.Read(klb, binary.LittleEndian, &datLen)
     var val []byte
@@ -114,8 +128,10 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
       case 2:
         rm.From=string(val[:])
       case 3:
-        if crc32r(string(val[:]))!=j.indexStructure[position-1].ToCRC {
-          return nil, errors.New("crc incorrect")
+        if !deleted {
+          if crc32r(string(val[:]))!=j.indexStructure[position-1].jamsh.ToCRC {
+            return nil, errors.New(fmt.Sprintf("'To' crc incorrect, got %08x, need %08x",crc32r(string(val[:])), j.indexStructure[position-1].jamsh.ToCRC))
+          }
         }
         rm.To=string(val[:])
       case 4:
@@ -152,7 +168,6 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
   }
   //log.Printf("msgh: %#v", jamh)
   //log.Printf("rm: %#v", rm)
-  
   return rm, nil
 }
 func (j *JAM) readJDX() {
@@ -166,6 +181,7 @@ func (j *JAM) readJDX() {
   defer file.Close()
   reader := bufio.NewReader(file)
   part := make([]byte, 16384)
+  i:=uint32(0)
   for {
     count, err := reader.Read(part);
     if err!=nil {
@@ -173,13 +189,14 @@ func (j *JAM) readJDX() {
     }
     partb:=bytes.NewBuffer(part[:count])
     for {
-      var jam jam_s
+      var jam jam_sh
       if err=utils.ReadStructFromBuffer(partb, &jam); err!=nil {
         break
       }
-      if (jam.ToCRC!=0xffffffff || jam.Offset!=0xffffffff) {
-        j.indexStructure=append(j.indexStructure,jam)
+      if ( jam.Offset!=0xffffffff) { //&& jam.ToCRC!=0xffffffff) {
+        j.indexStructure=append(j.indexStructure,jam_s{i+1,jam})
       }
+      i++
     }
   }
 }
@@ -211,12 +228,21 @@ func (j *JAM) readJLR() {
   }
   //log.Printf("%#v", j.lastRead)
 }
+func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
+  log.Printf("%d %#v",mId,j.indexStructure)
+  for i,ji:=range j.indexStructure {
+    if mId==ji.MessageNum {
+      return uint32(i)
+    }
+  }
+  return 0
+}
 
 func (j *JAM) GetLast() uint32 {
   j.readJLR()
   for _,l:=range j.lastRead {
     if l.UserCRC==crc32r(config.Config.Username) {
-      return l.LastReadMsg
+      return j.getPositionOfJamMsg(l.LastReadMsg)+1
     }
   }
   return 0
@@ -254,12 +280,12 @@ func (j *JAM) SetLast(l uint32) {
     j.lastRead=append(j.lastRead, jam_l{
       crc32r(config.Config.Username),
       crc32r(config.Config.Username),
-      l,
-      l})
+      j.indexStructure[l-1].MessageNum,
+      j.indexStructure[l-1].MessageNum})
   } else {
     j.lastRead[found].LastReadMsg=l
-    if l>j.lastRead[found].HighReadMsg {
-      j.lastRead[found].HighReadMsg=l
+    if j.indexStructure[l-1].MessageNum>j.lastRead[found].HighReadMsg {
+      j.lastRead[found].HighReadMsg=j.indexStructure[l-1].MessageNum
     }
   }
   buf := new(bytes.Buffer)
