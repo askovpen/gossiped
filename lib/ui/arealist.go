@@ -53,9 +53,18 @@ func areaNext(g *gocui.Gui, v *gocui.View) error {
       if cy+oy==len(msgapi.Areas) {
         return nil
       }
+      StatusLine=fmt.Sprintf(" %s: %d msgs, %d unread",
+        msgapi.Areas[cy+oy].GetName(),
+        msgapi.Areas[cy+oy].GetCount(),
+        msgapi.Areas[cy+oy].GetCount()-msgapi.Areas[cy+oy].GetLast())
       if err := v.SetOrigin(ox, oy+1); err != nil {
         return err
       }
+    } else {
+      StatusLine=fmt.Sprintf(" %s: %d msgs, %d unread",
+        msgapi.Areas[cy].GetName(),
+        msgapi.Areas[cy].GetCount(),
+        msgapi.Areas[cy].GetCount()-msgapi.Areas[cy].GetLast())
     }
   }
   return nil
@@ -65,13 +74,20 @@ func areaPrev(g *gocui.Gui, v *gocui.View) error {
   if v != nil {
     ox, oy := v.Origin()
     cx, cy := v.Cursor()
-    log.Printf("cy: %d, oy: %d %s",cy,oy, App.CurrentView().Name())
     if cy>1 {
+      StatusLine=fmt.Sprintf(" %s: %d msgs, %d unread",
+        msgapi.Areas[cy+oy-2].GetName(),
+        msgapi.Areas[cy+oy-2].GetCount(),
+        msgapi.Areas[cy+oy-2].GetCount()-msgapi.Areas[cy+oy-2].GetLast())
       if err := v.SetCursor(cx, cy-1); err != nil  {
         log.Print(err)
         return err
       }
     } else if oy>0 {
+      StatusLine=fmt.Sprintf(" %s: %d msgs, %d unread",
+        msgapi.Areas[cy+oy-2].GetName(),
+        msgapi.Areas[cy+oy-2].GetCount(),
+        msgapi.Areas[cy+oy-2].GetCount()-msgapi.Areas[cy+oy-2].GetLast())
       if err := v.SetOrigin(ox, oy-1); err != nil {
         log.Print(err)
         return err

@@ -16,6 +16,10 @@ func viewMsg(areaId int, msgNum uint32) error {
     log.Printf("vM err: %s",err.Error())
     return err
   }
+  StatusLine=fmt.Sprintf("Msg %d of %d (%d left)",
+    msgNum,
+    msgapi.Areas[areaId].GetCount(),
+    msgapi.Areas[areaId].GetCount()-msgNum)
   msgapi.Areas[areaId].SetLast(msgNum)
   MsgHeader, _:= App.SetView("MsgHeader", 0, 0, maxX-1, 5);
   MsgHeader.Wrap = false
