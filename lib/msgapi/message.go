@@ -35,20 +35,19 @@ func (m *Message) ParseRaw() error {
       m.kludges["TOPT"]=l[6:]
     } else if len(l)>5 && l[0:6]=="\x01FMPT " {
       m.kludges["FMPT"]=l[6:]
-    } else if len(l)>8 && l[0:9]=="\x01REPLYTO " {
-      m.kludges["REPLYTO"]=l[9:]
-    } else if len(l)>7 && l[0:8]=="\x01MSGID: " {
-      m.kludges["MSGID"]=l[8:]
+    } else if len(l)>10 && l[0:11]=="\x20*\x20Origin: " {
+      re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
+      m.kludges["ORIGIN"]=re.FindStringSubmatch(l)[0];
     }
   }
   log.Printf("%#v", m.kludges)
-  if _, ok := m.kludges["INTL"]; ok {
-    m.ToAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[0])
-    m.FromAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[1])
-  } else if _, ok := m.kludges["REPLYTO"]; ok {
-    m.FromAddr=types.AddrFromString(strings.Split(m.kludges["REPLYTO"]," ")[0])
-  } else if _, ok := m.kludges["MSGID"]; ok {
-    m.FromAddr=types.AddrFromString(strings.Split(m.kludges["MSGID"]," ")[0])
+  if m.FromAddr==nil {
+    if _, ok := m.kludges["INTL"]; ok {
+      m.ToAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[0])
+      m.FromAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[1])
+    } else if _, ok := m.kludges["ORIGIN"]; ok {
+      m.FromAddr=types.AddrFromString(m.kludges["ORIGIN"])
+    }
   }
   //log.Printf("%#v", m)
   if m.FromAddr==nil {
@@ -73,7 +72,6 @@ func (m *Message) ToView(showKludges bool) string {
   var nm []string
   re := regexp.MustCompile(">+")
   for _, l := range strings.Split(m.Body, "\x0d") {
-    
     if len(l)>1 && l[0]==1 {
       if showKludges { nm=append(nm,"[::b][black]@"+l[1:]) }
     } else if len(l)>10 && l[0:11]==" * Origin: " {
