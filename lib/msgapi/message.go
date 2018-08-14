@@ -39,7 +39,7 @@ func (m *Message) ParseRaw() error {
       re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
       m.kludges["ORIGIN"]=re.FindStringSubmatch(l)[0];
     } else if len(l)>6 && l[0:7]=="\x01CHRS: " {
-      m.kludges["CHRS"]=strings.Split(l," ")[1]
+      m.kludges["CHRS"]=strings.ToUpper(strings.Split(l," ")[1])
     }
   }
   log.Printf("ParseRaw(): %#v", m.kludges)
