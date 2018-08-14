@@ -13,16 +13,13 @@ func viewMsg(areaId int, msgNum uint32) error {
   maxX, maxY := App.Size()
   msg, err:=msgapi.Areas[areaId].GetMsg(msgNum)
   if err!=nil {
+    log.Printf("vM err: %s",err.Error())
     return err
   }
   msgapi.Areas[areaId].SetLast(msgNum)
   MsgHeader, _:= App.SetView("MsgHeader", 0, 0, maxX-1, 5);
   MsgHeader.Wrap = false
-//  MsgHeader.Title = 
-//  MsgHeader.Title="\033[33;1m"+msgapi.Areas[areaId].GetName()+"\033[0m"
   MsgHeader.Title=msgapi.Areas[areaId].GetName()
-//  MsgHeader.FgColor=gocui.ColorWhite
-//  MsgHeader.SelFgColor=gocui.ColorWhite
   fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
     fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),"Pvt")
   fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s\n",
@@ -37,14 +34,16 @@ func viewMsg(areaId int, msgNum uint32) error {
       msg.Subject)
   MsgBody, _:= App.SetView("MsgBody", -1, 5, maxX, maxY-1);
   MsgBody.Frame = false
-//  MsgBody.FgColor=gocui.ColorWhite
   fmt.Fprintf(MsgBody, "%s",msg.ToView(showKludges))
   return nil
 }
 func prevMsg(g *gocui.Gui, v *gocui.View) error {
   quitMsgView(g,v)
   if curMsgNum>1 {
-    viewMsg(curAreaId, curMsgNum-1)
+    err:=viewMsg(curAreaId, curMsgNum-1)
+    if err!=nil {
+      errorMsg(err.Error(),"AreaList")
+    }
     ActiveWindow="MsgBody"
   }
   return nil

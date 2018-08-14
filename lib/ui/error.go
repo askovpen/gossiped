@@ -7,6 +7,7 @@ import (
 )
 
 func errorMsg(msg string, parent string) error {
+  log.Printf("error msg: %s (parent: %s)", msg, parent)
   maxX, maxY := App.Size()
   parentWindow=parent
   var v *gocui.View
