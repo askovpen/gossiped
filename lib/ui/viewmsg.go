@@ -15,7 +15,7 @@ func viewMsg(areaId int, msgNum uint32) error {
   if err!=nil {
     return err
   }
-  
+  msgapi.Areas[areaId].SetLast(msgNum)
   MsgHeader, _:= App.SetView("MsgHeader", 0, 0, maxX-1, 5);
   MsgHeader.Wrap = false
 //  MsgHeader.Title = 
