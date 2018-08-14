@@ -35,8 +35,9 @@ func main() {
     log.Panicln(err)
   }
   defer ui.App.Close()
-  ui.App.Highlight = true
-  ui.App.SelFgColor = gocui.ColorBlue | gocui.AttrBold
+//  ui.App.Highlight = true
+//  ui.App.SelFgColor = gocui.ColorBlue | gocui.AttrBold
+//  ui.App.FgColor = gocui.ColorBlue | gocui.AttrBold
   ui.App.SetManagerFunc(ui.Layout)
   //ui.App.SetCurrentView("AreaList")
   ui.ActiveWindow="AreaList"

@@ -60,7 +60,7 @@ func viewArea(g *gocui.Gui, v *gocui.View) error {
     log.Printf("view %d",oy+cy)
     err:=viewMsg(cy+oy-1,msgapi.Areas[cy+oy-1].GetLast())
     if err!=nil {
-      return nil
+      errorMsg(err.Error(),"AreaList")
     }
     /*
     if _, err := g.SetViewOnTop("MsgHeader"); err != nil {
@@ -89,6 +89,7 @@ func CreateAreaList() error {
   AreaList.Highlight = true
   AreaList.SelBgColor = gocui.ColorBlue
   AreaList.SelFgColor = gocui.ColorWhite | gocui.AttrBold
+  AreaList.FgColor=gocui.ColorWhite
   AreaList.Clear()
   fmt.Fprintf(AreaList, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23),10)+"s %6s %6s \033[0m\n",
     "EchoID","Msgs","New")

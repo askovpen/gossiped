@@ -16,10 +16,12 @@ func viewMsg(areaId int, msgNum uint32) error {
     return err
   }
   MsgHeader, _:= App.SetView("MsgHeader", 0, 0, maxX-1, 5);
-//    MsgHeader.Highlight = true
-    MsgHeader.SelFgColor = gocui.ColorRed
-//  MsgHeader.Frame = true
   MsgHeader.Wrap = false
+//  MsgHeader.Title = 
+//  MsgHeader.Title="\033[33;1m"+msgapi.Areas[areaId].GetName()+"\033[0m"
+  MsgHeader.Title=msgapi.Areas[areaId].GetName()
+//  MsgHeader.FgColor=gocui.ColorWhite
+//  MsgHeader.SelFgColor=gocui.ColorWhite
   fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
     fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),"Pvt")
   fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s\n",
@@ -34,6 +36,7 @@ func viewMsg(areaId int, msgNum uint32) error {
       msg.Subject)
   MsgBody, _:= App.SetView("MsgBody", -1, 5, maxX, maxY-1);
   MsgBody.Frame = false
+//  MsgBody.FgColor=gocui.ColorWhite
   fmt.Fprintf(MsgBody, "%s",msg.ToView(true))
   return nil
 }

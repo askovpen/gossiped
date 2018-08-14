@@ -33,5 +33,9 @@ func Keybindings(g *gocui.Gui) error {
   if err := App.SetKeybinding("MsgBody", gocui.KeyCtrlQ, gocui.ModNone, quitMsgView); err != nil {
     return err
   }
+  if err := App.SetKeybinding("ErrorMsg", gocui.KeyEnter, gocui.ModNone, exitError); err != nil {
+    return err
+  }
+
   return nil
 }

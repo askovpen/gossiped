@@ -10,6 +10,7 @@ var (
   Status  *gocui.View
   AreaPosition uint16
   ActiveWindow string
+  parentWindow string
   curAreaId int
   curMsgNum uint32
 )

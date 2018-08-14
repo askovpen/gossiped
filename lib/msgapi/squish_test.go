@@ -14,5 +14,4 @@ func TestSquishBufHash32(t *testing.T) {
       So(0x00efd7be, ShouldEqual, bufHash32("Alexander N. Skovpen"))
     })
   })
-
 }
