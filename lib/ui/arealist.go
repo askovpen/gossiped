@@ -8,6 +8,33 @@ import (
   "log"
 )
 
+func quitEnter(g *gocui.Gui, v *gocui.View) error {
+  _, cy := v.Cursor()
+  if cy==1 {
+    ActiveWindow="AreaList"
+    g.DeleteView("QuitMsg")
+  } else {
+    return gocui.ErrQuit
+  }
+  return nil
+}
+func quitUp(g *gocui.Gui, v *gocui.View) error {
+  cx, cy := v.Cursor()
+  v.SetCursor(cx, 1-cy)
+  return nil
+}
+func quitAreaList(g *gocui.Gui, v *gocui.View) error {
+  v, _ = App.SetView("QuitMsg", 2, 1, 17, 4)
+  v.Title="Quit goAtEd?"
+  fmt.Fprintf(v,"     Yes!     \n      No       ")
+  v.Highlight=true
+  v.SelBgColor = gocui.ColorBlue
+  v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
+  ActiveWindow="QuitMsg"
+  App.SetCurrentView("QuitMsg")
+  return nil
+}
+
 func getAreaNew(m msgapi.AreaPrimitive) string {
   if m.GetCount()-m.GetLast()>0 {
     return "\033[37;1m+\033[0m"

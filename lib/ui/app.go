@@ -13,6 +13,7 @@ var (
   parentWindow string
   curAreaId int
   curMsgNum uint32
+  showKludges bool
 )
 
 func Quit(g *gocui.Gui, v *gocui.View) error {

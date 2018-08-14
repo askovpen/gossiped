@@ -15,6 +15,7 @@ func viewMsg(areaId int, msgNum uint32) error {
   if err!=nil {
     return err
   }
+  
   MsgHeader, _:= App.SetView("MsgHeader", 0, 0, maxX-1, 5);
   MsgHeader.Wrap = false
 //  MsgHeader.Title = 
@@ -37,7 +38,7 @@ func viewMsg(areaId int, msgNum uint32) error {
   MsgBody, _:= App.SetView("MsgBody", -1, 5, maxX, maxY-1);
   MsgBody.Frame = false
 //  MsgBody.FgColor=gocui.ColorWhite
-  fmt.Fprintf(MsgBody, "%s",msg.ToView(true))
+  fmt.Fprintf(MsgBody, "%s",msg.ToView(showKludges))
   return nil
 }
 func prevMsg(g *gocui.Gui, v *gocui.View) error {
@@ -94,5 +95,13 @@ func scrollUp(g *gocui.Gui, v *gocui.View) error {
       return err
     }
   }
+  return nil
+}
+func toggleKludges(g *gocui.Gui, v *gocui.View) error {
+  log.Printf("togglekl")
+  showKludges=!showKludges
+  quitMsgView(g,v)
+  viewMsg(curAreaId, curMsgNum)
+  ActiveWindow="MsgBody"
   return nil
 }
