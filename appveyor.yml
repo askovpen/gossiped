@@ -12,7 +12,7 @@ environment:
   GOVERSION: 1.10
 
 before_build:
-  - go get github.com/rivo/tview
+  - go get github.com/jroimartin/gocui
   - go get golang.org/x/text/transform
   - go get gopkg.in/yaml.v2
   - go get github.com/smartystreets/goconvey/convey
