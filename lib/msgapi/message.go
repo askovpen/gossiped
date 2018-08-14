@@ -38,9 +38,11 @@ func (m *Message) ParseRaw() error {
     } else if len(l)>10 && l[0:11]=="\x20*\x20Origin: " {
       re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
       m.kludges["ORIGIN"]=re.FindStringSubmatch(l)[0];
+    } else if len(l)>6 && l[0:7]=="\x01CHRS: " {
+      m.kludges["CHRS"]=strings.Split(l," ")[1]
     }
   }
-  log.Printf("%#v", m.kludges)
+  log.Printf("ParseRaw(): %#v", m.kludges)
   if m.FromAddr==nil {
     if _, ok := m.kludges["INTL"]; ok {
       m.ToAddr=types.AddrFromString(strings.Split(m.kludges["INTL"]," ")[0])
@@ -61,7 +63,11 @@ func (m *Message) ParseRaw() error {
 }
 
 func (m *Message) Decode() {
-  enc:="CP866"
+  enc := "CP866"
+  if _, ok := m.kludges["CHRS"]; ok {
+    enc = m.kludges["CHRS"]
+  }
+  log.Printf("Decode(): %#v", m.kludges)
   m.Body=utils.DecodeCharmap(m.Body,enc)
   m.From=utils.DecodeCharmap(m.From,enc)
   m.To=utils.DecodeCharmap(m.To,enc)
