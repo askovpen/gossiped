@@ -65,8 +65,8 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
   body:=make([]byte,sqdh.MsgLength+28-266)
   f.Read(body)
   log.Printf("%s", body)
-  if s.indexStructure[position-1].CRC!=bufHash32(string(sqdh.To[:])) {
-    return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:]))))
+  if s.indexStructure[position-1].CRC!=bufHash32(string(sqdh.To[:])) && s.indexStructure[position-1].CRC!=bufHash32(string(sqdh.To[:]))|0x80000000 {
+    return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x for name %s", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:])),sqdh.To))
   }
   rm:=&Message{}
   rm.From=strings.Trim(string(sqdh.From[:]),"\x00")

@@ -79,22 +79,22 @@ func (m *Message) ToView(showKludges bool) string {
   re := regexp.MustCompile(">+")
   for _, l := range strings.Split(m.Body, "\x0d") {
     if len(l)>1 && l[0]==1 {
-      if showKludges { nm=append(nm,"[::b][black]@"+l[1:]) }
+      if showKludges { nm=append(nm,"\033[30;1m@"+l[1:]+"\033[0m") }
     } else if len(l)>10 && l[0:11]==" * Origin: " {
-      nm=append(nm,"[::b]"+l)
+      nm=append(nm,"\033[37;1m"+l+"\033[0m")
     } else if len(l)>3 && l[0:4]=="--- " {
-      nm=append(nm,"[::b]"+l)
+      nm=append(nm,"\033[37;1m"+l+"\033[0m")
     } else if len(l)>3 && l[0:4]=="... " {
-      nm=append(nm,"[::b]"+l)
+      nm=append(nm,"\033[37;1m"+l+"\033[0m")
     } else if len(l)>8 && l[0:9]=="SEEN-BY: " {
-      if showKludges { nm=append(nm,"[::b][black]"+l) }
+      if showKludges { nm=append(nm,"\033[30;1m"+l+"\033[0m") }
     } else if ind:=re.FindStringIndex(l); ind!=nil {
       ind2:=strings.Index(l,"<")
       if ind2==-1 || ind2>ind[1] {
         if (ind[1]-ind[0])%2==0 {
-          nm=append(nm,"[::b]"+l)
+          nm=append(nm,"\033[37;1m"+l+"\033[0m")
         } else {
-          nm=append(nm,"[::b][yellow]"+l)
+          nm=append(nm,"\033[33;1m"+l+"\033[0m")
         }
       } else {
         nm=append(nm,l)

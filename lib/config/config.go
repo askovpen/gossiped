@@ -22,7 +22,7 @@ var (
 func Read() error {
   Version="0.0.1"
   PID="ATED+"+runtime.GOOS[0:3]+" "+Version
-  LongPID="GOAtEd "+runtime.GOOS+"/"+runtime.GOARCH+"-"+Version
+  LongPID="goAtEd "+runtime.GOOS+"/"+runtime.GOARCH+"-"+Version
   yamlFile, err := ioutil.ReadFile(os.Args[1])
   if err != nil {
     return err

@@ -13,8 +13,13 @@ import(
   "sort"
   "strings"
 )
-func Read() {
+func Read() error {
   readFile(config.Config.FidoConfig)
+
+  if len(msgapi.Areas)==0 {
+    return errors.New("no Areas found")
+  }
+
   sort.Slice(msgapi.Areas, func(i,j int) bool {
     if msgapi.Areas[i].GetType() != msgapi.Areas[j].GetType() {
       if msgapi.Areas[i].GetType()==msgapi.EchoAreaTypeMSG {
@@ -26,6 +31,7 @@ func Read() {
     }
     return msgapi.Areas[i].GetName() < msgapi.Areas[j].GetName()
   })
+  return nil
 }
 
 func checkIncludePath(fn string) (string, error) {

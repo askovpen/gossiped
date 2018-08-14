@@ -2,16 +2,19 @@ package main
 
 import (
 //  "fmt"
-  "github.com/gdamore/tcell"
-  "github.com/rivo/tview"
+//  "github.com/gdamore/tcell"
+//  "github.com/rivo/tview"
   "log"
   "os"
   "github.com/askovpen/goated/lib/config"
   "github.com/askovpen/goated/lib/fidoconfig"
   "github.com/askovpen/goated/lib/ui"
-  "time"
+  "github.com/jroimartin/gocui"
+//  "github.com/nsf/termbox-go"
+//  "time"
 //  "strconv"
 )
+//var clock *time.Ticker
 
 func main() {
   if len(os.Args)==1 {
@@ -28,47 +31,27 @@ func main() {
   f, _ := os.OpenFile(config.Config.Log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
   defer f.Close()
   log.SetOutput(f)
-  fidoconfig.Read()
-  //return
-  ui.App = tview.NewApplication()
+  err=fidoconfig.Read()
+  if err!=nil {
+    log.Print(err)
+    return
+  }
+  ui.App, err = gocui.NewGui(gocui.OutputNormal)
+  if err != nil {
+    log.Panicln(err)
+  }
+  defer ui.App.Close()
 
-  ui.Pages = tview.NewPages()
-  ui.Pages.AddPage(ui.AreaList())
-  ui.Pages.SetChangedFunc(func() {
-    ui.App.Draw()
-  })
-  
-  ui.Status = tview.NewTextView().SetWrap(false)
-  ui.Status.SetBackgroundColor(tcell.ColorBlue)
-  ui.Status.SetTextColor(tcell.ColorWhite)
-  ui.Status.SetDynamicColors(true)
-  ui.Status.SetChangedFunc(func() {
-    ui.App.Draw()
-  })
-
-  ui.StatusTime = tview.NewTextView().SetWrap(false)
-  ui.StatusTime.SetBackgroundColor(tcell.ColorBlue)
-  ui.StatusTime.SetTextColor(tcell.ColorWhite)
-  ui.StatusTime.SetDynamicColors(true)
-  ui.StatusTime.SetChangedFunc(func() {
-    ui.App.Draw()
-  })
-  clock := time.NewTicker(1 * time.Second)
-  go func() {
-    for t := range clock.C {
-      //fmt.Fprintf(ui.StatusTime,"%s",t.Format("15:04:05"))
-      ui.StatusTime.SetText("[::b]"+t.Format("15:04:05"))
-    }
-  }()
-//  return
-  layout := tview.NewFlex().
-    SetDirection(tview.FlexRow).
-    AddItem(ui.Pages, 0, 1, true).
-    AddItem(tview.NewFlex().
-      AddItem(ui.Status, 0, 1, false).
-      AddItem(ui.StatusTime, 10, 1, false),1,1,false)
-  if err := ui.App.SetRoot(layout, true).Run(); err != nil {
-    panic(err)
+  ui.App.InputEsc=true
+  ui.App.SetManagerFunc(ui.Layout)
+  ui.ActiveWindow="AreaList"
+  if err := ui.App.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, ui.Quit); err != nil {
+    log.Panicln(err)
+  }
+  if err := ui.Keybindings(ui.App); err != nil {
+    log.Panicln(err)
+  }
+  if err := ui.App.MainLoop(); err != nil && err != gocui.ErrQuit {
+    log.Panicln(err)
   }
 }
-
