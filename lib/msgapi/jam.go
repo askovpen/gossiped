@@ -8,7 +8,7 @@ import (
   "fmt"
   "hash/crc32"
   "io/ioutil"
-  "log"
+//  "log"
   "os"
   "github.com/askovpen/goated/lib/config"
   "github.com/askovpen/goated/lib/types"
@@ -229,7 +229,7 @@ func (j *JAM) readJLR() {
   //log.Printf("%#v", j.lastRead)
 }
 func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
-  log.Printf("%d %#v",mId,j.indexStructure)
+  //log.Printf("%d %#v",mId,j.indexStructure)
   for i,ji:=range j.indexStructure {
     if mId==ji.MessageNum {
       return uint32(i)
@@ -291,12 +291,12 @@ func (j *JAM) SetLast(l uint32) {
   buf := new(bytes.Buffer)
   err := binary.Write(buf, binary.LittleEndian, j.lastRead)
   if err!=nil {
-    log.Print(err)
+    //log.Print(err)
     return
   }
   err = ioutil.WriteFile(j.AreaPath+".jlr",buf.Bytes(),0644)
   if err!=nil {
-    log.Print(err)
+    //log.Print(err)
     return
   }
 }

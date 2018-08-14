@@ -1,7 +1,7 @@
 package ui
 
 import (
-//  "fmt"
+  "fmt"
 //  "github.com/askovpen/goated/lib/msgapi"
   "github.com/jroimartin/gocui"
 //  "strconv"
@@ -24,16 +24,16 @@ func getAreaNew(m msgapi.AreaPrimitive) string {
 }*/
 func Layout(g *gocui.Gui) error {
   maxX, maxY := g.Size()
-  Status, err:= g.SetView("status", -1, maxY-2, maxX, maxY);
+  status, err:= g.SetView("status", -1, maxY-2, maxX, maxY);
   if err!=nil && err!=gocui.ErrUnknownView { 
     return err
   }
-  Status.Frame=false
-  Status.Wrap=false
-  Status.BgColor=gocui.ColorBlue
-  Status.FgColor=gocui.ColorWhite|gocui.AttrBold
-  Status.Clear()
-//  fmt.Fprintf(Status," Loading...")
+  status.Frame=false
+  status.Wrap=false
+  status.BgColor=gocui.ColorBlue
+  status.FgColor=gocui.ColorWhite|gocui.AttrBold
+  status.Clear()
+  fmt.Fprintf(status,StatusLine)
   err=CreateAreaList()
   if err!=nil {
     log.Print(err)
