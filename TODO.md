@@ -7,4 +7,4 @@
   - [ ] MSG
   - [ ] Squish
   - [ ] Jam
-  
+- [ ] https://goreportcard.com/report/github.com/askovpen/goated
