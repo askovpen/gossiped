@@ -21,6 +21,9 @@ func Keybindings(g *gocui.Gui) error {
   if err := App.SetKeybinding("AreaList", gocui.KeyEnter, gocui.ModNone, viewArea); err != nil {
     return err
   }
+  if err := App.SetKeybinding("AreaList", gocui.KeyArrowRight, gocui.ModNone, viewArea); err != nil {
+    return err
+  }
   if err := App.SetKeybinding("QuitMsg", gocui.KeyArrowDown, gocui.ModNone, quitUp); err != nil {
     return err
   }
@@ -40,6 +43,12 @@ func Keybindings(g *gocui.Gui) error {
     return err
   }
   if err := App.SetKeybinding("MsgBody", gocui.KeyArrowRight, gocui.ModNone, nextMsg); err != nil {
+    return err
+  }
+  if err := App.SetKeybinding("MsgBody", '<', gocui.ModNone, firstMsg); err != nil {
+    return err
+  }
+  if err := App.SetKeybinding("MsgBody", '>', gocui.ModNone, lastMsg); err != nil {
     return err
   }
   if err := App.SetKeybinding("MsgBody", gocui.KeyEsc, gocui.ModNone, quitMsgView); err != nil {

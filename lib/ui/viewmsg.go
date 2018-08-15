@@ -55,12 +55,27 @@ func prevMsg(g *gocui.Gui, v *gocui.View) error {
   }
   return nil
 }
+
 func nextMsg(g *gocui.Gui, v *gocui.View) error {
   quitMsgView(g,v)
   if curMsgNum<msgapi.Areas[curAreaId].GetCount() {
     viewMsg(curAreaId, curMsgNum+1)
     ActiveWindow="MsgBody"
   }
+  return nil
+}
+
+func firstMsg(g *gocui.Gui, v *gocui.View) error {
+  quitMsgView(g,v)
+  viewMsg(curAreaId, 1)
+  ActiveWindow="MsgBody"
+  return nil
+}
+
+func lastMsg(g *gocui.Gui, v *gocui.View) error {
+  quitMsgView(g,v)
+  viewMsg(curAreaId, msgapi.Areas[curAreaId].GetCount())
+  ActiveWindow="MsgBody"
   return nil
 }
 
