@@ -5,6 +5,7 @@ import(
   "github.com/askovpen/goated/lib/msgapi"
   "github.com/jroimartin/gocui"
   "log"
+  "strconv"
   "strings"
 )
 
@@ -27,6 +28,7 @@ func viewMsg(areaId int, msgNum uint32) error {
   msgapi.Areas[areaId].SetLast(msgNum)
   MsgHeader, _:= App.SetView("MsgHeader", 0, 0, maxX-1, 5);
   MsgHeader.Wrap = false
+  MsgHeader.Clear()
   MsgHeader.Title=msgapi.Areas[areaId].GetName()
   fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
     fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),
@@ -43,6 +45,7 @@ func viewMsg(areaId int, msgNum uint32) error {
       msg.Subject)
   MsgBody, _:= App.SetView("MsgBody", -1, 5, maxX, maxY-1);
   MsgBody.Frame = false
+  MsgBody.Clear()
   fmt.Fprintf(MsgBody, "%s",msg.ToView(showKludges))
   return nil
 }
@@ -73,6 +76,56 @@ func firstMsg(g *gocui.Gui, v *gocui.View) error {
   ActiveWindow="MsgBody"
   return nil
 }
+func editMsgNumEnter(g *gocui.Gui, v *gocui.View) error {
+  //log.Print("1")
+  ActiveWindow="MsgBody"
+  en,err:=g.View("editNumber")
+  if err!=nil {
+    return err
+  }
+  
+  n, err := strconv.ParseInt(strings.Trim(en.Buffer(),"\n"),10,32)
+  if err!=nil {
+    //log.Print(err)
+    n=-1
+  }
+  if err := g.DeleteView("editNumber"); err != nil {
+    return err
+  }
+  if err := g.DeleteView("editNumberTitle"); err != nil {
+    return err
+  }
+  //log.Print("n: %d, max: %d",n,msgapi.Areas[curAreaId].GetCount())
+  if n>0 && uint32(n)<=msgapi.Areas[curAreaId].GetCount() {
+    //log.Print("3")
+    err:=viewMsg(curAreaId, uint32(n))
+    if err!=nil {
+      errorMsg(err.Error(),"AreaList")
+    }
+  }
+  return nil
+}
+
+func editMsgNum(g *gocui.Gui, v *gocui.View) error {
+  editableNumber, err:= App.SetView("editNumber", 8, 0, 15, 2);
+  if err!=nil && err!=gocui.ErrUnknownView {
+    return err
+  }
+  editableNumber.Frame = false
+  editableNumber.BgColor = gocui.ColorWhite
+  editableNumber.FgColor = gocui.ColorBlue
+  editableNumber.Editable = true
+  editableNumberTitle, _:= App.SetView("editNumberTitle", 14, 0, 24, 2);
+  editableNumberTitle.Frame = false
+  fmt.Fprintf(editableNumberTitle," of %d",msgapi.Areas[curAreaId].GetCount())
+//  App.SetCurrentView("editNumberTitle")
+  App.SetCurrentView("editNumber")
+  ActiveWindow="editNumber"
+//  quitMsgView(g,v)
+//  viewMsg(curAreaId, 1)
+//  ActiveWindow="MsgBody"
+  return nil
+}
 
 func lastMsg(g *gocui.Gui, v *gocui.View) error {
   quitMsgView(g,v)
@@ -82,7 +135,7 @@ func lastMsg(g *gocui.Gui, v *gocui.View) error {
 }
 
 func quitMsgView(g *gocui.Gui, v *gocui.View) error {
-  log.Printf("Delete")
+  //log.Printf("Delete")
   ActiveWindow="AreaList"
   if err := g.DeleteView("MsgHeader"); err != nil {
     return err
@@ -93,7 +146,7 @@ func quitMsgView(g *gocui.Gui, v *gocui.View) error {
   return nil
 }
 func scrollDown(g *gocui.Gui, v *gocui.View) error {
-  log.Printf("test")
+  //log.Printf("test")
   if v != nil {
     ox, oy := v.Origin()
     _,sy:=v.Size()
@@ -108,7 +161,7 @@ func scrollDown(g *gocui.Gui, v *gocui.View) error {
 }
 
 func scrollUp(g *gocui.Gui, v *gocui.View) error {
-  log.Printf("test")
+  //log.Printf("test")
   if v != nil {
     ox, oy := v.Origin()
     if oy==0 {
@@ -121,7 +174,7 @@ func scrollUp(g *gocui.Gui, v *gocui.View) error {
   return nil
 }
 func toggleKludges(g *gocui.Gui, v *gocui.View) error {
-  log.Printf("togglekl")
+  //log.Printf("togglekl")
   showKludges=!showKludges
   quitMsgView(g,v)
   viewMsg(curAreaId, curMsgNum)

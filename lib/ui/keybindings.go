@@ -60,6 +60,12 @@ func Keybindings(g *gocui.Gui) error {
   if err := App.SetKeybinding("MsgBody", gocui.KeyCtrlK, gocui.ModNone, toggleKludges); err != nil {
     return err
   }
+  if err := App.SetKeybinding("MsgBody", gocui.KeyCtrlG, gocui.ModNone, editMsgNum); err != nil {
+    return err
+  }
+  if err := App.SetKeybinding("editNumber", gocui.KeyEnter, gocui.ModNone, editMsgNumEnter); err != nil {
+    return err
+  }
   if err := App.SetKeybinding("ErrorMsg", gocui.KeyEnter, gocui.ModNone, exitError); err != nil {
     return err
   }
