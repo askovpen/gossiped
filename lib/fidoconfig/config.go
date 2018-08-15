@@ -13,7 +13,11 @@ import(
   "sort"
   "strings"
 )
+var (
+  defaultMsgType msgapi.EchoAreaType
+)
 func Read() error {
+  defaultMsgType=msgapi.EchoAreaTypeMSG
   readFile(config.Config.FidoConfig)
 
   if len(msgapi.Areas)==0 {
@@ -75,9 +79,20 @@ func readFile(fn string) {
         processArea(res[0])
       } else if strings.EqualFold(res[1],"netmailarea") {
         processArea(res[0])
+      } else if strings.EqualFold(res[1],"EchoAreaDefault") {
+        processDef(res[0])
       }
     }
   }
+}
+
+func processDef(areaDef string) {
+  re:=regexp.MustCompile(`[^\s\t"']+|"([^"]*)"|'([^']*)`)
+  res:=re.FindAllString(areaDef, -1)
+  if len(res)<3 {
+    return
+  }
+  defaultMsgType=getMsgBType(res)
 }
 
 func processArea(areaDef string) {
@@ -109,8 +124,10 @@ func getMsgBType(tokens []string) msgapi.EchoAreaType {
          return msgapi.EchoAreaTypeSquish
       } else if strings.EqualFold(tokens[i+1],"jam") {
          return msgapi.EchoAreaTypeJAM
-      } else {
+      } else if strings.EqualFold(tokens[i+1],"msg") {
         return msgapi.EchoAreaTypeMSG
+      } else {
+        return defaultMsgType
       }
     }
   }
