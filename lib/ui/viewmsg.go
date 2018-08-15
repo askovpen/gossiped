@@ -8,6 +8,9 @@ import(
 )
 
 func viewMsg(areaId int, msgNum uint32) error {
+  if msgNum==0 && msgapi.Areas[areaId].GetCount()!=0 {
+    msgNum=1
+  }
   curAreaId=areaId
   curMsgNum=msgNum
   maxX, maxY := App.Size()
