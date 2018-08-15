@@ -44,6 +44,8 @@ func main() {
 
   ui.App.InputEsc=true
   ui.App.SetManagerFunc(ui.Layout)
+  ui.App.BgColor=gocui.ColorBlack
+  ui.App.FgColor=gocui.ColorWhite
   ui.ActiveWindow="AreaList"
   if err := ui.App.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, ui.Quit); err != nil {
     log.Panicln(err)
