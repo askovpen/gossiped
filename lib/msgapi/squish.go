@@ -42,6 +42,29 @@ type sqd_h struct {
   UMsgId  uint32
   Date  [20]byte
 }
+func (s *Squish) getAttrs(a uint32) (attrs []string) {
+  datr:=[]string{
+    "Pvt", "" ,"Rcv","Snt",
+    "","Trs","","K/s",
+    "Loc","","","",
+    "Rrq","","Arq","",
+    "Scn", "" ,"","",
+    "","","","",
+    "","","","",
+    "","","","",
+  }
+  i:=0
+  for a>0 {
+    if a&1>0 {
+      if datr[i]!="" {
+        attrs=append(attrs,datr[i])
+      }
+    }
+    i++
+    a=a>>1
+  }
+  return
+}
 
 func (s *Squish) GetMsg(position uint32) (*Message, error) {
   if len(s.indexStructure)==0 { return nil, errors.New("Empty Area") }
@@ -74,6 +97,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
   rm.FromAddr=types.AddrFromNum(sqdh.FromZone, sqdh.FromNet, sqdh.FromNode, sqdh.FromPoint)
   rm.ToAddr=types.AddrFromNum(sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint)
   rm.Subject=strings.Trim(string(sqdh.Subject[:]),"\x00")
+  rm.Attrs=s.getAttrs(sqdh.Attr)
   rm.Body=string(body[:])
   rm.DateWritten=getTime(sqdh.DateWritten)
   rm.DateArrived=getTime(sqdh.DateArrived)
