@@ -4,6 +4,8 @@
 
 *goated* - ftn message editor (as yet viewer)
 
+[Wiki](https://github.com/askovpen/goated/wiki)
+
 supported bases:
   - MSG/Opus
   - Squish
