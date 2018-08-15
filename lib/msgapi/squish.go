@@ -60,11 +60,11 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
   if err=utils.ReadStructFromBuffer(headerb, &sqdh); err!=nil {
     return nil, err
   }
-  log.Printf("%#v", sqdh)
+  //log.Printf("%#v", sqdh)
   //var body []byte
   body:=make([]byte,sqdh.MsgLength+28-266)
   f.Read(body)
-  log.Printf("%s", body)
+  //log.Printf("%s", body)
   if s.indexStructure[position-1].CRC!=bufHash32(string(sqdh.To[:])) && s.indexStructure[position-1].CRC!=bufHash32(string(sqdh.To[:]))|0x80000000 {
     return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x for name %s", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:])),sqdh.To))
   }
@@ -78,7 +78,12 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
   rm.DateWritten=getTime(sqdh.DateWritten)
   rm.DateArrived=getTime(sqdh.DateArrived)
   kla:=strings.Split(rm.Body[1:sqdh.CLen],"\x01")
+  for i:=range kla {
+    kla[i]=strings.Trim(kla[i],"\x00")
+  }
   rm.Body="\x01"+strings.Join(kla,"\x0d\x01")+"\x0d"+rm.Body[sqdh.CLen:]
+  //log.Printf("body: %s",rm.Body)
+  //log.Printf("after Kludges: %d",rm.Body[sqdh.CLen-1])
   if strings.Index(rm.Body,"\x00")!=-1 {
     rm.Body=rm.Body[0:strings.Index(rm.Body,"\x00")]
   }
@@ -86,7 +91,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
   if err!=nil {
     return nil, err
   }
-  log.Printf("%#v", rm)
+  //log.Printf("msg: %#v", rm)
   return rm, nil
 }
 
