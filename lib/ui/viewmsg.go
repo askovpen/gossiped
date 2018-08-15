@@ -5,6 +5,7 @@ import(
   "github.com/askovpen/goated/lib/msgapi"
   "github.com/jroimartin/gocui"
   "log"
+  "strings"
 )
 
 func viewMsg(areaId int, msgNum uint32) error {
@@ -28,7 +29,8 @@ func viewMsg(areaId int, msgNum uint32) error {
   MsgHeader.Wrap = false
   MsgHeader.Title=msgapi.Areas[areaId].GetName()
   fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
-    fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),"Pvt")
+    fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),
+    strings.Join(msg.Attrs," "))
   fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s\n",
     msg.From,
     msg.FromAddr.String(),

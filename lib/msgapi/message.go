@@ -16,7 +16,7 @@ type Message struct {
   MaxNum  uint32
   DateWritten time.Time
   DateArrived time.Time
-  Attr uint32
+  Attrs []string
   Body string
   FromAddr *types.FidoAddr
   ToAddr *types.FidoAddr

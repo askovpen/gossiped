@@ -56,8 +56,33 @@ type jam_h struct {
   PasswordCRC uint32
   Cost uint32
 }
+
 type jam_l struct {
   UserCRC, UserId, LastReadMsg, HighReadMsg uint32
+}
+
+func (j *JAM) getAttrs(a uint32) (attrs []string) {
+  datr:=[]string{
+    "Loc", "" ,"Pvt","Rcv",
+    "Snt","","","",
+    "","","","",
+    "","","","",
+    "", "" ,"","",
+    "","","","",
+    "","","","",
+    "","","","",
+  }
+  i:=0
+  for a>0 {
+    if a&1>0 {
+      if datr[i]!="" {
+        attrs=append(attrs,datr[i])
+      }
+    }
+    i++
+    a=a>>1
+  }
+  return
 }
 
 func (j *JAM) GetMsg(position uint32) (*Message, error) {
@@ -96,9 +121,10 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
   rm.DateArrived=time.Unix(int64(jamh.DateReceived),0)
   rm.DateWritten=rm.DateWritten.Add(time.Duration(tofs)* -time.Second)
   rm.DateArrived=rm.DateArrived.Add(time.Duration(tofs)* -time.Second)
-  rm.Attr=jamh.Attribute
+//  rm.Attr=jamh.Attribute
+  rm.Attrs=j.getAttrs(jamh.Attribute)
   deleted:=false
-  if rm.Attr & 0x80000000>0 {
+  if jamh.Attribute & 0x80000000>0 {
     deleted=true
   }
   rm.Body+=""
