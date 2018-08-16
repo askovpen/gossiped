@@ -37,7 +37,9 @@ func (m *Message) ParseRaw() error {
       m.kludges["FMPT"]=l[6:]
     } else if len(l)>10 && l[0:11]=="\x20*\x20Origin: " {
       re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
-      m.kludges["ORIGIN"]=re.FindStringSubmatch(l)[0];
+      if len(re.FindStringSubmatch(l))>0 {
+        m.kludges["ORIGIN"]=re.FindStringSubmatch(l)[0];
+      }
     } else if len(l)>6 && l[0:7]=="\x01CHRS: " {
       m.kludges["CHRS"]=strings.ToUpper(strings.Split(l," ")[1])
     }
