@@ -45,6 +45,7 @@ func viewMsg(areaId int, msgNum uint32) error {
       msg.Subject)
   MsgBody, _:= App.SetView("MsgBody", -1, 5, maxX, maxY-1);
   MsgBody.Frame = false
+  MsgBody.Wrap = true
   MsgBody.Clear()
   fmt.Fprintf(MsgBody, "%s",msg.ToView(showKludges))
   return nil
