@@ -179,3 +179,7 @@ func (m *MSG) SetLast(l uint32) {
 		return
 	}
 }
+
+func (m *MSG) SaveMsg(tm *Message) error {
+	return errors.New("not implemented")
+}

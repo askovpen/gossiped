@@ -234,3 +234,7 @@ func (s *Squish) SetLast(l uint32) {
 		log.Print(err)
 	}
 }
+
+func (s *Squish) SaveMsg(tm *Message) error {
+	return errors.New("not implemented")
+}

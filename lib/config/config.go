@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"github.com/askovpen/goated/lib/types"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -8,9 +10,11 @@ import (
 )
 
 type config_s struct {
-	Username   string
-	FidoConfig string
-	Log        string
+	Username		string
+	FidoConfig	string
+	Log					string
+	Address			*types.FidoAddr
+	Origin			string
 }
 
 var (
@@ -31,6 +35,9 @@ func Read() error {
 	err = yaml.Unmarshal(yamlFile, &Config)
 	if err != nil {
 		return err
+	}
+	if Config.Address==nil {
+		return errors.New("Address not defined")
 	}
 	return nil
 }

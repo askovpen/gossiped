@@ -328,3 +328,7 @@ func (j *JAM) SetLast(l uint32) {
 		return
 	}
 }
+
+func (j *JAM) SaveMsg(tm *Message) error {
+	return errors.New("not implemented")
+}
