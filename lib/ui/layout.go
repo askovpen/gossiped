@@ -41,5 +41,4 @@ func Layout(g *gocui.Gui) error {
 	}
 	setCurrentViewOnTop(g, ActiveWindow)
 	return nil
-
 }

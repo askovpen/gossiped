@@ -41,6 +41,9 @@ func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("editFromName", gocui.KeyTab, gocui.ModNone, editFromNameNext)
 	g.SetKeybinding("editFromAddr", gocui.KeyEnter, gocui.ModNone, editFromAddrNext)
 	g.SetKeybinding("editFromAddr", gocui.KeyTab, gocui.ModNone, editFromAddrNext)
+	g.SetKeybinding("editMsgBody", gocui.KeyCtrlS, gocui.ModNone, editMsgBodyMenu)
+	g.SetKeybinding("editMsgBody", gocui.KeyF2, gocui.ModNone, editMsgBodyMenu)
+	g.SetKeybinding("editMenuMsg", gocui.KeyEnter, gocui.ModNone, saveMessage)
 
 	g.SetKeybinding("editNumber", gocui.KeyEnter, gocui.ModNone, editMsgNumEnter)
 	g.SetKeybinding("ErrorMsg", gocui.KeyEnter, gocui.ModNone, exitError)

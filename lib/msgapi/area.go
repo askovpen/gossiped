@@ -16,6 +16,7 @@ type AreaPrimitive interface {
 	GetName() string
 	GetType() EchoAreaType
 	SetLast(uint32)
+	SaveMsg(*Message) error
 }
 
 type Area_s struct {
