@@ -13,32 +13,23 @@ func viewMsg(areaId int, msgNum uint32) error {
 	if msgNum == 0 && msgapi.Areas[areaId].GetCount() != 0 {
 		msgNum = 1
 	}
-<<<<<<< HEAD
 	msgEmpty:=false
-=======
->>>>>>> master
 	curAreaId = areaId
 	curMsgNum = msgNum
 	maxX, maxY := App.Size()
 	msg, err := msgapi.Areas[areaId].GetMsg(msgNum)
 	if err != nil {
-<<<<<<< HEAD
 		if err.Error()=="Empty Area" {
 			msgEmpty=true
 		} else {
 			log.Printf("vM err: %s", err.Error())
 			return err
 		}
-=======
-		log.Printf("vM err: %s", err.Error())
-		return err
->>>>>>> master
 	}
 	StatusLine = fmt.Sprintf("Msg %d of %d (%d left)",
 		msgNum,
 		msgapi.Areas[areaId].GetCount(),
 		msgapi.Areas[areaId].GetCount()-msgNum)
-<<<<<<< HEAD
 	if msgEmpty {
 		MsgHeader, _ := App.SetView("MsgHeader", 0, 0, maxX-1, 5)
 		MsgHeader.Clear()
@@ -78,31 +69,6 @@ func viewMsg(areaId int, msgNum uint32) error {
 		MsgBody.Clear()
 		fmt.Fprintf(MsgBody, "%s", msg.ToView(showKludges))
 	}
-=======
-	msgapi.Areas[areaId].SetLast(msgNum)
-	MsgHeader, _ := App.SetView("MsgHeader", 0, 0, maxX-1, 5)
-	MsgHeader.Wrap = false
-	MsgHeader.Clear()
-	MsgHeader.Title = msgapi.Areas[areaId].GetName()
-	fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
-		fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),
-		strings.Join(msg.Attrs, " "))
-	fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s\n",
-		msg.From,
-		msg.FromAddr.String(),
-		msg.DateWritten.Format("02 Jan 06 15:04:05"))
-	fmt.Fprintf(MsgHeader, " To   : %-34s %-15s %-18s\n",
-		msg.To,
-		msg.ToAddr.String(),
-		msg.DateArrived.Format("02 Jan 06 15:04:05"))
-	fmt.Fprintf(MsgHeader, " Subj : %-50s",
-		msg.Subject)
-	MsgBody, _ := App.SetView("MsgBody", -1, 5, maxX, maxY-1)
-	MsgBody.Frame = false
-	MsgBody.Wrap = true
-	MsgBody.Clear()
-	fmt.Fprintf(MsgBody, "%s", msg.ToView(showKludges))
->>>>>>> master
 	return nil
 }
 func prevMsg(g *gocui.Gui, v *gocui.View) error {
