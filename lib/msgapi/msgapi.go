@@ -1,5 +1,5 @@
 package msgapi
 
 var (
-  Areas []AreaPrimitive
+	Areas []AreaPrimitive
 )
