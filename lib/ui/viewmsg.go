@@ -100,6 +100,7 @@ func firstMsg(g *gocui.Gui, v *gocui.View) error {
 }
 func editMsgNumEnter(g *gocui.Gui, v *gocui.View) error {
 	//log.Print("1")
+	g.Cursor=false
 	ActiveWindow = "MsgBody"
 	en, err := g.View("editNumber")
 	if err != nil {
@@ -139,6 +140,7 @@ func editMsgNum(g *gocui.Gui, v *gocui.View) error {
 	editableNumber.Editable = true
 	editableNumberTitle, _ := App.SetView("editNumberTitle", 14, 0, 24, 2)
 	editableNumberTitle.Frame = false
+	g.Cursor=true
 	fmt.Fprintf(editableNumberTitle, " of %d", msgapi.Areas[curAreaId].GetCount())
 	//  App.SetCurrentView("editNumberTitle")
 	App.SetCurrentView("editNumber")
