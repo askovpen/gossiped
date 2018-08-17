@@ -96,7 +96,7 @@ func (m *Message) ToView(showKludges bool) string {
 			}
 		} else if ind := re.FindStringIndex(l); ind != nil {
 			ind2 := strings.Index(l, "<")
-			if (ind2 == -1 || ind2 > ind[1]) && ind[0]<6 {
+			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
 				if (ind[1]-ind[0])%2 == 0 {
 					nm = append(nm, "\033[37;1m"+l+"\033[0m")
 				} else {

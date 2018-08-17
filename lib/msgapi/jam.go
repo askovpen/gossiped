@@ -120,7 +120,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	//  _, tofs:=time.Now().Local().Zone()
 	rm.DateWritten = time.Unix(int64(jamh.DateWritten), 0)
 	_, tofs := rm.DateWritten.Zone()
-	if jamh.DateReceived>0 {
+	if jamh.DateReceived > 0 {
 		rm.DateArrived = time.Unix(int64(jamh.DateReceived), 0)
 	} else {
 		rm.DateArrived = time.Unix(int64(jamh.DateProcessed), 0)

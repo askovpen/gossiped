@@ -13,14 +13,14 @@ func viewMsg(areaId int, msgNum uint32) error {
 	if msgNum == 0 && msgapi.Areas[areaId].GetCount() != 0 {
 		msgNum = 1
 	}
-	msgEmpty:=false
+	msgEmpty := false
 	curAreaId = areaId
 	curMsgNum = msgNum
 	maxX, maxY := App.Size()
 	msg, err := msgapi.Areas[areaId].GetMsg(msgNum)
 	if err != nil {
-		if err.Error()=="Empty Area" {
-			msgEmpty=true
+		if err.Error() == "Empty Area" {
+			msgEmpty = true
 		} else {
 			log.Printf("vM err: %s", err.Error())
 			return err
@@ -100,7 +100,7 @@ func firstMsg(g *gocui.Gui, v *gocui.View) error {
 }
 func editMsgNumEnter(g *gocui.Gui, v *gocui.View) error {
 	//log.Print("1")
-	g.Cursor=false
+	g.Cursor = false
 	ActiveWindow = "MsgBody"
 	en, err := g.View("editNumber")
 	if err != nil {
@@ -140,7 +140,7 @@ func editMsgNum(g *gocui.Gui, v *gocui.View) error {
 	editableNumber.Editable = true
 	editableNumberTitle, _ := App.SetView("editNumberTitle", 14, 0, 24, 2)
 	editableNumberTitle.Frame = false
-	g.Cursor=true
+	g.Cursor = true
 	fmt.Fprintf(editableNumberTitle, " of %d", msgapi.Areas[curAreaId].GetCount())
 	//  App.SetCurrentView("editNumberTitle")
 	App.SetCurrentView("editNumber")

@@ -10,11 +10,11 @@ import (
 )
 
 type config_s struct {
-	Username		string
-	FidoConfig	string
-	Log					string
-	Address			*types.FidoAddr
-	Origin			string
+	Username   string
+	FidoConfig string
+	Log        string
+	Address    *types.FidoAddr
+	Origin     string
 }
 
 var (
@@ -36,7 +36,7 @@ func Read() error {
 	if err != nil {
 		return err
 	}
-	if Config.Address==nil {
+	if Config.Address == nil {
 		return errors.New("Address not defined")
 	}
 	return nil
