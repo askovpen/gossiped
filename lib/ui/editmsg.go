@@ -7,6 +7,7 @@ import (
 	"github.com/askovpen/goated/lib/types"
 	"github.com/jroimartin/gocui"
 	"log"
+	"strings"
 )
 
 func editMsg(g *gocui.Gui, v *gocui.View) error {
@@ -41,7 +42,9 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	msgToName.Clear()
 	msgToName.Frame = false
 	msgToName.Editable = true
-	fmt.Fprintf(msgToName, "All")
+	if msgapi.Areas[curAreaId].GetType()!=msgapi.EchoAreaTypeNetmail {
+		fmt.Fprintf(msgToName, "All")
+	}
 	msgToAddr, _ := g.SetView("editToAddr", 43, 2, 57, 4)
 	msgToAddr.Clear()
 	msgToAddr.Frame = false
@@ -58,8 +61,12 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 
 func editToNameNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editToName")
-	newMsg.To = vn.Buffer()
-	ActiveWindow = "editToAddr"
+	newMsg.To = strings.Trim(vn.Buffer(),"\n")
+	if msgapi.Areas[curAreaId].GetType()==msgapi.EchoAreaTypeNetmail {
+		ActiveWindow = "editToAddr"
+	} else {
+		ActiveWindow = "editSubj"
+	}
 	return nil
 }
 
@@ -95,7 +102,15 @@ func editToSubjBody(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editSubj")
 	newMsg.Subject = string(vn.Buffer())
 	vn, _ = g.View("editMsgBody")
-	fmt.Fprintf(vn, "Hello, %s\n\n\n--- %s\n * Origin: %s (%s)", newMsg.From, config.LongPID, config.Config.Origin, config.Config.Address)
+	mv,p:=newMsg.ToEditNewView()
+	_, maxY := vn.Size()
+	if p>maxY-1 {
+		vn.SetCursor(0, maxY-1)
+		vn.SetOrigin(0, p-maxY-1)
+	} else {
+		vn.SetCursor(0, p)
+	}
+	fmt.Fprintf(vn,mv)
 	ActiveWindow = "editMsgBody"
 	return nil
 }

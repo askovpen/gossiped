@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
+	"github.com/askovpen/goated/lib/config"
 	"log"
 	"regexp"
 	"strings"
@@ -110,4 +111,41 @@ func (m *Message) ToView(showKludges bool) string {
 		}
 	}
 	return strings.Join(nm, "\n")
+}
+func (m *Message) ToEditNewView() (string, int) {
+	var nm []string
+	p:=0
+	r:=strings.NewReplacer(
+		"@pseudo", m.To,
+		"@CFName",strings.Split(m.From," ")[0])
+	for _,l:=range config.Template {
+		if len(l)>0 {
+			if l[0]=='@' {
+				if len(l)>3 && l[0:4]=="@New" {
+					if len(l)==4 {
+						nm=append(nm,"")
+					} else {
+						nm=append(nm,r.Replace(l[4:]))
+					}
+				} else if len(l)>8 && l[0:9]=="@Position" {
+					p=len(nm)
+					if len(l)==9 {
+						nm=append(nm,"")
+					} else {
+						nm=append(nm,r.Replace(l[9:]))
+					}
+				} else if len(l)>6 && l[0:7]=="@CFName" {
+					nm=append(nm,r.Replace(l))
+				}
+			} else {
+				nm=append(nm,r.Replace(l))
+			}
+		} else {
+			nm=append(nm,l)
+		}
+	}
+	nm=append(nm, "--- "+config.LongPID)
+	nm=append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
+	return strings.Join(nm, "\n"),p
+	
 }

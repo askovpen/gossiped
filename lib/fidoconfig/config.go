@@ -28,12 +28,7 @@ func Read() error {
 
 	sort.Slice(msgapi.Areas, func(i, j int) bool {
 		if msgapi.Areas[i].GetType() != msgapi.Areas[j].GetType() {
-			if msgapi.Areas[i].GetType() == msgapi.EchoAreaMsgTypeMSG {
-				return true
-			}
-			if msgapi.Areas[j].GetType() == msgapi.EchoAreaMsgTypeMSG {
-				return false
-			}
+			return msgapi.Areas[i].GetType() < msgapi.Areas[j].GetType()
 		}
 		return msgapi.Areas[i].GetName() < msgapi.Areas[j].GetName()
 	})

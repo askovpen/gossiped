@@ -288,8 +288,12 @@ func (j *JAM) GetCount() uint32 {
 	return uint32(len(j.indexStructure))
 }
 
-func (j *JAM) GetType() EchoAreaMsgType {
+func (j *JAM) GetMsgType() EchoAreaMsgType {
 	return EchoAreaMsgTypeJAM
+}
+
+func (j *JAM) GetType() EchoAreaType {
+	return j.AreaType
 }
 
 func (j *JAM) Init() {
