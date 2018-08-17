@@ -184,8 +184,12 @@ func (s *Squish) GetCount() uint32 {
 	return uint32(len(s.indexStructure))
 }
 
-func (s *Squish) GetType() EchoAreaMsgType {
+func (s *Squish) GetMsgType() EchoAreaMsgType {
 	return EchoAreaMsgTypeSquish
+}
+
+func (s *Squish) GetType() EchoAreaType {
+	return s.AreaType
 }
 
 func (s *Squish) Init() {

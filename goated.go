@@ -7,7 +7,7 @@ import (
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/fidoconfig"
 	"github.com/askovpen/goated/lib/ui"
-	"github.com/jroimartin/gocui"
+	"github.com/askovpen/gocui"
 	"log"
 	"os"
 	//  "github.com/nsf/termbox-go"

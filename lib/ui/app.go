@@ -2,7 +2,7 @@ package ui
 
 import (
 	"github.com/askovpen/goated/lib/msgapi"
-	"github.com/jroimartin/gocui"
+	"github.com/askovpen/gocui"
 )
 
 var (
@@ -16,6 +16,7 @@ var (
 	showKludges  bool
 	StatusLine   string
 	newMsg       *msgapi.Message
+	newMsgType   string
 )
 
 func Quit(g *gocui.Gui, v *gocui.View) error {

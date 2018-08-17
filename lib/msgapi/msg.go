@@ -159,8 +159,11 @@ func (m *MSG) readMN() {
 	sort.Slice(m.messageNums, func(i, j int) bool { return m.messageNums[i] < m.messageNums[j] })
 }
 
-func (m *MSG) GetType() EchoAreaMsgType {
+func (m *MSG) GetMsgType() EchoAreaMsgType {
 	return EchoAreaMsgTypeMSG
+}
+func (m *MSG) GetType() EchoAreaType {
+	return m.AreaType
 }
 
 func (m *MSG) SetLast(l uint32) {

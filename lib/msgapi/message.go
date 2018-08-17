@@ -2,6 +2,7 @@ package msgapi
 
 import (
 	"errors"
+	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
 	"log"
@@ -110,4 +111,116 @@ func (m *Message) ToView(showKludges bool) string {
 		}
 	}
 	return strings.Join(nm, "\n")
+}
+func (m *Message) ToEditNewView() (string, int) {
+	var nm []string
+	p := 0
+	r := strings.NewReplacer(
+		"@pseudo", m.To,
+		"@CFName", strings.Split(m.From, " ")[0])
+	for _, l := range config.Template {
+		if len(l) > 0 {
+			if l[0] == '@' {
+				if len(l) > 3 && l[0:4] == "@New" {
+					if len(l) == 4 {
+						nm = append(nm, "")
+					} else {
+						nm = append(nm, r.Replace(l[4:]))
+					}
+				} else if len(l) > 8 && l[0:9] == "@Position" {
+					p = len(nm)
+					if len(l) == 9 {
+						nm = append(nm, "")
+					} else {
+						nm = append(nm, r.Replace(l[9:]))
+					}
+				} else if len(l) > 6 && l[0:7] == "@CFName" {
+					nm = append(nm, r.Replace(l))
+				}
+			} else {
+				nm = append(nm, r.Replace(l))
+			}
+		} else {
+			nm = append(nm, l)
+		}
+	}
+	nm = append(nm, "\033[37;1m--- "+config.LongPID+"\033[0m")
+	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
+	return strings.Join(nm, "\n"), p
+
+}
+func (m *Message) GetQuote() []string {
+	var nm []string
+	re := regexp.MustCompile(">+")
+	from := ""
+	for _, l := range strings.Split(m.From, " ") {
+		from += string(l[0])
+	}
+	for _, l := range strings.Split(m.Body, "\x0d") {
+		if len(l) > 1 && l[0] == 1 {
+			continue
+		} else if len(l) > 8 && l[0:9] == "SEEN-BY: " {
+			continue
+		} else if ind := re.FindStringIndex(l); ind != nil {
+			ind2 := strings.Index(l, "<")
+			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
+				if (ind[1]-ind[0])%2 == 0 {
+					nm = append(nm, "\033[33;1m"+l[0:ind[0]+1]+">"+l[ind[0]+1:]+"\033[0m")
+				} else {
+					nm = append(nm, "\033[37;1m"+l[0:ind[0]+1]+">"+l[ind[0]+1:]+"\033[0m")
+				}
+			} else {
+				nm = append(nm, "\033[33;1m "+from+"> "+l+"\033[0m")
+			}
+		} else {
+			nm = append(nm, "\033[33;1m "+from+"> "+l+"\033[0m")
+		}
+	}
+	log.Print(from)
+	return nm
+}
+func (m *Message) ToEditAnswerView(om *Message) (string, int) {
+	var nm []string
+	p := 0
+	r := strings.NewReplacer(
+		"@pseudo", m.To,
+		"@CFName", strings.Split(m.From, " ")[0],
+		"@ODate", om.DateWritten.Format("02 Jan 06"),
+		"@OTime", om.DateWritten.Format("15:04:05"),
+		"@OName", om.From,
+		"@DName", om.To)
+	for _, l := range config.Template {
+		if len(l) > 0 {
+			if l[0] == '@' {
+				if len(l) > 15 && l[0:16] == "@Quoted@Position" {
+					p = len(nm)
+					nm = append(nm, "")
+				} else if len(l) > 6 && l[0:7] == "@Quoted" {
+					if len(l) == 7 {
+						nm = append(nm, "")
+					} else {
+						nm = append(nm, r.Replace(l[7:]))
+					}
+				} else if len(l) > 8 && l[0:9] == "@Position" {
+					p = len(nm)
+					if len(l) == 9 {
+						nm = append(nm, "")
+					} else {
+						nm = append(nm, r.Replace(l[9:]))
+					}
+				} else if len(l) > 5 && l[0:6] == "@Quote" {
+					nm = append(nm, om.GetQuote()...)
+				} else if len(l) > 6 && l[0:7] == "@CFName" {
+					nm = append(nm, r.Replace(l))
+				}
+			} else {
+				nm = append(nm, r.Replace(l))
+			}
+		} else {
+			nm = append(nm, l)
+		}
+	}
+	nm = append(nm, "\033[37;1m--- "+config.LongPID+"\033[0m")
+	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
+	return strings.Join(nm, "\n"), p
 }
