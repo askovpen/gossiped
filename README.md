@@ -4,7 +4,7 @@
 [![Go Reportcard](https://goreportcard.com/badge/github.com/askovpen/goated)](https://goreportcard.com/report/github.com/askovpen/goated)
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/askovpen/goated/blob/master/LICENSE.txt)
 
-*goated* - ftn message editor (as yet viewer)
+*goAtEd* - ftn message editor (as yet viewer)
 
 [Wiki](https://github.com/askovpen/goated/wiki)
 
