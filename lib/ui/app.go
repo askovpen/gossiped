@@ -16,6 +16,7 @@ var (
 	showKludges  bool
 	StatusLine   string
 	newMsg       *msgapi.Message
+	newMsgType   string
 )
 
 func Quit(g *gocui.Gui, v *gocui.View) error {

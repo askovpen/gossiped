@@ -20,10 +20,10 @@ type config_s struct {
 }
 
 var (
-	Config  config_s
-	Version string
-	PID     string
-	LongPID string
+	Config   config_s
+	Version  string
+	PID      string
+	LongPID  string
 	Template []string
 )
 
@@ -43,14 +43,14 @@ func Read() error {
 		return errors.New("Address not defined")
 	}
 	tpl, err := ioutil.ReadFile(Config.Template)
-	if err!=nil {
-	  return err
+	if err != nil {
+		return err
 	}
-	for _,l:=range strings.Split(string(tpl[:]),"\n") {
-	  if len(l)>0 && l[0]==';' {
-	    continue
-	  }
-	  Template=append(Template,l)
+	for _, l := range strings.Split(string(tpl[:]), "\n") {
+		if len(l) > 0 && l[0] == ';' {
+			continue
+		}
+		Template = append(Template, l)
 	}
 	return nil
 }

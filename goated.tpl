@@ -56,27 +56,8 @@ Hello @pseudo!
 ;   ----------------------------------------------------------------------
 ;   If we are replying without quoting, add these lines.
 ;   ----------------------------------------------------------------------
-@ReplyAnswering a msg of <@ODate>, from @OName{me}{you} to @DName{me}{you}:
-@Reply@Position
-;
-;   ----------------------------------------------------------------------
-;   If we are comment-replying, add these lines.
-;   ----------------------------------------------------------------------
-@Comment@ODate @OTime, @OName{I}{you} wrote to @DName{me}{you}:
-@Comment@Position
-;
-;   ----------------------------------------------------------------------
-;   If we are quote-replying, add these lines.
-;   ----------------------------------------------------------------------
-@Quoted@ODate @OTime, @OName{I}{you} wrote to @DName{me}{you}:
+@Quoted@ODate @OTime, @OName wrote to @DName:
 @Quoted@Position
-;
-;   ----------------------------------------------------------------------
-;   For the quotebuffer, add these lines.
-;   ----------------------------------------------------------------------
-@Quotebuf
-@Quotebuf@ODate @OTime, @OName{I}{you} wrote to @DName{me}{you}:
-@Quotebuf
 ;
 ;   ----------------------------------------------------------------------
 ;   Insert quote of the original message here, if our message is a
