@@ -18,6 +18,7 @@ import (
 type Squish struct {
 	AreaPath       string
 	AreaName       string
+	AreaType       EchoAreaType
 	indexStructure []sqi_s
 }
 
@@ -100,7 +101,9 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	rm.From = strings.Trim(string(sqdh.From[:]), "\x00")
 	rm.To = strings.Trim(string(sqdh.To[:]), "\x00")
 	rm.FromAddr = types.AddrFromNum(sqdh.FromZone, sqdh.FromNet, sqdh.FromNode, sqdh.FromPoint)
-	rm.ToAddr = types.AddrFromNum(sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint)
+	if s.AreaType!=EchoAreaTypeLocal && s.AreaType!=EchoAreaTypeEcho {
+		rm.ToAddr = types.AddrFromNum(sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint)
+	}
 	rm.Subject = strings.Trim(string(sqdh.Subject[:]), "\x00")
 	rm.Attrs = s.getAttrs(sqdh.Attr)
 	rm.Body = string(body[:])
@@ -181,8 +184,8 @@ func (s *Squish) GetCount() uint32 {
 	return uint32(len(s.indexStructure))
 }
 
-func (s *Squish) GetType() EchoAreaType {
-	return EchoAreaTypeSquish
+func (s *Squish) GetType() EchoAreaMsgType {
+	return EchoAreaMsgTypeSquish
 }
 
 func (s *Squish) Init() {

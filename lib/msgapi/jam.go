@@ -20,6 +20,7 @@ import (
 type JAM struct {
 	AreaPath       string
 	AreaName       string
+	AreaType       EchoAreaType
 	indexStructure []jam_s
 	lastRead       []jam_l
 }
@@ -156,7 +157,9 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		case 0:
 			rm.FromAddr = types.AddrFromString(string(val[:]))
 		case 1:
-			rm.ToAddr = types.AddrFromString(string(val[:]))
+			if j.AreaType!=EchoAreaTypeLocal && j.AreaType!=EchoAreaTypeEcho {
+				rm.ToAddr = types.AddrFromString(string(val[:]))
+			}
 		case 2:
 			rm.From = string(val[:])
 		case 3:
@@ -285,8 +288,8 @@ func (j *JAM) GetCount() uint32 {
 	return uint32(len(j.indexStructure))
 }
 
-func (j *JAM) GetType() EchoAreaType {
-	return EchoAreaTypeJAM
+func (j *JAM) GetType() EchoAreaMsgType {
+	return EchoAreaMsgTypeJAM
 }
 
 func (j *JAM) Init() {

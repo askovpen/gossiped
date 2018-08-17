@@ -18,6 +18,7 @@ import (
 type MSG struct {
 	AreaPath    string
 	AreaName    string
+	AreaType    EchoAreaType
 	lastreads   string
 	messageNums []uint32
 }
@@ -158,8 +159,8 @@ func (m *MSG) readMN() {
 	sort.Slice(m.messageNums, func(i, j int) bool { return m.messageNums[i] < m.messageNums[j] })
 }
 
-func (m *MSG) GetType() EchoAreaType {
-	return EchoAreaTypeMSG
+func (m *MSG) GetType() EchoAreaMsgType {
+	return EchoAreaMsgTypeMSG
 }
 
 func (m *MSG) SetLast(l uint32) {
