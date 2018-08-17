@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 	"github.com/askovpen/goated/lib/msgapi"
-	"github.com/jroimartin/gocui"
+	"github.com/askovpen/gocui"
 	"log"
 	"strconv"
 )
@@ -26,6 +26,8 @@ func quitUp(g *gocui.Gui, v *gocui.View) error {
 func quitAreaList(g *gocui.Gui, v *gocui.View) error {
 	v, _ = App.SetView("QuitMsg", 2, 1, 17, 4)
 	v.Title = "Quit goAtEd?"
+	v.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
+	v.FrameFgColor = gocui.ColorRed | gocui.AttrBold
 	fmt.Fprintf(v, "     Yes!     \n      No       ")
 	v.Highlight = true
 	v.SelBgColor = gocui.ColorBlue
@@ -133,6 +135,7 @@ func CreateAreaList() error {
 	AreaList.SelBgColor = gocui.ColorBlue
 	AreaList.SelFgColor = gocui.ColorWhite | gocui.AttrBold
 	AreaList.FgColor = gocui.ColorWhite
+	AreaList.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 	AreaList.Clear()
 	fmt.Fprintf(AreaList, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6s %6s \033[0m\n",
 		"EchoID", "Msgs", "New")

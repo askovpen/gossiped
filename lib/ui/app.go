@@ -2,7 +2,7 @@ package ui
 
 import (
 	"github.com/askovpen/goated/lib/msgapi"
-	"github.com/jroimartin/gocui"
+	"github.com/askovpen/gocui"
 )
 
 var (

@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 	"github.com/askovpen/goated/lib/msgapi"
-	"github.com/jroimartin/gocui"
+	"github.com/askovpen/gocui"
 	"log"
 	"strconv"
 	"strings"
@@ -34,6 +34,8 @@ func viewMsg(areaId int, msgNum uint32) error {
 		MsgHeader, _ := App.SetView("MsgHeader", 0, 0, maxX-1, 5)
 		MsgHeader.Clear()
 		MsgHeader.Title = msgapi.Areas[areaId].GetName()
+		MsgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
+		MsgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
 			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),
 			"")
@@ -50,6 +52,8 @@ func viewMsg(areaId int, msgNum uint32) error {
 		MsgHeader.Wrap = false
 		MsgHeader.Clear()
 		MsgHeader.Title = msgapi.Areas[areaId].GetName()
+		MsgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
+		MsgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
 			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),
 			strings.Join(msg.Attrs, " "))

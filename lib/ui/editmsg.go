@@ -5,7 +5,7 @@ import (
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/msgapi"
 	"github.com/askovpen/goated/lib/types"
-	"github.com/jroimartin/gocui"
+	"github.com/askovpen/gocui"
 	"log"
 	"strings"
 )
@@ -31,6 +31,7 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	}
 	maxX, maxY := g.Size()
 	msgHeader, _ := g.SetView("MsgHeader", 0, 0, maxX-1, 5)
+	msgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 	msgHeader.Clear()
 	fmt.Fprintf(msgHeader, " Msg  : %-34s Pvt\n",
 		fmt.Sprintf("%d of %d", msgapi.Areas[curAreaId].GetCount()+1, msgapi.Areas[curAreaId].GetCount()+1))
