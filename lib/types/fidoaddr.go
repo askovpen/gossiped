@@ -27,6 +27,9 @@ func (f *FidoAddr) String() string {
 	if f.zone == 0 {
 		return ""
 	}
+	if f.point == 0 {
+		return strconv.Itoa(int(f.zone)) + ":" + strconv.Itoa(int(f.net)) + "/" + strconv.Itoa(int(f.node))
+	}
 	return strconv.Itoa(int(f.zone)) + ":" + strconv.Itoa(int(f.net)) + "/" + strconv.Itoa(int(f.node)) + "." + strconv.Itoa(int(f.point))
 }
 func (f *FidoAddr) FQDN() (string, error) {

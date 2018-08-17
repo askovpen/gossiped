@@ -101,7 +101,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	rm.From = strings.Trim(string(sqdh.From[:]), "\x00")
 	rm.To = strings.Trim(string(sqdh.To[:]), "\x00")
 	rm.FromAddr = types.AddrFromNum(sqdh.FromZone, sqdh.FromNet, sqdh.FromNode, sqdh.FromPoint)
-	if s.AreaType!=EchoAreaTypeLocal && s.AreaType!=EchoAreaTypeEcho {
+	if s.AreaType != EchoAreaTypeLocal && s.AreaType != EchoAreaTypeEcho {
 		rm.ToAddr = types.AddrFromNum(sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint)
 	}
 	rm.Subject = strings.Trim(string(sqdh.Subject[:]), "\x00")

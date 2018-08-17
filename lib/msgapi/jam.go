@@ -157,7 +157,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		case 0:
 			rm.FromAddr = types.AddrFromString(string(val[:]))
 		case 1:
-			if j.AreaType!=EchoAreaTypeLocal && j.AreaType!=EchoAreaTypeEcho {
+			if j.AreaType != EchoAreaTypeLocal && j.AreaType != EchoAreaTypeEcho {
 				rm.ToAddr = types.AddrFromString(string(val[:]))
 			}
 		case 2:
