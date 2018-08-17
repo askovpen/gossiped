@@ -81,7 +81,7 @@ func readFile(fn string) {
 				processArea(res[0])
 			} else if strings.EqualFold(res[1], "netmailarea") {
 				processArea(res[0])
-			} else if strings.EqualFold(res[1], "EchoAreaDefault") {
+			} else if strings.EqualFold(res[1], "EchoAreaDefaults") {
 				processDef(res[0])
 			}
 		}
@@ -91,6 +91,10 @@ func readFile(fn string) {
 func processDef(areaDef string) {
 	re := regexp.MustCompile(`[^\s\t"']+|"([^"]*)"|'([^']*)`)
 	res := re.FindAllString(areaDef, -1)
+	if len(res) == 2 && strings.EqualFold(res[1], "off") {
+		defaultMsgType = msgapi.EchoAreaTypeMSG
+		return
+	}
 	if len(res) < 3 {
 		return
 	}
@@ -133,7 +137,7 @@ func getMsgBType(tokens []string) msgapi.EchoAreaType {
 			}
 		}
 	}
-	return msgapi.EchoAreaTypeMSG
+	return defaultMsgType
 }
 
 func isPassthrough(tokens []string) bool {
