@@ -15,11 +15,11 @@ import (
 )
 
 var (
-	defaultMsgType msgapi.EchoAreaType
+	defaultMsgType msgapi.EchoAreaMsgType
 )
 
 func Read() error {
-	defaultMsgType = msgapi.EchoAreaTypeMSG
+	defaultMsgType = msgapi.EchoAreaMsgTypeMSG
 	readFile(config.Config.FidoConfig)
 
 	if len(msgapi.Areas) == 0 {
@@ -28,10 +28,10 @@ func Read() error {
 
 	sort.Slice(msgapi.Areas, func(i, j int) bool {
 		if msgapi.Areas[i].GetType() != msgapi.Areas[j].GetType() {
-			if msgapi.Areas[i].GetType() == msgapi.EchoAreaTypeMSG {
+			if msgapi.Areas[i].GetType() == msgapi.EchoAreaMsgTypeMSG {
 				return true
 			}
-			if msgapi.Areas[j].GetType() == msgapi.EchoAreaTypeMSG {
+			if msgapi.Areas[j].GetType() == msgapi.EchoAreaMsgTypeMSG {
 				return false
 			}
 		}
@@ -76,11 +76,11 @@ func readFile(fn string) {
 			if strings.EqualFold(res[1], "include") {
 				readFile(res[2])
 			} else if strings.EqualFold(res[1], "echoarea") {
-				processArea(res[0])
+				processArea(res[0], msgapi.EchoAreaTypeEcho)
 			} else if strings.EqualFold(res[1], "localarea") {
-				processArea(res[0])
+				processArea(res[0], msgapi.EchoAreaTypeLocal)
 			} else if strings.EqualFold(res[1], "netmailarea") {
-				processArea(res[0])
+				processArea(res[0], msgapi.EchoAreaTypeNetmail)
 			} else if strings.EqualFold(res[1], "EchoAreaDefaults") {
 				processDef(res[0])
 			}
@@ -92,7 +92,7 @@ func processDef(areaDef string) {
 	re := regexp.MustCompile(`[^\s\t"']+|"([^"]*)"|'([^']*)`)
 	res := re.FindAllString(areaDef, -1)
 	if len(res) == 2 && strings.EqualFold(res[1], "off") {
-		defaultMsgType = msgapi.EchoAreaTypeMSG
+		defaultMsgType = msgapi.EchoAreaMsgTypeMSG
 		return
 	}
 	if len(res) < 3 {
@@ -101,7 +101,7 @@ func processDef(areaDef string) {
 	defaultMsgType = getMsgBType(res)
 }
 
-func processArea(areaDef string) {
+func processArea(areaDef string, aType msgapi.EchoAreaType) {
 	re := regexp.MustCompile(`[^\s\t"']+|"([^"]*)"|'([^']*)`)
 	res := re.FindAllString(areaDef, -1)
 	if len(res) < 3 {
@@ -111,27 +111,27 @@ func processArea(areaDef string) {
 		return
 	}
 	MsgBType := getMsgBType(res)
-	if MsgBType == msgapi.EchoAreaTypeSquish {
-		area := &msgapi.Squish{AreaName: res[1], AreaPath: res[2]}
+	if MsgBType == msgapi.EchoAreaMsgTypeSquish {
+		area := &msgapi.Squish{AreaName: res[1], AreaPath: res[2], AreaType: aType}
 		msgapi.Areas = append(msgapi.Areas, area)
-	} else if MsgBType == msgapi.EchoAreaTypeMSG {
-		area := &msgapi.MSG{AreaName: res[1], AreaPath: res[2]}
+	} else if MsgBType == msgapi.EchoAreaMsgTypeMSG {
+		area := &msgapi.MSG{AreaName: res[1], AreaPath: res[2], AreaType: aType}
 		msgapi.Areas = append(msgapi.Areas, area)
-	} else if MsgBType == msgapi.EchoAreaTypeJAM {
-		area := &msgapi.JAM{AreaName: res[1], AreaPath: res[2]}
+	} else if MsgBType == msgapi.EchoAreaMsgTypeJAM {
+		area := &msgapi.JAM{AreaName: res[1], AreaPath: res[2], AreaType: aType}
 		msgapi.Areas = append(msgapi.Areas, area)
 	}
 }
 
-func getMsgBType(tokens []string) msgapi.EchoAreaType {
+func getMsgBType(tokens []string) msgapi.EchoAreaMsgType {
 	for i, t := range tokens {
 		if strings.EqualFold(t, "-b") {
 			if strings.EqualFold(tokens[i+1], "squish") {
-				return msgapi.EchoAreaTypeSquish
+				return msgapi.EchoAreaMsgTypeSquish
 			} else if strings.EqualFold(tokens[i+1], "jam") {
-				return msgapi.EchoAreaTypeJAM
+				return msgapi.EchoAreaMsgTypeJAM
 			} else if strings.EqualFold(tokens[i+1], "msg") {
-				return msgapi.EchoAreaTypeMSG
+				return msgapi.EchoAreaMsgTypeMSG
 			} else {
 				return defaultMsgType
 			}
