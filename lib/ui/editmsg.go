@@ -22,7 +22,7 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
 	var origMessage *msgapi.Message
 	if newMsg == nil {
-		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address}
+		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: curAreaId}
 	}
 	if newMsgType == "answer" {
 		origMessage, _ = msgapi.Areas[curAreaId].GetMsg(curMsgNum)
@@ -145,7 +145,9 @@ func editToSubjBody(g *gocui.Gui, v *gocui.View) error {
 	} else {
 		vn.SetCursor(0, p)
 	}
-	fmt.Fprintf(vn, mv)
+	if vn.Buffer() == "" {
+		fmt.Fprintf(vn, mv)
+	}
 	ActiveWindow = "editMsgBody"
 	return nil
 }
@@ -154,19 +156,42 @@ func editMsgBodyMenu(g *gocui.Gui, v *gocui.View) error {
 	g.Cursor = false
 	vn, _ := g.View("editMsgBody")
 	newMsg.Body = string(vn.Buffer())
-	v, _ = App.SetView("editMenuMsg", 0, 6, 17, 11)
+	v, _ = App.SetView("editMenuMsg", 0, 6, 19, 11)
 	v.Title = "Save?"
 	v.Highlight = true
+	v.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
+	v.FrameFgColor = gocui.ColorRed | gocui.AttrBold
 	v.SelBgColor = gocui.ColorBlue
 	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
-	fmt.Fprintf(v, "Yes!\nNo, Drop\nContinue Writing\nEdit Header")
+	fmt.Fprintf(v, " Yes!             \n No, Drop         \n Continue Writing \n Edit Header      ")
 	ActiveWindow = "editMenuMsg"
+	return nil
+}
+func editMsgBodyMenuUp(g *gocui.Gui, v *gocui.View) error {
+	cx, cy := v.Cursor()
+	if cy == 0 {
+		cy = 3
+	} else {
+		cy -= 1
+	}
+	v.SetCursor(cx, cy)
+	return nil
+}
+func editMsgBodyMenuDown(g *gocui.Gui, v *gocui.View) error {
+	cx, cy := v.Cursor()
+	if cy == 3 {
+		cy = 0
+	} else {
+		cy += 1
+	}
+	v.SetCursor(cx, cy)
 	return nil
 }
 func saveMessage(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
 	log.Printf("cy %d", cy)
-	if cy == 0 {
+	switch cy {
+	case 0:
 		g.DeleteView("MsgHeader")
 		g.DeleteView("editMsgBody")
 		g.DeleteView("editFromName")
@@ -175,10 +200,32 @@ func saveMessage(g *gocui.Gui, v *gocui.View) error {
 		g.DeleteView("editToAddr")
 		g.DeleteView("editSubj")
 		g.DeleteView("editMenuMsg")
-		err := msgapi.Areas[curAreaId].SaveMsg(newMsg)
+		err := msgapi.Areas[curAreaId].SaveMsg(newMsg.MakeBody())
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
+		} else {
+			viewMsg(curAreaId, curMsgNum)
+			ActiveWindow = "MsgBody"
 		}
+	case 1:
+		g.DeleteView("MsgHeader")
+		g.DeleteView("editMsgBody")
+		g.DeleteView("editFromName")
+		g.DeleteView("editFromAddr")
+		g.DeleteView("editToName")
+		g.DeleteView("editToAddr")
+		g.DeleteView("editSubj")
+		g.DeleteView("editMenuMsg")
+		viewMsg(curAreaId, curMsgNum)
+		ActiveWindow = "MsgBody"
+	case 2:
+		g.DeleteView("editMenuMsg")
+		g.Cursor = true
+		ActiveWindow = "editMsgBody"
+	case 3:
+		g.DeleteView("editMenuMsg")
+		g.Cursor = true
+		ActiveWindow = "editFromName"
 	}
 	return nil
 }

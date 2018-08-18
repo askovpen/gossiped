@@ -91,6 +91,14 @@ func (f *FidoAddr) getNode() uint16 {
 	return f.node
 }
 
-func (f *FidoAddr) getNet() uint16 {
+func (f *FidoAddr) GetNet() uint16 {
 	return f.net
+}
+
+func (f *FidoAddr) GetPoint() uint16 {
+	return f.point
+}
+
+func (f *FidoAddr) SetPoint(p uint16) {
+	f.point=p
 }
