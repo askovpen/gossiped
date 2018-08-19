@@ -1,6 +1,5 @@
 version: "{build}"
 clone_folder: c:\gopath\src\github.com\askovpen\goated
-clone_depth: 1
 
 branches:
   only:
