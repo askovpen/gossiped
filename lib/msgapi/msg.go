@@ -97,10 +97,10 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 		return nil, err
 	}
 	defer f.Close()
-//	fi, err := f.Stat()
-//	if err != nil {
-//		return nil, err
-//	}
+	//	fi, err := f.Stat()
+	//	if err != nil {
+	//		return nil, err
+	//	}
 	msg, err := ioutil.ReadAll(f)
 	if err != nil {
 		return nil, err
@@ -207,38 +207,38 @@ func (m *MSG) SetLast(l uint32) {
 func (m *MSG) SaveMsg(tm *Message) error {
 	log.Printf("msg: %#v", tm)
 	var msgm msg_s
-	msgm.Attr=MSGLOCAL
+	msgm.Attr = MSGLOCAL
 	tm.Encode()
-	copy(msgm.From[:],tm.From)
-	copy(msgm.To[:],tm.To)
-	copy(msgm.Subj[:],tm.Subject)
-	copy(msgm.Date[:],tm.DateWritten.Format("02 Jan 06  15:04:05"))
-	msgm.DateWritten=setTime(tm.DateWritten)
-	msgm.DateArrived=setTime(tm.DateArrived)
-	msgm.DestNode=tm.ToAddr.GetNode()
-	msgm.DestNet=tm.ToAddr.GetNet()
-	msgm.OrigNode=tm.FromAddr.GetNode()
-	msgm.OrigNet=tm.FromAddr.GetNet()
-	msgm.Body=tm.Body
-	for kl, v:=range tm.Kludges {
-		msgm.Body="\x01"+kl+" "+v+"\x0d"+msgm.Body
+	copy(msgm.From[:], tm.From)
+	copy(msgm.To[:], tm.To)
+	copy(msgm.Subj[:], tm.Subject)
+	copy(msgm.Date[:], tm.DateWritten.Format("02 Jan 06  15:04:05"))
+	msgm.DateWritten = setTime(tm.DateWritten)
+	msgm.DateArrived = setTime(tm.DateArrived)
+	msgm.DestNode = tm.ToAddr.GetNode()
+	msgm.DestNet = tm.ToAddr.GetNet()
+	msgm.OrigNode = tm.FromAddr.GetNode()
+	msgm.OrigNet = tm.FromAddr.GetNet()
+	msgm.Body = tm.Body
+	for kl, v := range tm.Kludges {
+		msgm.Body = "\x01" + kl + " " + v + "\x0d" + msgm.Body
 	}
-	msgm.Body+="\x00"
+	msgm.Body += "\x00"
 	log.Printf("msgm: %#v", msgm)
 	buf := new(bytes.Buffer)
 	err := utils.WriteStructToBuffer(buf, &msgm)
-	if err!=nil {
+	if err != nil {
 		return err
 	}
-	err= ioutil.WriteFile(
+	err = ioutil.WriteFile(
 		filepath.Join(m.AreaPath, strconv.FormatUint(uint64(m.messageNums[len(m.messageNums)-1]+1), 10)+".msg"),
 		buf.Bytes(),
 		0644)
-	if err!=nil {
+	if err != nil {
 		return err
 	}
 	log.Printf("buf: %#v", buf)
-	m.messageNums=append(m.messageNums, m.messageNums[len(m.messageNums)-1]+1)
+	m.messageNums = append(m.messageNums, m.messageNums[len(m.messageNums)-1]+1)
 	return nil
 	//return errors.New("not implemented")
 }

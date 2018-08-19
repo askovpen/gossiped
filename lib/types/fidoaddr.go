@@ -100,5 +100,5 @@ func (f *FidoAddr) GetPoint() uint16 {
 }
 
 func (f *FidoAddr) SetPoint(p uint16) {
-	f.point=p
+	f.point = p
 }
