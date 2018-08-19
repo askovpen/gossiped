@@ -210,6 +210,16 @@ func getTime(t uint32) time.Time {
 		0,
 		time.Local)
 }
+func setTime(t time.Time) (rt uint32) {
+	rt=0
+	rt|=uint32(t.Day()&31)
+	rt|=uint32(t.Month()&15<<5)
+	rt|=uint32((t.Year()-1980)&127<<9)
+	rt|=uint32((t.Second()/2)&31<<16)
+	rt|=uint32(t.Minute()&63<<21)
+	rt|=uint32(t.Hour()&31<<27)
+	return
+}
 func bufHash32(str string) (h uint32) {
 	h = 0
 	for _, b := range strings.ToLower(str) {
