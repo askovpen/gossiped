@@ -87,7 +87,7 @@ func (f FidoAddr) MarshalYAML() (interface{}, error) {
 	return f.String(), nil
 }
 
-func (f *FidoAddr) getNode() uint16 {
+func (f *FidoAddr) GetNode() uint16 {
 	return f.node
 }
 

@@ -23,11 +23,15 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	var origMessage *msgapi.Message
 	if newMsg == nil {
 		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: curAreaId}
+		newMsg.Kludges=make(map[string]string)
 	}
 	if newMsgType == "answer" {
 		origMessage, _ = msgapi.Areas[curAreaId].GetMsg(curMsgNum)
 		newMsg.To = origMessage.From
 		newMsg.ToAddr = origMessage.FromAddr
+		newMsg.Kludges["PID:"]=config.PID
+		newMsg.Kludges["REPLY:"]=origMessage.Kludges["MSGID:"]
+		newMsg.Kludges["CHRS:"]="CP866 2"
 	}
 	maxX, maxY := g.Size()
 	msgHeader, _ := g.SetView("MsgHeader", 0, 0, maxX-1, 5)

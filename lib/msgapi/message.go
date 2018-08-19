@@ -2,6 +2,7 @@ package msgapi
 
 import (
 	"errors"
+	"fmt"
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
@@ -38,6 +39,8 @@ func (m *Message) ParseRaw() error {
 			m.Kludges["TOPT"] = l[6:]
 		} else if len(l) > 5 && l[0:6] == "\x01FMPT " {
 			m.Kludges["FMPT"] = l[6:]
+		} else if len(l) > 7 && l[0:8] == "\x01MSGID: " {
+			m.Kludges["MSGID:"] = l[8:]
 		} else if len(l) > 10 && l[0:11] == "\x20*\x20Origin: " {
 			re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
 			if len(re.FindStringSubmatch(l)) > 0 {
@@ -65,6 +68,14 @@ func (m *Message) ParseRaw() error {
 	}
 	m.Decode()
 	return nil
+}
+
+func (m *Message) Encode() {
+	enc := "CP866"
+	m.Body = utils.EncodeCharmap(m.Body, enc)
+	m.From = utils.EncodeCharmap(m.From, enc)
+	m.To = utils.EncodeCharmap(m.To, enc)
+	m.Subject = utils.EncodeCharmap(m.Subject, enc)
 }
 
 func (m *Message) Decode() {
@@ -227,8 +238,6 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 	return strings.Join(nm, "\n"), p
 }
 func (m *Message) MakeBody() *Message {
-	m.Kludges = make(map[string]string)
-	m.Kludges["PID:"]=config.PID
 	if Areas[m.AreaID].GetType()==EchoAreaTypeNetmail {
 		to:=m.ToAddr
 		top:=to.GetPoint()
@@ -244,5 +253,9 @@ func (m *Message) MakeBody() *Message {
 			m.Kludges["FMPT"]=strconv.FormatUint(uint64(fromp),10)
 		}
 	}
+	m.Kludges["MSGID:"]=fmt.Sprintf("%s %08x",m.FromAddr.String(),uint32(time.Now().Unix()))
+	m.Body=strings.Join(strings.Split(m.Body,"\n"),"\x0d")
+	m.DateWritten=time.Now()
+	m.DateArrived=m.DateWritten
 	return m
 }
