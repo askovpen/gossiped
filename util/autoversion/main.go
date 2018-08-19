@@ -34,9 +34,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cc:=0
+	cc := 0
 	err = cIter.ForEach(func(c *object.Commit) error {
-		cc+=1
+		cc += 1
 		return nil
 	})
 	if err != nil {

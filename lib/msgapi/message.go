@@ -8,8 +8,8 @@ import (
 	"github.com/askovpen/goated/lib/utils"
 	"log"
 	"regexp"
-	"strings"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -71,7 +71,7 @@ func (m *Message) ParseRaw() error {
 }
 
 func (m *Message) Encode() {
-	enc := "CP866"
+	enc := strings.Split(config.Config.Chrs," ")[0]
 	m.Body = utils.EncodeCharmap(m.Body, enc)
 	m.From = utils.EncodeCharmap(m.From, enc)
 	m.To = utils.EncodeCharmap(m.To, enc)
@@ -79,7 +79,7 @@ func (m *Message) Encode() {
 }
 
 func (m *Message) Decode() {
-	enc := "CP866"
+	enc := strings.Split(config.Config.Chrs," ")[0]
 	if _, ok := m.Kludges["CHRS"]; ok {
 		enc = m.Kludges["CHRS"]
 	}
@@ -238,24 +238,24 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 	return strings.Join(nm, "\n"), p
 }
 func (m *Message) MakeBody() *Message {
-	if Areas[m.AreaID].GetType()==EchoAreaTypeNetmail {
-		to:=m.ToAddr
-		top:=to.GetPoint()
+	if Areas[m.AreaID].GetType() == EchoAreaTypeNetmail {
+		to := m.ToAddr
+		top := to.GetPoint()
 		to.SetPoint(0)
-		from:=m.FromAddr
-		fromp:=from.GetPoint()
+		from := m.FromAddr
+		fromp := from.GetPoint()
 		from.SetPoint(0)
-		m.Kludges["INTL"]=to.String()+" "+from.String()
-		if top>0 {
-			m.Kludges["TOPT"]=strconv.FormatUint(uint64(top),10)
+		m.Kludges["INTL"] = to.String() + " " + from.String()
+		if top > 0 {
+			m.Kludges["TOPT"] = strconv.FormatUint(uint64(top), 10)
 		}
-		if fromp>0 {
-			m.Kludges["FMPT"]=strconv.FormatUint(uint64(fromp),10)
+		if fromp > 0 {
+			m.Kludges["FMPT"] = strconv.FormatUint(uint64(fromp), 10)
 		}
 	}
-	m.Kludges["MSGID:"]=fmt.Sprintf("%s %08x",m.FromAddr.String(),uint32(time.Now().Unix()))
-	m.Body=strings.Join(strings.Split(m.Body,"\n"),"\x0d")
-	m.DateWritten=time.Now()
-	m.DateArrived=m.DateWritten
+	m.Kludges["MSGID:"] = fmt.Sprintf("%s %08x", m.FromAddr.String(), uint32(time.Now().Unix()))
+	m.Body = strings.Join(strings.Split(m.Body, "\n"), "\x0d")
+	m.DateWritten = time.Now()
+	m.DateArrived = m.DateWritten
 	return m
 }

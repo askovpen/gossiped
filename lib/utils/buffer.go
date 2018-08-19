@@ -78,7 +78,7 @@ func WriteStructToBuffer(buffer *bytes.Buffer, data interface{}) error {
 			//var strlen uint16
 			//            err := binary.Read(buffer, binary.BigEndian, &strlen)
 			//str, err := buffer.ReadString(0x00)
-			_, err:=buffer.WriteString(v.Field(i).Interface().(string))
+			_, err := buffer.WriteString(v.Field(i).Interface().(string))
 			if err != nil {
 				return err
 			}
@@ -88,7 +88,7 @@ func WriteStructToBuffer(buffer *bytes.Buffer, data interface{}) error {
 
 			break
 		case reflect.Array:
-//			err := binary.Read(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
+			//			err := binary.Read(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			err := binary.Write(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			if err != nil {
 				return err

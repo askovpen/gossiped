@@ -4,3 +4,4 @@ fidoconfig: /etc/ftn/hpt/config
 log: ./app.log
 template: goated.tpl
 origin: Just Origin
+chrs: CP866 2 # <charset> <lvl> http://ftsc.org/docs/fts-5003.001

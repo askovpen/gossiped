@@ -17,6 +17,7 @@ type config_s struct {
 	Address    *types.FidoAddr
 	Origin     string
 	Template   string
+	Chrs       string
 }
 
 //go:generate go run ../../util/autoversion/main.go
@@ -37,7 +38,10 @@ func Read() error {
 		return err
 	}
 	if Config.Address == nil {
-		return errors.New("Address not defined")
+		return errors.New("Config.Address not defined")
+	}
+	if Config.Chrs == "" {
+		return errors.New("Config.Chrs not defined")
 	}
 	tpl, err := ioutil.ReadFile(Config.Template)
 	if err != nil {
