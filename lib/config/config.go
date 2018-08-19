@@ -19,18 +19,15 @@ type config_s struct {
 	Template   string
 }
 
+//go:generate go run ../../util/autoversion/main.go
 var (
 	Config   config_s
-	Version  string
-	PID      string
-	LongPID  string
+	PID      = "ATED+" + runtime.GOOS[0:3] + " " + Version
+	LongPID  = "goAtEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
 	Template []string
 )
 
 func Read() error {
-	Version = "0.0.1"
-	PID = "ATED+" + runtime.GOOS[0:3] + " " + Version
-	LongPID = "goAtEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
 	yamlFile, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
 		return err

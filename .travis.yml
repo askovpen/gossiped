@@ -5,6 +5,16 @@ branches:
     - master
     - /^goated-.*/
 
+install:
+  - go get github.com/askovpen/gocui                                                                                                                                                                         
+  - go get golang.org/x/text/transform                                                                                                                                                                       
+  - go get gopkg.in/yaml.v2                                                                                                                                                                                  
+  - go get github.com/smartystreets/goconvey/convey                                                                                                                                                          
+  - go get gopkg.in/src-d/go-git.v4                                                                                                                                                                          
+  - go generate ./...
+
 script: 
+  - go generate ./...
   - go build
   - go test -v -cover -race ./...
+  - ./goated

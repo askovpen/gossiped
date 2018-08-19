@@ -1,6 +1,5 @@
 version: "{build}"
 clone_folder: c:\gopath\src\github.com\askovpen\goated
-clone_depth: 1
 
 branches:
   only:
@@ -16,6 +15,8 @@ before_build:
   - go get golang.org/x/text/transform
   - go get gopkg.in/yaml.v2
   - go get github.com/smartystreets/goconvey/convey
+  - go get gopkg.in/src-d/go-git.v4
+  - go generate ./...
 
 build_script:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOOS=linux)
@@ -41,6 +42,7 @@ build_script:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-win32.zip goated.exe config.example.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOARCH=amd64)
   - go build -v -ldflags "-w -s"
+  - goated
   - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-win64.zip goated.exe config.example.yml)
 
 test_script:
