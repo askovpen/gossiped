@@ -6,5 +6,6 @@ branches:
     - /^goated-.*/
 
 script: 
+  - go generate ./...
   - go build
   - go test -v -cover -race ./...
