@@ -24,14 +24,14 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	if newMsg == nil {
 		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: curAreaId}
 		newMsg.Kludges = make(map[string]string)
+		newMsg.Kludges["PID:"] = config.PID
+		newMsg.Kludges["CHRS:"] = config.Config.Chrs
 	}
 	if newMsgType == "answer" {
 		origMessage, _ = msgapi.Areas[curAreaId].GetMsg(curMsgNum)
 		newMsg.To = origMessage.From
 		newMsg.ToAddr = origMessage.FromAddr
-		newMsg.Kludges["PID:"] = config.PID
 		newMsg.Kludges["REPLY:"] = origMessage.Kludges["MSGID:"]
-		newMsg.Kludges["CHRS:"] = config.Config.Chrs
 	}
 	maxX, maxY := g.Size()
 	msgHeader, _ := g.SetView("MsgHeader", 0, 0, maxX-1, 5)
@@ -101,35 +101,35 @@ func editToNameNext(g *gocui.Gui, v *gocui.View) error {
 
 func editFromNameNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editFromName")
-	newMsg.From = strings.Trim(vn.Buffer(),"\n")
+	newMsg.From = strings.Trim(vn.Buffer(), "\n")
 	ActiveWindow = "editFromAddr"
 	return nil
 }
 
 func editToAddrNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editToAddr")
-	newMsg.ToAddr = types.AddrFromString(strings.Trim(vn.Buffer(),"\n"))
+	newMsg.ToAddr = types.AddrFromString(strings.Trim(vn.Buffer(), "\n"))
 	ActiveWindow = "editSubj"
 	return nil
 }
 
 func editFromAddrNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editFromAddr")
-	newMsg.FromAddr = types.AddrFromString(strings.Trim(vn.Buffer(),"\n"))
+	newMsg.FromAddr = types.AddrFromString(strings.Trim(vn.Buffer(), "\n"))
 	ActiveWindow = "editToName"
 	return nil
 }
 
 func editToSubjNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editSubj")
-	newMsg.Subject = strings.Trim(vn.Buffer(),"\n")
+	newMsg.Subject = strings.Trim(vn.Buffer(), "\n")
 	ActiveWindow = "editFromName"
 	return nil
 }
 
 func editToSubjBody(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editSubj")
-	newMsg.Subject = strings.Trim(vn.Buffer(),"\n")
+	newMsg.Subject = strings.Trim(vn.Buffer(), "\n")
 	var origMessage *msgapi.Message
 	var p int
 	var mv string
