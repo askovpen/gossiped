@@ -71,7 +71,7 @@ func (m *Message) ParseRaw() error {
 }
 
 func (m *Message) Encode() {
-	enc := strings.Split(config.Config.Chrs," ")[0]
+	enc := strings.Split(config.Config.Chrs, " ")[0]
 	m.Body = utils.EncodeCharmap(m.Body, enc)
 	m.From = utils.EncodeCharmap(m.From, enc)
 	m.To = utils.EncodeCharmap(m.To, enc)
@@ -79,7 +79,7 @@ func (m *Message) Encode() {
 }
 
 func (m *Message) Decode() {
-	enc := strings.Split(config.Config.Chrs," ")[0]
+	enc := strings.Split(config.Config.Chrs, " ")[0]
 	if _, ok := m.Kludges["CHRS"]; ok {
 		enc = m.Kludges["CHRS"]
 	}

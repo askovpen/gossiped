@@ -15,6 +15,30 @@ import (
 	"time"
 )
 
+type SquishAttrs uint32
+
+const (
+	SquishPRIVATE SquishAttrs = 0x0001
+	SquishCRASH   SquishAttrs = 0x0002
+	SquishREAD    SquishAttrs = 0x0004
+	SquishSENT    SquishAttrs = 0x0008
+	SquishFILE    SquishAttrs = 0x0010
+	SquishFWD     SquishAttrs = 0x0020
+	SquishORPHAN  SquishAttrs = 0x0040
+	SquishKILL    SquishAttrs = 0x0080
+	SquishLOCAL   SquishAttrs = 0x0100
+	SquishHOLD    SquishAttrs = 0x0200
+	SquishXX2     SquishAttrs = 0x0400
+	SquishFRQ     SquishAttrs = 0x0800
+	SquishRRQ     SquishAttrs = 0x1000
+	SquishCPT     SquishAttrs = 0x2000
+	SquishARQ     SquishAttrs = 0x4000
+	SquishURQ     SquishAttrs = 0x8000
+	SquishSCANNED SquishAttrs = 0x00010000
+	SquishUID     SquishAttrs = 0x00020000
+	SquishSEEN    SquishAttrs = 0x00080000
+)
+
 type Squish struct {
 	AreaPath       string
 	AreaName       string
@@ -26,6 +50,17 @@ type sqi_s struct {
 	Offset     uint32
 	MessageNum uint32
 	CRC        uint32
+}
+
+type sqd_s struct {
+	Len, Rsvd1                                                uint16
+	NumMsg, HighMsg, SkipMsg, HighWater, Uid                  uint32
+	Base                                                      [80]byte
+	BeginFrame, LastFrame, FreeFrame, LastFreeFrame, EndFrame uint32
+	MaxMsg                                                    uint32
+	KeepDays                                                  uint16
+	SzSQHdr                                                   uint16
+	Rsvd2                                                     [124]byte
 }
 
 type sqd_h struct {
@@ -68,6 +103,17 @@ func (s *Squish) getAttrs(a uint32) (attrs []string) {
 	return
 }
 
+func readSQDH(headerb *bytes.Buffer) (sqd_h, error) {
+	var sqdh sqd_h
+	if err := utils.ReadStructFromBuffer(headerb, &sqdh); err != nil {
+		return sqdh, err
+	}
+	if sqdh.Id != 0xafae4453 {
+		return sqdh, errors.New(fmt.Sprintf("Wrong Squish header %08x", sqdh.Id))
+	}
+	return sqdh, nil
+}
+
 func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	if len(s.indexStructure) == 0 {
 		return nil, errors.New("Empty Area")
@@ -85,16 +131,24 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	header = make([]byte, 266)
 	f.Read(header)
 	headerb := bytes.NewBuffer(header)
-	var sqdh sqd_h
-	if err = utils.ReadStructFromBuffer(headerb, &sqdh); err != nil {
+	sqdh, err := readSQDH(headerb)
+	if err != nil {
 		return nil, err
 	}
+	//	var sqdh sqd_h
+	//	if err = utils.ReadStructFromBuffer(headerb, &sqdh); err != nil {
+	//		return nil, err
+	//	}
 	//log.Printf("%#v", sqdh)
 	//var body []byte
 	body := make([]byte, sqdh.MsgLength+28-266)
 	f.Read(body)
 	//log.Printf("%s", body)
-	if s.indexStructure[position-1].CRC != bufHash32(string(sqdh.To[:])) && s.indexStructure[position-1].CRC != bufHash32(string(sqdh.To[:]))|0x80000000 {
+	toHash := bufHash32(string(sqdh.To[:]))
+	if sqdh.Attr&uint32(SquishREAD) > 0 {
+		toHash = toHash | 0x80000000
+	}
+	if s.indexStructure[position-1].CRC != toHash {
 		return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x for name %s", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:])), sqdh.To))
 	}
 	rm := &Message{}
@@ -253,5 +307,109 @@ func (s *Squish) SetLast(l uint32) {
 }
 
 func (s *Squish) SaveMsg(tm *Message) error {
-	return errors.New("not implemented")
+	if len(s.indexStructure) == 0 {
+		return errors.New("creating Squish area not implemented")
+	}
+	lastIdx := len(s.indexStructure) - 1
+	var sqdh sqd_h
+	var sqi sqi_s
+	kludges := ""
+	for kl, v := range tm.Kludges {
+		kludges += "\x01" + kl + " " + v
+	}
+	kludges += "\x00"
+	sqdh.Id = 0xafae4453
+	sqdh.NextFrame = 0
+	sqdh.PrevFrame = s.indexStructure[lastIdx].Offset
+	sqdh.Attr = uint32(SquishLOCAL | SquishSEEN)
+	tm.Encode()
+	copy(sqdh.From[:], tm.From)
+	copy(sqdh.To[:], tm.To)
+	copy(sqdh.Subject[:], tm.Subject)
+	copy(sqdh.Date[:], tm.DateWritten.Format("02 Jan 06  15:04:05"))
+	sqdh.DateWritten = setTime(tm.DateWritten)
+	sqdh.DateArrived = setTime(tm.DateArrived)
+	sqdh.FromZone, sqdh.FromNet, sqdh.FromNode, sqdh.FromPoint = tm.FromAddr.GetZone(), tm.FromAddr.GetNet(), tm.FromAddr.GetNode(), tm.FromAddr.GetPoint()
+	if s.AreaType == EchoAreaTypeNetmail {
+		sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint = tm.ToAddr.GetZone(), tm.ToAddr.GetNet(), tm.ToAddr.GetNode(), tm.ToAddr.GetPoint()
+	} else {
+		sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint = 0, 0, 0, 0
+	}
+	sqdh.UMsgId = s.indexStructure[lastIdx].MessageNum + 1
+	sqdh.CLen = uint32(len(kludges))
+	body := kludges + tm.Body + "\x00"
+	sqdh.MsgLength = uint32(len(body)) + 266 - 28
+	sqdh.FrameLength = uint32(len(body)) + 266 - 28
+	sqi.CRC = bufHash32(tm.To)
+	sqi.MessageNum = sqdh.UMsgId
+	f, err := os.OpenFile(s.AreaPath+".sqd", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	var header []byte
+	header = make([]byte, 256)
+	f.Read(header)
+	headerb := bytes.NewBuffer(header)
+	var sqd sqd_s
+	if err := utils.ReadStructFromBuffer(headerb, &sqd); err != nil {
+		return err
+	}
+	sqi.Offset = sqd.EndFrame
+	//log.Printf("sqd header: %#v",sqd)
+	//	_, err=f.Seek(int64(sqd.EndFrame), 0)
+	//	if err != nil {
+	//		return err
+	//	}
+	sqd.NumMsg += 1
+	sqd.HighMsg += 1
+	sqd.Uid += 1
+	sqd.LastFrame = sqd.EndFrame
+	sqd.EndFrame = sqd.LastFrame + sqdh.FrameLength + 28
+	f.Seek(0, 0)
+	buf := new(bytes.Buffer)
+	err = utils.WriteStructToBuffer(buf, &sqd)
+	if err != nil {
+		return err
+	}
+	//log.Printf("len: %d", len(buf.Bytes()))
+	f.Write(buf.Bytes())
+	buf.Reset()
+	f.Seek(int64(sqdh.PrevFrame), 0)
+	//var header []byte
+	header = make([]byte, 266)
+	f.Read(header)
+	headerb = bytes.NewBuffer(header)
+	prevSqdh, err := readSQDH(headerb)
+	prevSqdh.NextFrame = sqi.Offset
+	err = utils.WriteStructToBuffer(buf, &prevSqdh)
+	if err != nil {
+		return err
+	}
+	f.Seek(int64(sqdh.PrevFrame), 0)
+	f.Write(buf.Bytes())
+	buf.Reset()
+	err = utils.WriteStructToBuffer(buf, &sqdh)
+	if err != nil {
+		return err
+	}
+	f.Seek(int64(sqi.Offset), 0)
+	f.Write(buf.Bytes())
+	buf.Reset()
+	f.Write([]byte(body))
+	f.Close()
+	f, err = os.OpenFile(s.AreaPath+".sqi", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	err = utils.WriteStructToBuffer(buf, &sqi)
+	f.Seek(0, 2)
+	f.Write(buf.Bytes())
+	f.Close()
+	s.indexStructure = append(s.indexStructure, sqi)
+	//	log.Printf("%d",r)
+	//	log.Printf("sqdh: %#v, %x",sqdh, body)
+	return nil
+	//return errors.New("not implemented")
 }
