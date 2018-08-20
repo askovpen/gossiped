@@ -31,6 +31,7 @@ func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlG, gocui.ModNone, editMsgNum)
 	g.SetKeybinding("MsgBody", gocui.KeyInsert, gocui.ModNone, editMsg)
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlQ, gocui.ModNone, answerMsg)
+	g.SetKeybinding("MsgBody", gocui.KeyF3, gocui.ModNone, answerMsg)
 	g.SetKeybinding("MsgBody", 'q', gocui.ModAlt, answerMsg)
 
 	g.SetKeybinding("editToName", gocui.KeyEnter, gocui.ModNone, editToNameNext)
