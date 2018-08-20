@@ -205,7 +205,10 @@ func (m *MSG) SetLast(l uint32) {
 }
 
 func (m *MSG) SaveMsg(tm *Message) error {
-	log.Printf("msg: %#v", tm)
+	if len(m.messageNums) == 0 {
+		return errors.New("creating MSG area not implemented")
+	}
+	//log.Printf("msg: %#v", tm)
 	var msgm msg_s
 	msgm.Attr = MSGLOCAL
 	tm.Encode()
@@ -224,7 +227,7 @@ func (m *MSG) SaveMsg(tm *Message) error {
 		msgm.Body = "\x01" + kl + " " + v + "\x0d" + msgm.Body
 	}
 	msgm.Body += "\x00"
-	log.Printf("msgm: %#v", msgm)
+	//log.Printf("msgm: %#v", msgm)
 	buf := new(bytes.Buffer)
 	err := utils.WriteStructToBuffer(buf, &msgm)
 	if err != nil {
@@ -237,7 +240,7 @@ func (m *MSG) SaveMsg(tm *Message) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("buf: %#v", buf)
+	//log.Printf("buf: %#v", buf)
 	m.messageNums = append(m.messageNums, m.messageNums[len(m.messageNums)-1]+1)
 	return nil
 	//return errors.New("not implemented")
