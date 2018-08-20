@@ -101,35 +101,35 @@ func editToNameNext(g *gocui.Gui, v *gocui.View) error {
 
 func editFromNameNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editFromName")
-	newMsg.From = vn.Buffer()
+	newMsg.From = strings.Trim(vn.Buffer(),"\n")
 	ActiveWindow = "editFromAddr"
 	return nil
 }
 
 func editToAddrNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editToAddr")
-	newMsg.ToAddr = types.AddrFromString(vn.Buffer())
+	newMsg.ToAddr = types.AddrFromString(strings.Trim(vn.Buffer(),"\n"))
 	ActiveWindow = "editSubj"
 	return nil
 }
 
 func editFromAddrNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editFromAddr")
-	newMsg.FromAddr = types.AddrFromString(vn.Buffer())
+	newMsg.FromAddr = types.AddrFromString(strings.Trim(vn.Buffer(),"\n"))
 	ActiveWindow = "editToName"
 	return nil
 }
 
 func editToSubjNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editSubj")
-	newMsg.Subject = vn.Buffer()
+	newMsg.Subject = strings.Trim(vn.Buffer(),"\n")
 	ActiveWindow = "editFromName"
 	return nil
 }
 
 func editToSubjBody(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editSubj")
-	newMsg.Subject = string(vn.Buffer())
+	newMsg.Subject = strings.Trim(vn.Buffer(),"\n")
 	var origMessage *msgapi.Message
 	var p int
 	var mv string
