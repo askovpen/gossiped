@@ -279,12 +279,13 @@ func setTime(t time.Time) (rt uint32) {
 }
 func bufHash32(str string) (h uint32) {
 	str=strings.ToLower(str)
+	strb:=[]byte(str)
 	h = 0
-	for i:= range str {
-		if str[i] == 0 {
+	for i:= range strb {
+		if strb[i] == 0 {
 			continue
 		}
-		h = (h << 4) + uint32(str[i])
+		h = (h << 4) + uint32(strb[i])
 		g := h & 0xF0000000
 		if g != 0 {
 			h |= g >> 24
