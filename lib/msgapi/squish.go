@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -149,6 +150,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 		toHash = toHash | 0x80000000
 	}
 	if s.indexStructure[position-1].CRC != toHash {
+		log.Printf("crc error for %s",sqdh.To)
 		return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x for name %s", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:])), sqdh.To))
 	}
 	rm := &Message{}
@@ -207,6 +209,7 @@ func (s *Squish) readSQI() {
 			}
 		}
 	}
+	sort.Slice(s.indexStructure, func(i, j int) bool { return s.indexStructure[i].MessageNum < s.indexStructure[j].MessageNum })
 	//  log.Printf("%s %#v", s.AreaName, s.indexStructure)
 }
 func (s *Squish) GetLast() uint32 {
@@ -275,12 +278,14 @@ func setTime(t time.Time) (rt uint32) {
 	return
 }
 func bufHash32(str string) (h uint32) {
+	str=strings.ToLower(str)
+	strb:=[]byte(str)
 	h = 0
-	for _, b := range strings.ToLower(str) {
-		if b == 0 {
+	for i:= range strb {
+		if strb[i] == 0 {
 			continue
 		}
-		h = (h << 4) + uint32(b)
+		h = (h << 4) + uint32(strb[i])
 		g := h & 0xF0000000
 		if g != 0 {
 			h |= g >> 24
