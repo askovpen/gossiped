@@ -16,7 +16,7 @@ type FidoAddr struct {
 	point uint16
 }
 
-func (f *FidoAddr) Equal(fn FidoAddr) bool {
+func (f *FidoAddr) Equal(fn *FidoAddr) bool {
 	if f.zone == fn.zone && f.net == fn.net && f.node == fn.node && f.point == fn.point {
 		return true
 	} else {
