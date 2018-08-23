@@ -45,17 +45,17 @@ func getAreaNew(m msgapi.AreaPrimitive) string {
 	}
 }
 func areaPgup(g *gocui.Gui, v *gocui.View) error {
-//	_, cy := v.Cursor()
+	//	_, cy := v.Cursor()
 	_, oy := v.Origin()
 	_, maxY := v.Size()
-	if oy-maxY+1<0 {
-		if oy>0 {
-			v.SetOrigin(0,0)
+	if oy-maxY+1 < 0 {
+		if oy > 0 {
+			v.SetOrigin(0, 0)
 		} else {
-			v.SetCursor(0,1)
+			v.SetCursor(0, 1)
 		}
 	} else {
-		v.SetOrigin(0,oy-maxY+1)
+		v.SetOrigin(0, oy-maxY+1)
 	}
 	return nil
 }
@@ -63,14 +63,14 @@ func areaPgdn(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
 	_, oy := v.Origin()
 	_, maxY := v.Size()
-	if len(msgapi.Areas)-oy<maxY-1 && cy!=maxY {
-		v.SetCursor(0,len(msgapi.Areas)-oy)
-	} else if cy<maxY-1 {
-		v.SetCursor(0,maxY-1)
-	} else if len(msgapi.Areas)-oy>maxY-1 {
-		v.SetOrigin(0,oy+maxY-1)
-		if len(msgapi.Areas)-(oy+maxY-1) <maxY-1 {
-		 v.SetCursor(0,len(msgapi.Areas)-(oy+maxY-1))
+	if len(msgapi.Areas)-oy < maxY-1 && cy != maxY {
+		v.SetCursor(0, len(msgapi.Areas)-oy)
+	} else if cy < maxY-1 {
+		v.SetCursor(0, maxY-1)
+	} else if len(msgapi.Areas)-oy > maxY-1 {
+		v.SetOrigin(0, oy+maxY-1)
+		if len(msgapi.Areas)-(oy+maxY-1) < maxY-1 {
+			v.SetCursor(0, len(msgapi.Areas)-(oy+maxY-1))
 		}
 	}
 	return nil
