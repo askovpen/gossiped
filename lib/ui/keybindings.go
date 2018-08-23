@@ -12,6 +12,8 @@ func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("AreaList", gocui.KeyArrowDown, gocui.ModNone, areaNext)
 	g.SetKeybinding("AreaList", gocui.KeyEsc, gocui.ModNone, quitAreaList)
 	g.SetKeybinding("AreaList", gocui.KeyArrowUp, gocui.ModNone, areaPrev)
+	g.SetKeybinding("AreaList", gocui.KeyPgdn, gocui.ModNone, areaPgdn)
+	g.SetKeybinding("AreaList", gocui.KeyPgup, gocui.ModNone, areaPgup)
 	g.SetKeybinding("AreaList", gocui.KeyEnter, gocui.ModNone, viewArea)
 	g.SetKeybinding("AreaList", gocui.KeyArrowRight, gocui.ModNone, viewArea)
 
