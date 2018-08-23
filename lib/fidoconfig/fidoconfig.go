@@ -47,6 +47,7 @@ func checkIncludePath(fn string) (string, error) {
 
 func readFile(fn string) {
 	re := regexp.MustCompile("(\\w+?)\\s+(.*)")
+	reEnv := regexp.MustCompile("\\[(.+?)\\]")
 	nfn, err := checkIncludePath(fn)
 	if err != nil {
 		log.Print(err)
@@ -69,7 +70,7 @@ func readFile(fn string) {
 		if len(res) > 2 {
 			//log.Printf("%q",res)
 			if strings.EqualFold(res[1], "include") {
-				readFile(res[2])
+				readFile(reEnv.ReplaceAllStringFunc(res[2], replaceEnv))
 			} else if strings.EqualFold(res[1], "echoarea") {
 				processArea(res[0], msgapi.EchoAreaTypeEcho)
 			} else if strings.EqualFold(res[1], "localarea") {
@@ -81,6 +82,10 @@ func readFile(fn string) {
 			}
 		}
 	}
+}
+
+func replaceEnv(s string) string {
+	return os.Getenv(s[1 : len(s)-1])
 }
 
 func processDef(areaDef string) {
