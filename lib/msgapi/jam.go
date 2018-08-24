@@ -131,10 +131,10 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	rm.DateArrived = rm.DateArrived.Add(time.Duration(tofs) * -time.Second)
 	//  rm.Attr=jamh.Attribute
 	rm.Attrs = j.getAttrs(jamh.Attribute)
-	//	deleted := false
-	//	if jamh.Attribute&0x80000000 > 0 {
-	//		deleted = true
-	//	}
+	deleted := false
+	if jamh.Attribute&0x80000000 > 0 {
+		deleted = true
+	}
 	rm.Body += ""
 	var kl []byte
 	kl = make([]byte, jamh.SubfieldLen)
@@ -142,6 +142,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	//log.Printf("kl: %s, len: %d", kl, jamh.SubfieldLen)
 	klb := bytes.NewBuffer(kl)
 	//log.Printf("read kludges")
+	afterBody := ""
 	for {
 		var LoID, HiID uint16
 		var datLen uint32
@@ -172,31 +173,40 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		case 2:
 			rm.From = string(val[:])
 		case 3:
-			//			if !deleted {
-			//				if crc32r(string(val[:])) != j.indexStructure[position-1].jamsh.ToCRC {
-			//					log.Printf("to %s", val)
-			//					return nil, errors.New(fmt.Sprintf("'To' crc incorrect, got %08x, need %08x", crc32r(string(val[:])), j.indexStructure[position-1].jamsh.ToCRC))
-			//				}
-			//			}
+			if !deleted {
+				if crc32r(string(val[:])) != j.indexStructure[position-1].jamsh.ToCRC {
+					rm.Corrupted = true
+					//					log.Printf("to %s", val)
+					//					return nil, errors.New(fmt.Sprintf("'To' crc incorrect, got %08x, need %08x", crc32r(string(val[:])), j.indexStructure[position-1].jamsh.ToCRC))
+				}
+			}
 			rm.To = string(val[:])
 		case 4:
-			//			if crc32r(string(val[:])) != jamh.MSGIDcrc {
-			//				return nil, errors.New("crc incorrect")
-			//			}
+			if crc32r(string(val[:])) != jamh.MSGIDcrc {
+				//				return nil, errors.New("crc incorrect")
+				rm.Corrupted = true
+			}
 			rm.Body += "\x01MSGID: " + string(val[:]) + "\x0d"
 		case 5:
-			//			if crc32r(string(val[:])) != jamh.REPLYcrc {
-			//				return nil, errors.New("crc incorrect")
-			//			}
+			if crc32r(string(val[:])) != jamh.REPLYcrc {
+				//				return nil, errors.New("crc incorrect")
+				rm.Corrupted = true
+			}
 			rm.Body += "\x01REPLYID: " + string(val[:]) + "\x0d"
 		case 6:
 			rm.Subject = string(val[:])
 		case 7:
 			rm.Body += "\x01PID: " + string(val[:]) + "\x0d"
+		case 8:
+			afterBody += "\x01Via " + string(val[:]) + "\x0d"
 		case 2004:
 			rm.Body += "\x01TZUTC: " + string(val[:]) + "\x0d"
 		case 2000:
 			rm.Body += "\x01" + string(val[:]) + "\x0d"
+		case 2001:
+			afterBody += "SEEN-BY: " + string(val[:]) + "\x0d"
+		case 2002:
+			afterBody += "\x01PATH: " + string(val[:]) + "\x0d"
 		}
 	}
 	//log.Printf("%#v",rm)
@@ -211,6 +221,8 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	txt = make([]byte, jamh.TxtLen)
 	fJdt.Read(txt)
 	rm.Body += string(txt[:])
+	rm.Body += afterBody
+	//log.Printf(rm.Body)
 	//log.Printf("parseRaw()")
 	err = rm.ParseRaw()
 	//log.Printf("~parseRaw()")

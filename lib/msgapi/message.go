@@ -28,6 +28,7 @@ type Message struct {
 	To          string
 	Subject     string
 	Kludges     map[string]string
+	Corrupted   bool
 }
 
 func (m *Message) ParseRaw() error {

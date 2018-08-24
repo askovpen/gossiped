@@ -65,8 +65,12 @@ func viewMsg(areaId int, msgNum uint32) error {
 			msg.To,
 			msg.ToAddr.String(),
 			msg.DateArrived.Format("02 Jan 06 15:04:05"))
-		fmt.Fprintf(MsgHeader, " Subj : %-50s",
-			msg.Subject)
+		corrupted := ""
+		if msg.Corrupted {
+			corrupted = "\033[31;1mCorrupted\033[0m"
+		}
+		fmt.Fprintf(MsgHeader, " Subj : %-59s %9s",
+			msg.Subject, corrupted)
 		MsgBody, _ := App.SetView("MsgBody", -1, 5, maxX, maxY-1)
 		MsgBody.Frame = false
 		MsgBody.Wrap = true
