@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"fmt"
+	//	"fmt"
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
@@ -130,10 +130,10 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	rm.DateArrived = rm.DateArrived.Add(time.Duration(tofs) * -time.Second)
 	//  rm.Attr=jamh.Attribute
 	rm.Attrs = j.getAttrs(jamh.Attribute)
-	deleted := false
-	if jamh.Attribute&0x80000000 > 0 {
-		deleted = true
-	}
+	//	deleted := false
+	//	if jamh.Attribute&0x80000000 > 0 {
+	//		deleted = true
+	//	}
 	rm.Body += ""
 	var kl []byte
 	kl = make([]byte, jamh.SubfieldLen)
@@ -163,21 +163,22 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		case 2:
 			rm.From = string(val[:])
 		case 3:
-			if !deleted {
-				if crc32r(string(val[:])) != j.indexStructure[position-1].jamsh.ToCRC {
-					return nil, errors.New(fmt.Sprintf("'To' crc incorrect, got %08x, need %08x", crc32r(string(val[:])), j.indexStructure[position-1].jamsh.ToCRC))
-				}
-			}
+			//			if !deleted {
+			//				if crc32r(string(val[:])) != j.indexStructure[position-1].jamsh.ToCRC {
+			//					log.Printf("to %s", val)
+			//					return nil, errors.New(fmt.Sprintf("'To' crc incorrect, got %08x, need %08x", crc32r(string(val[:])), j.indexStructure[position-1].jamsh.ToCRC))
+			//				}
+			//			}
 			rm.To = string(val[:])
 		case 4:
-			if crc32r(string(val[:])) != jamh.MSGIDcrc {
-				return nil, errors.New("crc incorrect")
-			}
+			//			if crc32r(string(val[:])) != jamh.MSGIDcrc {
+			//				return nil, errors.New("crc incorrect")
+			//			}
 			rm.Body += "\x01MSGID: " + string(val[:]) + "\x0d"
 		case 5:
-			if crc32r(string(val[:])) != jamh.REPLYcrc {
-				return nil, errors.New("crc incorrect")
-			}
+			//			if crc32r(string(val[:])) != jamh.REPLYcrc {
+			//				return nil, errors.New("crc incorrect")
+			//			}
 			rm.Body += "\x01REPLYID: " + string(val[:]) + "\x0d"
 		case 6:
 			rm.Subject = string(val[:])
