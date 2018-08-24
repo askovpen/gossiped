@@ -81,6 +81,7 @@ func prevMsg(g *gocui.Gui, v *gocui.View) error {
 		err := viewMsg(curAreaId, curMsgNum-1)
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
+			return nil
 		}
 		ActiveWindow = "MsgBody"
 	}
@@ -90,7 +91,11 @@ func prevMsg(g *gocui.Gui, v *gocui.View) error {
 func nextMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
 	if curMsgNum < msgapi.Areas[curAreaId].GetCount() {
-		viewMsg(curAreaId, curMsgNum+1)
+		err := viewMsg(curAreaId, curMsgNum+1)
+		if err != nil {
+			errorMsg(err.Error(), "AreaList")
+			return nil
+		}
 		ActiveWindow = "MsgBody"
 	}
 	return nil

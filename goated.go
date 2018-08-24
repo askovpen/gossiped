@@ -32,6 +32,7 @@ func main() {
 	f, _ := os.OpenFile(config.Config.Log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	defer f.Close()
 	log.SetOutput(f)
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 	err = fidoconfig.Read()
 	if err != nil {
 		log.Print(err)
