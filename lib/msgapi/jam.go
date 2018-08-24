@@ -6,12 +6,12 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"hash/crc32"
-	"io/ioutil"
-	//  "log"
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
+	"hash/crc32"
+	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -261,7 +261,7 @@ func (j *JAM) readJLR() {
 			j.lastRead = append(j.lastRead, jaml)
 		}
 	}
-	//log.Printf("%#v", j.lastRead)
+	log.Printf("%#v", j.lastRead)
 }
 func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
 	//log.Printf("%d %#v",mId,j.indexStructure)
@@ -274,6 +274,10 @@ func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
 }
 
 func (j *JAM) GetLast() uint32 {
+	j.readJDX()
+	if len(j.indexStructure) == 0 {
+		return 0
+	}
 	j.readJLR()
 	for _, l := range j.lastRead {
 		if l.UserCRC == crc32r(config.Config.Username) {
