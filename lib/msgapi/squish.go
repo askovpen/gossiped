@@ -149,11 +149,12 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	if sqdh.Attr&uint32(SquishREAD) > 0 {
 		toHash = toHash | 0x80000000
 	}
-	if s.indexStructure[position-1].CRC != toHash {
-		log.Printf("crc error for %s", sqdh.To)
-		return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x for name %s", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:])), sqdh.To))
-	}
 	rm := &Message{}
+	if s.indexStructure[position-1].CRC != toHash {
+		rm.Corrupted=true
+		//log.Printf("crc error for %s", sqdh.To)
+		//return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x for name %s", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:])), sqdh.To))
+	}
 	rm.From = strings.Trim(string(sqdh.From[:]), "\x00")
 	rm.To = strings.Trim(string(sqdh.To[:]), "\x00")
 	rm.FromAddr = types.AddrFromNum(sqdh.FromZone, sqdh.FromNet, sqdh.FromNode, sqdh.FromPoint)
