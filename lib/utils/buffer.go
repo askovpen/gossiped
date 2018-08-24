@@ -28,16 +28,11 @@ func ReadStructFromBuffer(buffer *bytes.Buffer, data interface{}) error {
 			}
 			break
 		case reflect.String:
-			//var strlen uint16
-			//            err := binary.Read(buffer, binary.BigEndian, &strlen)
 			str, err := buffer.ReadString(0x00)
 			if err != nil {
 				return err
 			}
 			v.Field(i).SetString(str)
-
-			//v.Field(i).SetString(string(buffer.Next(int(strlen))))
-
 			break
 		case reflect.Array:
 			err := binary.Read(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
@@ -68,27 +63,18 @@ func WriteStructToBuffer(buffer *bytes.Buffer, data interface{}) error {
 	for i := 0; i < v.NumField(); i++ {
 		switch v.Field(i).Type().Kind() {
 		case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			// err := binary.Read(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			err := binary.Write(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			if err != nil {
 				return err
 			}
 			break
 		case reflect.String:
-			//var strlen uint16
-			//            err := binary.Read(buffer, binary.BigEndian, &strlen)
-			//str, err := buffer.ReadString(0x00)
 			_, err := buffer.WriteString(v.Field(i).Interface().(string))
 			if err != nil {
 				return err
 			}
-			//v.Field(i).SetString(str)
-
-			//v.Field(i).SetString(string(buffer.Next(int(strlen))))
-
 			break
 		case reflect.Array:
-			//			err := binary.Read(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			err := binary.Write(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			if err != nil {
 				return err

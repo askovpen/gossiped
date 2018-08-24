@@ -60,7 +60,6 @@ func (m *Message) ParseRaw() error {
 			m.FromAddr = types.AddrFromString(m.Kludges["ORIGIN"])
 		}
 	}
-	//log.Printf("%#v", m)
 	if m.FromAddr == nil {
 		return errors.New("FromAddr not defined")
 	}

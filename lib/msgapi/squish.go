@@ -136,24 +136,15 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	//	var sqdh sqd_h
-	//	if err = utils.ReadStructFromBuffer(headerb, &sqdh); err != nil {
-	//		return nil, err
-	//	}
-	//log.Printf("%#v", sqdh)
-	//var body []byte
 	body := make([]byte, sqdh.MsgLength+28-266)
 	f.Read(body)
-	//log.Printf("%s", body)
 	toHash := bufHash32(string(sqdh.To[:]))
 	if sqdh.Attr&uint32(SquishREAD) > 0 {
 		toHash = toHash | 0x80000000
 	}
 	rm := &Message{}
 	if s.indexStructure[position-1].CRC != toHash {
-		rm.Corrupted=true
-		//log.Printf("crc error for %s", sqdh.To)
-		//return nil, errors.New(fmt.Sprintf("Wrong message CRC need 0x%08x, got 0x%08x for name %s", s.indexStructure[position-1].CRC, bufHash32(string(sqdh.To[:])), sqdh.To))
+		rm.Corrupted = true
 	}
 	rm.From = strings.Trim(string(sqdh.From[:]), "\x00")
 	rm.To = strings.Trim(string(sqdh.To[:]), "\x00")
@@ -171,8 +162,6 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 		kla[i] = strings.Trim(kla[i], "\x00")
 	}
 	rm.Body = "\x01" + strings.Join(kla, "\x0d\x01") + "\x0d" + rm.Body[sqdh.CLen:]
-	//log.Printf("body: %s",rm.Body)
-	//log.Printf("after Kludges: %d",rm.Body[sqdh.CLen-1])
 	if strings.Index(rm.Body, "\x00") != -1 {
 		rm.Body = rm.Body[0:strings.Index(rm.Body, "\x00")]
 	}
@@ -180,7 +169,6 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	//log.Printf("msg: %#v", rm)
 	return rm, nil
 }
 
@@ -211,7 +199,6 @@ func (s *Squish) readSQI() {
 		}
 	}
 	sort.Slice(s.indexStructure, func(i, j int) bool { return s.indexStructure[i].MessageNum < s.indexStructure[j].MessageNum })
-	//  log.Printf("%s %#v", s.AreaName, s.indexStructure)
 }
 func (s *Squish) GetLast() uint32 {
 	s.readSQI()
@@ -230,7 +217,6 @@ func (s *Squish) GetLast() uint32 {
 	}
 	for i, is := range s.indexStructure {
 		if ret == is.MessageNum {
-			//      log.Printf("ret, i: %d %d",ret, i)
 			return uint32(i + 1)
 		}
 	}
@@ -362,11 +348,6 @@ func (s *Squish) SaveMsg(tm *Message) error {
 		return err
 	}
 	sqi.Offset = sqd.EndFrame
-	//log.Printf("sqd header: %#v",sqd)
-	//	_, err=f.Seek(int64(sqd.EndFrame), 0)
-	//	if err != nil {
-	//		return err
-	//	}
 	sqd.NumMsg += 1
 	sqd.HighMsg += 1
 	sqd.Uid += 1
@@ -378,11 +359,9 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	if err != nil {
 		return err
 	}
-	//log.Printf("len: %d", len(buf.Bytes()))
 	f.Write(buf.Bytes())
 	buf.Reset()
 	f.Seek(int64(sqdh.PrevFrame), 0)
-	//var header []byte
 	header = make([]byte, 266)
 	f.Read(header)
 	headerb = bytes.NewBuffer(header)
@@ -414,8 +393,5 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	f.Write(buf.Bytes())
 	f.Close()
 	s.indexStructure = append(s.indexStructure, sqi)
-	//	log.Printf("%d",r)
-	//	log.Printf("sqdh: %#v, %x",sqdh, body)
 	return nil
-	//return errors.New("not implemented")
 }

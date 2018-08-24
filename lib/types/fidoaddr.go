@@ -2,11 +2,8 @@ package types
 
 import (
 	"errors"
-	//  "fmt"
 	"regexp"
 	"strconv"
-	//  "strings"
-	//  "log"
 )
 
 type FidoAddr struct {
