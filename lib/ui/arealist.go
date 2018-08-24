@@ -137,6 +137,7 @@ func viewArea(g *gocui.Gui, v *gocui.View) error {
 	err := viewMsg(cy+oy-1, msgapi.Areas[cy+oy-1].GetLast())
 	if err != nil {
 		errorMsg(err.Error(), "AreaList")
+		return nil
 	}
 	/*
 	   if _, err := g.SetViewOnTop("MsgHeader"); err != nil {
