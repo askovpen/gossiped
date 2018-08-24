@@ -5,13 +5,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	//	"fmt"
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
 	"hash/crc32"
 	"io/ioutil"
-	//"log"
 	"os"
 	"strings"
 	"time"
@@ -87,7 +85,6 @@ func (j *JAM) getAttrs(a uint32) (attrs []string) {
 }
 
 func (j *JAM) GetMsg(position uint32) (*Message, error) {
-	//log.Printf("GetMsg %d", position)
 	if len(j.indexStructure) == 0 {
 		return nil, errors.New("Empty Area")
 	}
@@ -105,7 +102,6 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	}
 	var header []byte
 	header = make([]byte, 76)
-	//  reader := bufio.NewReader(f)
 	fJhr.Read(header)
 	headerb := bytes.NewBuffer(header)
 	var jamh jam_h
@@ -119,7 +115,6 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	rm.Area = j.AreaName
 	rm.MsgNum = position
 	rm.MaxNum = uint32(len(j.indexStructure))
-	//  _, tofs:=time.Now().Local().Zone()
 	rm.DateWritten = time.Unix(int64(jamh.DateWritten), 0)
 	_, tofs := rm.DateWritten.Zone()
 	if jamh.DateReceived > 0 {
@@ -129,7 +124,6 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	}
 	rm.DateWritten = rm.DateWritten.Add(time.Duration(tofs) * -time.Second)
 	rm.DateArrived = rm.DateArrived.Add(time.Duration(tofs) * -time.Second)
-	//  rm.Attr=jamh.Attribute
 	rm.Attrs = j.getAttrs(jamh.Attribute)
 	deleted := false
 	if jamh.Attribute&0x80000000 > 0 {
@@ -139,9 +133,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	var kl []byte
 	kl = make([]byte, jamh.SubfieldLen)
 	fJhr.Read(kl)
-	//log.Printf("kl: %s, len: %d", kl, jamh.SubfieldLen)
 	klb := bytes.NewBuffer(kl)
-	//log.Printf("read kludges")
 	afterBody := ""
 	for {
 		var LoID, HiID uint16
@@ -158,10 +150,8 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		var val []byte
 		val = make([]byte, datLen)
 		binary.Read(klb, binary.LittleEndian, &val)
-		//log.Printf("%d, %d (%d): %s",LoID, HiID, datLen, val)
 		switch LoID {
 		case 0:
-			//log.Printf("fromAddr %s",val)
 			fr := types.AddrFromString(string(val[:]))
 			if fr != nil {
 				rm.FromAddr = fr
@@ -176,20 +166,16 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 			if !deleted {
 				if crc32r(string(val[:])) != j.indexStructure[position-1].jamsh.ToCRC {
 					rm.Corrupted = true
-					//					log.Printf("to %s", val)
-					//					return nil, errors.New(fmt.Sprintf("'To' crc incorrect, got %08x, need %08x", crc32r(string(val[:])), j.indexStructure[position-1].jamsh.ToCRC))
 				}
 			}
 			rm.To = string(val[:])
 		case 4:
 			if crc32r(string(val[:])) != jamh.MSGIDcrc {
-				//				return nil, errors.New("crc incorrect")
 				rm.Corrupted = true
 			}
 			rm.Body += "\x01MSGID: " + string(val[:]) + "\x0d"
 		case 5:
 			if crc32r(string(val[:])) != jamh.REPLYcrc {
-				//				return nil, errors.New("crc incorrect")
 				rm.Corrupted = true
 			}
 			rm.Body += "\x01REPLYID: " + string(val[:]) + "\x0d"
@@ -209,8 +195,6 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 			afterBody += "\x01PATH: " + string(val[:]) + "\x0d"
 		}
 	}
-	//log.Printf("%#v",rm)
-	//log.Printf("~read kludges")
 	fJdt, err := os.Open(j.AreaPath + ".jdt")
 	if err != nil {
 		return nil, err
@@ -222,16 +206,10 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	fJdt.Read(txt)
 	rm.Body += string(txt[:])
 	rm.Body += afterBody
-	//log.Printf(rm.Body)
-	//log.Printf("parseRaw()")
 	err = rm.ParseRaw()
-	//log.Printf("~parseRaw()")
 	if err != nil {
 		return nil, err
 	}
-	//log.Printf("msgh: %#v", jamh)
-	//log.Printf("rm: %#v", rm)
-	//log.Printf("~GetMsg %d", position)
 	return rm, nil
 }
 func (j *JAM) readJDX() {
@@ -257,7 +235,7 @@ func (j *JAM) readJDX() {
 			if err = utils.ReadStructFromBuffer(partb, &jam); err != nil {
 				break
 			}
-			if jam.Offset != 0xffffffff { //&& jam.ToCRC!=0xffffffff) {
+			if jam.Offset != 0xffffffff {
 				j.indexStructure = append(j.indexStructure, jam_s{i + 1, jam})
 			}
 			i++
@@ -290,10 +268,8 @@ func (j *JAM) readJLR() {
 			j.lastRead = append(j.lastRead, jaml)
 		}
 	}
-	//log.Printf("%#v", j.lastRead)
 }
 func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
-	//log.Printf("%d %#v",mId,j.indexStructure)
 	for i, ji := range j.indexStructure {
 		if mId == ji.MessageNum {
 			return uint32(i)
@@ -363,12 +339,10 @@ func (j *JAM) SetLast(l uint32) {
 	buf := new(bytes.Buffer)
 	err := binary.Write(buf, binary.LittleEndian, j.lastRead)
 	if err != nil {
-		//log.Print(err)
 		return
 	}
 	err = ioutil.WriteFile(j.AreaPath+".jlr", buf.Bytes(), 0644)
 	if err != nil {
-		//log.Print(err)
 		return
 	}
 }

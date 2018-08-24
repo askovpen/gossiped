@@ -1,21 +1,15 @@
 package main
 
 import (
-	//  "fmt"
-	//  "github.com/gdamore/tcell"
-	//  "github.com/rivo/tview"
+	"fmt"
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/fidoconfig"
 	"github.com/askovpen/goated/lib/ui"
 	"github.com/askovpen/gocui"
 	"log"
 	"os"
-	//  "github.com/nsf/termbox-go"
-	//  "time"
-	//  "strconv"
+	"time"
 )
-
-//var clock *time.Ticker
 
 func main() {
 	log.Printf("%s started", config.LongPID)
@@ -55,6 +49,15 @@ func main() {
 	if err := ui.Keybindings(ui.App); err != nil {
 		log.Panicln(err)
 	}
+	ticker := time.NewTicker(1 * time.Second)
+	go func() {
+		for t := range ticker.C {
+			ui.StatusTime = fmt.Sprintf("│ %s ", t.Format("15:04:05"))
+			ui.App.Update(func(*gocui.Gui) error {
+				return nil
+			})
+		}
+	}()
 	if err := ui.App.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
 	}

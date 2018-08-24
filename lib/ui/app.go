@@ -15,6 +15,7 @@ var (
 	curMsgNum    uint32
 	showKludges  bool
 	StatusLine   string
+	StatusTime   string
 	newMsg       *msgapi.Message
 	newMsgType   string
 )

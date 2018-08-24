@@ -1,11 +1,7 @@
 package ui
 
 import (
-	//  "fmt"
-	//  "github.com/askovpen/goated/lib/msgapi"
 	"github.com/askovpen/gocui"
-	//  "strconv"
-	//  "log"
 )
 
 func Keybindings(g *gocui.Gui) error {

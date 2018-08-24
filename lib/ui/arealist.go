@@ -45,7 +45,6 @@ func getAreaNew(m msgapi.AreaPrimitive) string {
 	}
 }
 func areaPgup(g *gocui.Gui, v *gocui.View) error {
-	//	_, cy := v.Cursor()
 	_, oy := v.Origin()
 	_, maxY := v.Size()
 	if oy-maxY+1 < 0 {
@@ -139,19 +138,7 @@ func viewArea(g *gocui.Gui, v *gocui.View) error {
 		errorMsg(err.Error(), "AreaList")
 		return nil
 	}
-	/*
-	   if _, err := g.SetViewOnTop("MsgHeader"); err != nil {
-	     log.Print(err)
-	     return err
-	   }
-	*/
 	g.SetCurrentView("MsgBody")
-	//    setCurrentViewOnTop(g, "MsgHeader")
-	//    setCurrentViewOnTop(g, "MsgBody")
-	//    App.SetViewOnTop("MsgBody")
-	//  if err := App.SetKeybinding("MsgBody", gocui.KeyArrowDown, gocui.ModNone, scrollDown); err != nil {
-	//      return err
-	//        }
 	ActiveWindow = "MsgBody"
 	return nil
 }
@@ -179,21 +166,9 @@ func CreateAreaList() error {
 			a.GetCount(),
 			a.GetCount()-a.GetLast())
 	}
-	//  AreaList.SetCursor(0,1)
-	/*
-	   if _, err = setCurrentViewOnTop("AreaList"); err != nil {
-	     return err
-	   }
-	*/
-	//App.SetCurrentView("AreaList")
-	//   App.SetViewOnTop("AreaList")
-	//    setCurrentViewOnTop(App, "AreaList")
 	_, cy := AreaList.Cursor()
 	if cy == 0 {
 		areaNext(App, AreaList)
 	}
-	//  if err := App.SetKeybinding("AreaList", gocui.KeyArrowDown, gocui.ModNone, AreaNext); err != nil {
-	//    return err
-	//  }
 	return nil
 }

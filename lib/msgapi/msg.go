@@ -97,10 +97,6 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 		return nil, err
 	}
 	defer f.Close()
-	//	fi, err := f.Stat()
-	//	if err != nil {
-	//		return nil, err
-	//	}
 	msg, err := ioutil.ReadAll(f)
 	if err != nil {
 		return nil, err
@@ -120,16 +116,13 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	rm.Subject = strings.Trim(string(msgm.Subj[:]), "\x00")
 	rm.Body = strings.Trim(string(msgm.Body[:]), "\x00")
 	rm.DateWritten, err = time.Parse("02 Jan 06  15:04:05", strings.Trim(string(msgm.Date[:]), "\x00"))
-	rm.DateArrived = getTime(msgm.DateArrived) //fi.ModTime()
+	rm.DateArrived = getTime(msgm.DateArrived)
 	rm.Attrs = m.getAttrs(uint16(msgm.Attr))
-	//  rm.Attr=uint32(msgm.Attr)
 	err = rm.ParseRaw()
 	if err != nil {
 		return nil, err
 	}
-	//  tBody:=strings.Trim(string(msgm.Body[:]),"\x00")
 	return rm, nil
-	//return nil, errors.New("not implemented")
 }
 
 func (m *MSG) GetName() string {
@@ -208,7 +201,6 @@ func (m *MSG) SaveMsg(tm *Message) error {
 	if len(m.messageNums) == 0 {
 		return errors.New("creating MSG area not implemented")
 	}
-	//log.Printf("msg: %#v", tm)
 	var msgm msg_s
 	msgm.Attr = MSGLOCAL
 	tm.Encode()
@@ -227,7 +219,6 @@ func (m *MSG) SaveMsg(tm *Message) error {
 		msgm.Body = "\x01" + kl + " " + v + "\x0d" + msgm.Body
 	}
 	msgm.Body += "\x00"
-	//log.Printf("msgm: %#v", msgm)
 	buf := new(bytes.Buffer)
 	err := utils.WriteStructToBuffer(buf, &msgm)
 	if err != nil {
@@ -240,8 +231,6 @@ func (m *MSG) SaveMsg(tm *Message) error {
 	if err != nil {
 		return err
 	}
-	//log.Printf("buf: %#v", buf)
 	m.messageNums = append(m.messageNums, m.messageNums[len(m.messageNums)-1]+1)
 	return nil
-	//return errors.New("not implemented")
 }

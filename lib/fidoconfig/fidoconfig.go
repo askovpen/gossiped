@@ -65,10 +65,8 @@ func readFile(fn string) {
 	}
 	scanner := bufio.NewScanner(strings.NewReader(string(b[:])))
 	for scanner.Scan() {
-		//log.Print(scanner.Text())
 		res := re.FindStringSubmatch(scanner.Text())
 		if len(res) > 2 {
-			//log.Printf("%q",res)
 			if strings.EqualFold(res[1], "include") {
 				readFile(reEnv.ReplaceAllStringFunc(res[2], replaceEnv))
 			} else if strings.EqualFold(res[1], "echoarea") {

@@ -19,7 +19,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	//head, err := r.Head()
 	head, err := r.Head()
 	tags, err := r.Tags()
 	var tag *plumbing.Reference

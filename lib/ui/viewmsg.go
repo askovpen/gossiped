@@ -112,7 +112,6 @@ func firstMsg(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 func editMsgNumEnter(g *gocui.Gui, v *gocui.View) error {
-	//log.Print("1")
 	g.Cursor = false
 	ActiveWindow = "MsgBody"
 	en, err := g.View("editNumber")
@@ -122,7 +121,6 @@ func editMsgNumEnter(g *gocui.Gui, v *gocui.View) error {
 
 	n, err := strconv.ParseInt(strings.Trim(en.Buffer(), "\n"), 10, 32)
 	if err != nil {
-		//log.Print(err)
 		n = -1
 	}
 	if err := g.DeleteView("editNumber"); err != nil {
@@ -131,9 +129,7 @@ func editMsgNumEnter(g *gocui.Gui, v *gocui.View) error {
 	if err := g.DeleteView("editNumberTitle"); err != nil {
 		return err
 	}
-	//log.Print("n: %d, max: %d",n,msgapi.Areas[curAreaId].GetCount())
 	if n > 0 && uint32(n) <= msgapi.Areas[curAreaId].GetCount() {
-		//log.Print("3")
 		err := viewMsg(curAreaId, uint32(n))
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
@@ -155,12 +151,8 @@ func editMsgNum(g *gocui.Gui, v *gocui.View) error {
 	editableNumberTitle.Frame = false
 	g.Cursor = true
 	fmt.Fprintf(editableNumberTitle, " of %d", msgapi.Areas[curAreaId].GetCount())
-	//  App.SetCurrentView("editNumberTitle")
 	App.SetCurrentView("editNumber")
 	ActiveWindow = "editNumber"
-	//  quitMsgView(g,v)
-	//  viewMsg(curAreaId, 1)
-	//  ActiveWindow="MsgBody"
 	return nil
 }
 
@@ -172,7 +164,6 @@ func lastMsg(g *gocui.Gui, v *gocui.View) error {
 }
 
 func quitMsgView(g *gocui.Gui, v *gocui.View) error {
-	//log.Printf("Delete")
 	ActiveWindow = "AreaList"
 	if err := g.DeleteView("MsgHeader"); err != nil {
 		return err
@@ -183,7 +174,6 @@ func quitMsgView(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 func scrollDown(g *gocui.Gui, v *gocui.View) error {
-	//log.Printf("test")
 	if v != nil {
 		ox, oy := v.Origin()
 		_, sy := v.Size()
@@ -198,7 +188,6 @@ func scrollDown(g *gocui.Gui, v *gocui.View) error {
 }
 
 func scrollUp(g *gocui.Gui, v *gocui.View) error {
-	//log.Printf("test")
 	if v != nil {
 		ox, oy := v.Origin()
 		if oy == 0 {
@@ -211,7 +200,6 @@ func scrollUp(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 func toggleKludges(g *gocui.Gui, v *gocui.View) error {
-	//log.Printf("togglekl")
 	showKludges = !showKludges
 	quitMsgView(g, v)
 	viewMsg(curAreaId, curMsgNum)
