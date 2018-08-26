@@ -18,6 +18,7 @@ var (
 	defaultMsgType msgapi.EchoAreaMsgType
 )
 
+// Read fidoconfig
 func Read() error {
 	defaultMsgType = msgapi.EchoAreaMsgTypeMSG
 	readFile(config.Config.FidoConfig)

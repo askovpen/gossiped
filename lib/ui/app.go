@@ -6,20 +6,27 @@ import (
 )
 
 var (
-	App          *gocui.Gui
-	AreaList     *gocui.View
+	// App gui
+	App *gocui.Gui
+	// AreaList variable
+	AreaList *gocui.View
+	// AreaPosition variable
 	AreaPosition uint16
+	// ActiveWindow name
 	ActiveWindow string
 	parentWindow string
 	curAreaId    int
 	curMsgNum    uint32
 	showKludges  bool
-	StatusLine   string
-	StatusTime   string
-	newMsg       *msgapi.Message
-	newMsgType   string
+	// StatusLine variable
+	StatusLine string
+	// StatusTime variable
+	StatusTime string
+	newMsg     *msgapi.Message
+	newMsgType string
 )
 
+// Quit application
 func Quit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
 }

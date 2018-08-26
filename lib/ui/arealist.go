@@ -143,6 +143,7 @@ func viewArea(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
+// CreateAreaList create arealist
 func CreateAreaList() error {
 	maxX, maxY := App.Size()
 	AreaList, err := App.SetView("AreaList", 0, 0, maxX-1, maxY-2)

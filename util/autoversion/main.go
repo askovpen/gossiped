@@ -19,8 +19,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	head, err := r.Head()
-	tags, err := r.Tags()
+	head, _ := r.Head()
+	tags, _ := r.Tags()
 	var tag *plumbing.Reference
 	err = tags.ForEach(func(t *plumbing.Reference) error {
 		tag = t

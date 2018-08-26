@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type config_s struct {
+type configS struct {
 	Username   string
 	FidoConfig string
 	Log        string
@@ -22,12 +22,13 @@ type config_s struct {
 
 //go:generate go run ../../util/autoversion/main.go
 var (
-	Config   config_s
+	Config   configS
 	PID      = "ATED+" + runtime.GOOS[0:3] + " " + Version
 	LongPID  = "goAtEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
 	Template []string
 )
 
+// Read config
 func Read() error {
 	yamlFile, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {

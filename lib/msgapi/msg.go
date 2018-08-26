@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+// MSG struct
 type MSG struct {
 	AreaPath    string
 	AreaName    string
@@ -23,7 +24,7 @@ type MSG struct {
 	messageNums []uint32
 }
 
-type msg_s struct {
+type msgS struct {
 	From        [36]byte
 	To          [36]byte
 	Subj        [72]byte
@@ -41,8 +42,11 @@ type msg_s struct {
 	Up          uint16
 	Body        string
 }
+
+// MSGAttrs MSG attributes
 type MSGAttrs uint16
 
+// attributes
 const (
 	MSGPRIVATE MSGAttrs = 0x0001
 	MSGCRASH   MSGAttrs = 0x0002
@@ -62,6 +66,7 @@ const (
 	MSGURQ     MSGAttrs = 0x8000
 )
 
+// Init for future
 func (m *MSG) Init() {
 }
 
@@ -85,6 +90,7 @@ func (m *MSG) getAttrs(a uint16) (attrs []string) {
 	return
 }
 
+// GetMsg getmsg
 func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	if len(m.messageNums) == 0 {
 		return nil, errors.New("Empty Area")
@@ -102,7 +108,7 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 		return nil, err
 	}
 	msgb := bytes.NewBuffer(msg)
-	var msgm msg_s
+	var msgm msgS
 	err = utils.ReadStructFromBuffer(msgb, &msgm)
 	if err != nil {
 		return nil, err
@@ -115,7 +121,7 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	rm.To = strings.Trim(string(msgm.To[:]), "\x00")
 	rm.Subject = strings.Trim(string(msgm.Subj[:]), "\x00")
 	rm.Body = strings.Trim(string(msgm.Body[:]), "\x00")
-	rm.DateWritten, err = time.Parse("02 Jan 06  15:04:05", strings.Trim(string(msgm.Date[:]), "\x00"))
+	rm.DateWritten, _ = time.Parse("02 Jan 06  15:04:05", strings.Trim(string(msgm.Date[:]), "\x00"))
 	rm.DateArrived = getTime(msgm.DateArrived)
 	rm.Attrs = m.getAttrs(uint16(msgm.Attr))
 	err = rm.ParseRaw()
@@ -125,22 +131,25 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	return rm, nil
 }
 
+// GetName get areaname
 func (m *MSG) GetName() string {
 	return m.AreaName
 }
 
+// GetCount get msg count
 func (m *MSG) GetCount() uint32 {
 	m.readMN()
 	return uint32(len(m.messageNums))
 }
 
+// GetLast get last msg number
 func (m *MSG) GetLast() uint32 {
 	m.readMN()
 	file, err := os.Open(filepath.Join(m.AreaPath, "lastread"))
 	if err != nil {
 		return 0
 	}
-	b, err := ioutil.ReadAll(file)
+	b, _ := ioutil.ReadAll(file)
 	if len(b) != 2 {
 		return 0
 	}
@@ -172,13 +181,17 @@ func (m *MSG) readMN() {
 	sort.Slice(m.messageNums, func(i, j int) bool { return m.messageNums[i] < m.messageNums[j] })
 }
 
+// GetMsgType return area msg base type
 func (m *MSG) GetMsgType() EchoAreaMsgType {
 	return EchoAreaMsgTypeMSG
 }
+
+// GetType get area type
 func (m *MSG) GetType() EchoAreaType {
 	return m.AreaType
 }
 
+// SetLast set last message num
 func (m *MSG) SetLast(l uint32) {
 	if l == 0 {
 		l = 1
@@ -197,11 +210,12 @@ func (m *MSG) SetLast(l uint32) {
 	}
 }
 
+// SaveMsg save message
 func (m *MSG) SaveMsg(tm *Message) error {
 	if len(m.messageNums) == 0 {
 		return errors.New("creating MSG area not implemented")
 	}
-	var msgm msg_s
+	var msgm msgS
 	msgm.Attr = MSGLOCAL
 	tm.Encode()
 	copy(msgm.From[:], tm.From)

@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// DecodeCharmap decode string from charmap
 func DecodeCharmap(s string, c string) string {
 	sr := strings.NewReader(s)
 	var tr *transform.Reader
@@ -49,6 +50,7 @@ func DecodeCharmap(s string, c string) string {
 	return string(b)
 }
 
+// EncodeCharmap encode string to charmap
 func EncodeCharmap(s string, c string) string {
 	var enc *encoding.Encoder
 	switch c {

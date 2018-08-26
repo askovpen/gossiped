@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// FidoAddr struct
 type FidoAddr struct {
 	zone  uint16
 	net   uint16
@@ -13,13 +14,14 @@ type FidoAddr struct {
 	point uint16
 }
 
+// Equal compare two *FidoAddr
 func (f *FidoAddr) Equal(fn *FidoAddr) bool {
 	if f.zone == fn.zone && f.net == fn.net && f.node == fn.node && f.point == fn.point {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
+
 func (f *FidoAddr) String() string {
 	if f.zone == 0 {
 		return ""
@@ -29,12 +31,16 @@ func (f *FidoAddr) String() string {
 	}
 	return strconv.Itoa(int(f.zone)) + ":" + strconv.Itoa(int(f.net)) + "/" + strconv.Itoa(int(f.node)) + "." + strconv.Itoa(int(f.point))
 }
+
+// FQDN return hostname
 func (f *FidoAddr) FQDN() (string, error) {
 	if f.point > 0 {
 		return "", errors.New("point")
 	}
 	return "f" + strconv.Itoa(int(f.node)) + ".n" + strconv.Itoa(int(f.net)) + ".z" + strconv.Itoa(int(f.zone)) + ".binkp.net", nil
 }
+
+// AddrFromString return FidoAddr from string
 func AddrFromString(s string) *FidoAddr {
 	f := &FidoAddr{}
 	res := regexp.MustCompile("(\\d+):(\\d+)/(\\d+)\\.?(\\d+)?(@.*)?").FindStringSubmatch(s)
@@ -59,6 +65,8 @@ func AddrFromString(s string) *FidoAddr {
 	}
 	return f
 }
+
+// AddrFromNum return FidoAddr from digits
 func AddrFromNum(zone uint16, net uint16, node uint16, point uint16) *FidoAddr {
 	f := &FidoAddr{}
 	f.zone = zone
@@ -68,6 +76,7 @@ func AddrFromNum(zone uint16, net uint16, node uint16, point uint16) *FidoAddr {
 	return f
 }
 
+// UnmarshalYAML for UnmarshalYAML
 func (f *FidoAddr) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
 	var fm string
 	if err := unmarshal(&fm); err != nil {
@@ -80,26 +89,33 @@ func (f *FidoAddr) UnmarshalYAML(unmarshal func(interface{}) error) (err error) 
 	f.point = tf.point
 	return nil
 }
+
+// MarshalYAML for MarshaYAML
 func (f FidoAddr) MarshalYAML() (interface{}, error) {
 	return f.String(), nil
 }
 
+// GetZone return zone
 func (f *FidoAddr) GetZone() uint16 {
 	return f.zone
 }
 
+// GetNode return node
 func (f *FidoAddr) GetNode() uint16 {
 	return f.node
 }
 
+// GetNet return net
 func (f *FidoAddr) GetNet() uint16 {
 	return f.net
 }
 
+// GetPoint return point
 func (f *FidoAddr) GetPoint() uint16 {
 	return f.point
 }
 
+// SetPoint set point
 func (f *FidoAddr) SetPoint(p uint16) {
 	f.point = p
 }

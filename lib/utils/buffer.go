@@ -8,6 +8,7 @@ import (
 	"reflect"
 )
 
+// ReadStructFromBuffer is reading from buffer to struct
 func ReadStructFromBuffer(buffer *bytes.Buffer, data interface{}) error {
 	k := reflect.TypeOf(data).Kind()
 	if k != reflect.Ptr {
@@ -49,6 +50,7 @@ func ReadStructFromBuffer(buffer *bytes.Buffer, data interface{}) error {
 	return nil
 }
 
+// WriteStructToBuffer is reading from struct to buffer
 func WriteStructToBuffer(buffer *bytes.Buffer, data interface{}) error {
 	k := reflect.TypeOf(data).Kind()
 	if k != reflect.Ptr {

@@ -13,6 +13,7 @@ func setCurrentViewOnTop(g *gocui.Gui, name string) (*gocui.View, error) {
 	return g.SetViewOnTop(name)
 }
 
+// Layout default
 func Layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 	status, err := g.SetView("status", -1, maxY-2, maxX-11, maxY)

@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+// Message struct
 type Message struct {
 	Area        string
 	AreaID      int
@@ -31,6 +32,7 @@ type Message struct {
 	Corrupted   bool
 }
 
+// ParseRaw parse raw msg
 func (m *Message) ParseRaw() error {
 	m.Kludges = make(map[string]string)
 	for _, l := range strings.Split(m.Body, "\x0d") {
@@ -70,6 +72,7 @@ func (m *Message) ParseRaw() error {
 	return nil
 }
 
+// Encode charset
 func (m *Message) Encode() {
 	enc := strings.Split(config.Config.Chrs, " ")[0]
 	m.Body = utils.EncodeCharmap(m.Body, enc)
@@ -78,6 +81,7 @@ func (m *Message) Encode() {
 	m.Subject = utils.EncodeCharmap(m.Subject, enc)
 }
 
+// Decode charset
 func (m *Message) Decode() {
 	enc := strings.Split(config.Config.Chrs, " ")[0]
 	if _, ok := m.Kludges["CHRS"]; ok {
@@ -90,6 +94,7 @@ func (m *Message) Decode() {
 	m.Subject = utils.DecodeCharmap(m.Subject, enc)
 }
 
+// ToView export view
 func (m *Message) ToView(showKludges bool) string {
 	var nm []string
 	re := regexp.MustCompile(">+")
@@ -125,6 +130,8 @@ func (m *Message) ToView(showKludges bool) string {
 	}
 	return strings.Join(nm, "\n")
 }
+
+// ToEditNewView export view
 func (m *Message) ToEditNewView() (string, int) {
 	var nm []string
 	p := 0
@@ -162,6 +169,8 @@ func (m *Message) ToEditNewView() (string, int) {
 	return strings.Join(nm, "\n"), p
 
 }
+
+// GetQuote get quote
 func (m *Message) GetQuote() []string {
 	var nm []string
 	re := regexp.MustCompile(">+")
@@ -192,6 +201,8 @@ func (m *Message) GetQuote() []string {
 	log.Print(from)
 	return nm
 }
+
+// ToEditAnswerView export view
 func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 	var nm []string
 	p := 0
@@ -237,6 +248,8 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
 	return strings.Join(nm, "\n"), p
 }
+
+// MakeBody make body
 func (m *Message) MakeBody() *Message {
 	if Areas[m.AreaID].GetType() == EchoAreaTypeNetmail {
 		to := m.ToAddr

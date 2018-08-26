@@ -16,8 +16,10 @@ import (
 	"time"
 )
 
+// SquishAttrs Squish Attributes
 type SquishAttrs uint32
 
+// attrubutes
 const (
 	SquishPRIVATE SquishAttrs = 0x0001
 	SquishCRASH   SquishAttrs = 0x0002
@@ -40,20 +42,21 @@ const (
 	SquishSEEN    SquishAttrs = 0x00080000
 )
 
+// Squish struct
 type Squish struct {
 	AreaPath       string
 	AreaName       string
 	AreaType       EchoAreaType
-	indexStructure []sqi_s
+	indexStructure []sqiS
 }
 
-type sqi_s struct {
+type sqiS struct {
 	Offset     uint32
 	MessageNum uint32
 	CRC        uint32
 }
 
-type sqd_s struct {
+type sqdS struct {
 	Len, Rsvd1                                                uint16
 	NumMsg, HighMsg, SkipMsg, HighWater, Uid                  uint32
 	Base                                                      [80]byte
@@ -64,7 +67,7 @@ type sqd_s struct {
 	Rsvd2                                                     [124]byte
 }
 
-type sqd_h struct {
+type sqdH struct {
 	Id, NextFrame, PrevFrame, FrameLength, MsgLength, CLen uint32
 	FrameType, Rsvd                                        uint16
 	Attr                                                   uint32
@@ -104,17 +107,18 @@ func (s *Squish) getAttrs(a uint32) (attrs []string) {
 	return
 }
 
-func readSQDH(headerb *bytes.Buffer) (sqd_h, error) {
-	var sqdh sqd_h
+func readSQDH(headerb *bytes.Buffer) (sqdH, error) {
+	var sqdh sqdH
 	if err := utils.ReadStructFromBuffer(headerb, &sqdh); err != nil {
 		return sqdh, err
 	}
 	if sqdh.Id != 0xafae4453 {
-		return sqdh, errors.New(fmt.Sprintf("Wrong Squish header %08x", sqdh.Id))
+		return sqdh, fmt.Errorf("Wrong Squish header %08x", sqdh.Id)
 	}
 	return sqdh, nil
 }
 
+// GetMsg return message
 func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	if len(s.indexStructure) == 0 {
 		return nil, errors.New("Empty Area")
@@ -189,7 +193,7 @@ func (s *Squish) readSQI() {
 		}
 		partb := bytes.NewBuffer(part[:count])
 		for {
-			var sqi sqi_s
+			var sqi sqiS
 			if err = utils.ReadStructFromBuffer(partb, &sqi); err != nil {
 				break
 			}
@@ -200,6 +204,8 @@ func (s *Squish) readSQI() {
 	}
 	sort.Slice(s.indexStructure, func(i, j int) bool { return s.indexStructure[i].MessageNum < s.indexStructure[j].MessageNum })
 }
+
+// GetLast get last message number
 func (s *Squish) GetLast() uint32 {
 	s.readSQI()
 	if len(s.indexStructure) == 0 {
@@ -223,22 +229,27 @@ func (s *Squish) GetLast() uint32 {
 	return 0
 }
 
+// GetCount get messages count
 func (s *Squish) GetCount() uint32 {
 	s.readSQI()
 	return uint32(len(s.indexStructure))
 }
 
+// GetMsgType return area msg base type
 func (s *Squish) GetMsgType() EchoAreaMsgType {
 	return EchoAreaMsgTypeSquish
 }
 
+// GetType get area type
 func (s *Squish) GetType() EchoAreaType {
 	return s.AreaType
 }
 
+// Init for future
 func (s *Squish) Init() {
 }
 
+// GetName return area name
 func (s *Squish) GetName() string {
 	return s.AreaName
 }
@@ -282,6 +293,8 @@ func bufHash32(str string) (h uint32) {
 	h = h & 0x7fffffff
 	return
 }
+
+// SetLast set last message number
 func (s *Squish) SetLast(l uint32) {
 	if l == 0 {
 		l = 1
@@ -298,13 +311,14 @@ func (s *Squish) SetLast(l uint32) {
 	}
 }
 
+// SaveMsg save message
 func (s *Squish) SaveMsg(tm *Message) error {
 	if len(s.indexStructure) == 0 {
 		return errors.New("creating Squish area not implemented")
 	}
 	lastIdx := len(s.indexStructure) - 1
-	var sqdh sqd_h
-	var sqi sqi_s
+	var sqdh sqdH
+	var sqi sqiS
 	kludges := ""
 	for kl, v := range tm.Kludges {
 		kludges += "\x01" + kl + " " + v
@@ -343,7 +357,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	header = make([]byte, 256)
 	f.Read(header)
 	headerb := bytes.NewBuffer(header)
-	var sqd sqd_s
+	var sqd sqdS
 	if err := utils.ReadStructFromBuffer(headerb, &sqd); err != nil {
 		return err
 	}
@@ -366,6 +380,9 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	f.Read(header)
 	headerb = bytes.NewBuffer(header)
 	prevSqdh, err := readSQDH(headerb)
+	if err != nil {
+		return err
+	}
 	prevSqdh.NextFrame = sqi.Offset
 	err = utils.WriteStructToBuffer(buf, &prevSqdh)
 	if err != nil {
@@ -388,7 +405,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 		return err
 	}
 	defer f.Close()
-	err = utils.WriteStructToBuffer(buf, &sqi)
+	utils.WriteStructToBuffer(buf, &sqi)
 	f.Seek(0, 2)
 	f.Write(buf.Bytes())
 	f.Close()

@@ -16,29 +16,30 @@ import (
 	"time"
 )
 
+// JAM struct
 type JAM struct {
 	AreaPath, AreaName string
 	AreaType           EchoAreaType
-	indexStructure     []jam_s
-	lastRead           []jam_l
+	indexStructure     []jamS
+	lastRead           []jamL
 }
 
-type jam_s struct {
+type jamS struct {
 	MessageNum uint32
-	jamsh      jam_sh
+	jamsh      jamSH
 }
 
-type jam_sh struct {
+type jamSH struct {
 	ToCRC, Offset uint32
 }
 
-type jhr_s struct {
+type jhrS struct {
 	Signature                           [4]byte
 	DateCreated, ModCounter, ActiveMsgs uint32
 	PasswordCRC, BaseMsgNum, Highwater  uint32
 	RSRVD                               [996]byte
 }
-type jam_h struct {
+type jamH struct {
 	Signature                               uint32
 	Revision, ReservedWord                  uint16
 	SubfieldLen, TimesRead, MSGIDcrc        uint32
@@ -49,7 +50,7 @@ type jam_h struct {
 	PasswordCRC, Cost                       uint32
 }
 
-type jam_l struct {
+type jamL struct {
 	UserCRC, UserId, LastReadMsg, HighReadMsg uint32
 }
 
@@ -77,6 +78,7 @@ func (j *JAM) getAttrs(a uint32) (attrs []string) {
 	return
 }
 
+// GetMsg return msg
 func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	if len(j.indexStructure) == 0 {
 		return nil, errors.New("Empty Area")
@@ -97,7 +99,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	header = make([]byte, 76)
 	fJhr.Read(header)
 	headerb := bytes.NewBuffer(header)
-	var jamh jam_h
+	var jamh jamH
 	if err = utils.ReadStructFromBuffer(headerb, &jamh); err != nil {
 		return nil, err
 	}
@@ -224,12 +226,12 @@ func (j *JAM) readJDX() {
 		}
 		partb := bytes.NewBuffer(part[:count])
 		for {
-			var jam jam_sh
+			var jam jamSH
 			if err = utils.ReadStructFromBuffer(partb, &jam); err != nil {
 				break
 			}
 			if jam.Offset != 0xffffffff {
-				j.indexStructure = append(j.indexStructure, jam_s{i + 1, jam})
+				j.indexStructure = append(j.indexStructure, jamS{i + 1, jam})
 			}
 			i++
 		}
@@ -254,7 +256,7 @@ func (j *JAM) readJLR() {
 		}
 		partb := bytes.NewBuffer(part[:count])
 		for {
-			var jaml jam_l
+			var jaml jamL
 			if err = utils.ReadStructFromBuffer(partb, &jaml); err != nil {
 				break
 			}
@@ -271,6 +273,7 @@ func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
 	return 0
 }
 
+// GetLast return last message
 func (j *JAM) GetLast() uint32 {
 	j.readJDX()
 	if len(j.indexStructure) == 0 {
@@ -285,22 +288,27 @@ func (j *JAM) GetLast() uint32 {
 	return 0
 }
 
+// GetCount return count messages
 func (j *JAM) GetCount() uint32 {
 	j.readJDX()
 	return uint32(len(j.indexStructure))
 }
 
+// GetMsgType return msg base type
 func (j *JAM) GetMsgType() EchoAreaMsgType {
 	return EchoAreaMsgTypeJAM
 }
 
+// GetType return area type
 func (j *JAM) GetType() EchoAreaType {
 	return j.AreaType
 }
 
+// Init init
 func (j *JAM) Init() {
 }
 
+// GetName return area name
 func (j *JAM) GetName() string {
 	return j.AreaName
 }
@@ -310,6 +318,7 @@ func crc32r(str string) uint32 {
 	return 0xffffffff - crc32.ChecksumIEEE(bstr)
 }
 
+// SetLast set last message
 func (j *JAM) SetLast(l uint32) {
 	found := -1
 	for i, lr := range j.lastRead {
@@ -318,7 +327,7 @@ func (j *JAM) SetLast(l uint32) {
 		}
 	}
 	if found == -1 {
-		j.lastRead = append(j.lastRead, jam_l{
+		j.lastRead = append(j.lastRead, jamL{
 			crc32r(config.Config.Username),
 			crc32r(config.Config.Username),
 			j.indexStructure[l-1].MessageNum,
@@ -370,11 +379,13 @@ func packJamKludges(tm *Message) []byte {
 	log.Printf("klb: %#v", klb.Bytes())
 	return klb.Bytes()
 }
+
+// SaveMsg save message
 func (j *JAM) SaveMsg(tm *Message) error {
 	if len(j.indexStructure) == 0 {
 		return errors.New("creating JAM area not implemented")
 	}
-	jamh := jam_h{Signature: 0x4d414a, Revision: 1, Attribute: 0x02000001}
+	jamh := jamH{Signature: 0x4d414a, Revision: 1, Attribute: 0x02000001}
 	kl := packJamKludges(tm)
 	jamh.SubfieldLen = uint32(len(kl))
 	jamh.MSGIDcrc = crc32r(tm.Kludges["MSGID:"])
@@ -389,7 +400,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	jamh.DateProcessed = uint32(tm.DateArrived.Unix())
 	jamh.TxtLen = uint32(len(tm.Body))
 	jamh.MessageNumber = uint32(len(j.indexStructure)) + 1
-	var jam jam_sh
+	var jam jamSH
 	jam.ToCRC = crc32r(tm.To)
 	f, err := os.OpenFile(j.AreaPath+".jdt", os.O_RDWR, 0644)
 	if err != nil {
@@ -406,7 +417,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 		return err
 	}
 	defer f.Close()
-	var jhr jhr_s
+	var jhr jhrS
 	header := make([]byte, 1024)
 	f.Read(header)
 	headerb := bytes.NewBuffer(header)
@@ -444,6 +455,6 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	}
 	f.Write(buf.Bytes())
 	f.Close()
-	j.indexStructure = append(j.indexStructure, jam_s{jamh.MessageNumber, jam})
+	j.indexStructure = append(j.indexStructure, jamS{jamh.MessageNumber, jam})
 	return nil
 }

@@ -1,13 +1,16 @@
 package msgapi
 
+// EchoAreaMsgType Area msg base type
 type EchoAreaMsgType string
+
+// EchoAreaType Area type
 type EchoAreaType uint8
 
+// types
 const (
 	EchoAreaMsgTypeJAM    EchoAreaMsgType = "JAM"
 	EchoAreaMsgTypeMSG    EchoAreaMsgType = "MSG"
 	EchoAreaMsgTypeSquish EchoAreaMsgType = "Squish"
-
 	EchoAreaTypeNetmail EchoAreaType = 0
 	EchoAreaTypeEcho    EchoAreaType = 3
 	EchoAreaTypeLocal   EchoAreaType = 4
@@ -15,6 +18,7 @@ const (
 	EchoAreaTypeBad     EchoAreaType = 1
 )
 
+// AreaPrimitive interface
 type AreaPrimitive interface {
 	Init()
 	GetCount() uint32
@@ -25,13 +29,4 @@ type AreaPrimitive interface {
 	GetType() EchoAreaType
 	SetLast(uint32)
 	SaveMsg(*Message) error
-}
-
-type Area_s struct {
-	AreaName string
-	FileName string
-	MsgBType EchoAreaMsgType
-	AreaType EchoAreaType
-	Count    uint32
-	Position uint32
 }

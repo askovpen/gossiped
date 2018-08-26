@@ -4,6 +4,7 @@ import (
 	"github.com/askovpen/gocui"
 )
 
+// Keybindings for App
 func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("AreaList", gocui.KeyArrowDown, gocui.ModNone, areaNext)
 	g.SetKeybinding("AreaList", gocui.KeyEsc, gocui.ModNone, quitAreaList)
