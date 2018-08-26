@@ -64,8 +64,8 @@ func (m *Message) ParseRaw() error {
 	}
 	if m.FromAddr == nil {
 		//return errors.New("FromAddr not defined")
-		m.Corrupted=true
-		m.FromAddr=&types.FidoAddr{}
+		m.Corrupted = true
+		m.FromAddr = &types.FidoAddr{}
 	}
 	if m.ToAddr == nil {
 		m.ToAddr = &types.FidoAddr{}
