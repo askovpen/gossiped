@@ -10,17 +10,17 @@ import (
 	"github.com/askovpen/goated/lib/utils"
 	"hash/crc32"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 	"time"
 )
 
 type JAM struct {
-	AreaPath       string
-	AreaName       string
-	AreaType       EchoAreaType
-	indexStructure []jam_s
-	lastRead       []jam_l
+	AreaPath, AreaName string
+	AreaType           EchoAreaType
+	indexStructure     []jam_s
+	lastRead           []jam_l
 }
 
 type jam_s struct {
@@ -29,31 +29,24 @@ type jam_s struct {
 }
 
 type jam_sh struct {
-	ToCRC  uint32
-	Offset uint32
+	ToCRC, Offset uint32
 }
 
+type jhr_s struct {
+	Signature                           [4]byte
+	DateCreated, ModCounter, ActiveMsgs uint32
+	PasswordCRC, BaseMsgNum, Highwater  uint32
+	RSRVD                               [996]byte
+}
 type jam_h struct {
-	Signature     uint32
-	Revision      uint16
-	ReservedWord  uint16
-	SubfieldLen   uint32
-	TimesRead     uint32
-	MSGIDcrc      uint32
-	REPLYcrc      uint32
-	ReplyTo       uint32
-	Reply1st      uint32
-	ReplyNext     uint32
-	DateWritten   uint32
-	DateReceived  uint32
-	DateProcessed uint32
-	MessageNumber uint32
-	Attribute     uint32
-	Attribute2    uint32
-	Offset        uint32
-	TxtLen        uint32
-	PasswordCRC   uint32
-	Cost          uint32
+	Signature                               uint32
+	Revision, ReservedWord                  uint16
+	SubfieldLen, TimesRead, MSGIDcrc        uint32
+	REPLYcrc, ReplyTo, Reply1st             uint32
+	ReplyNext, DateWritten, DateReceived    uint32
+	DateProcessed, MessageNumber, Attribute uint32
+	Attribute2, Offset, TxtLen              uint32
+	PasswordCRC, Cost                       uint32
 }
 
 type jam_l struct {
@@ -346,7 +339,111 @@ func (j *JAM) SetLast(l uint32) {
 		return
 	}
 }
-
+func packJamKludge(b *bytes.Buffer, LoID uint16, HiID uint16, data []byte) {
+	datLen := uint32(len(data))
+	binary.Write(b, binary.LittleEndian, LoID)
+	binary.Write(b, binary.LittleEndian, HiID)
+	binary.Write(b, binary.LittleEndian, datLen)
+	binary.Write(b, binary.LittleEndian, data)
+}
+func packJamKludges(tm *Message) []byte {
+	klb := new(bytes.Buffer)
+	for kl, v := range tm.Kludges {
+		switch kl {
+		case "MSGID:":
+			packJamKludge(klb, 4, 0, []byte(v))
+		case "REPLYID:":
+			packJamKludge(klb, 5, 0, []byte(v))
+		case "PID:":
+			packJamKludge(klb, 7, 0, []byte(v))
+		default:
+			packJamKludge(klb, 2000, 0, []byte(kl+" "+v))
+		}
+	}
+	packJamKludge(klb, 0, 0, []byte(tm.FromAddr.String()))
+	if tm.ToAddr != nil {
+		packJamKludge(klb, 1, 0, []byte(tm.ToAddr.String()))
+	}
+	packJamKludge(klb, 2, 0, []byte(tm.From))
+	packJamKludge(klb, 3, 0, []byte(tm.To))
+	packJamKludge(klb, 6, 0, []byte(tm.Subject))
+	log.Printf("klb: %#v", klb.Bytes())
+	return klb.Bytes()
+}
 func (j *JAM) SaveMsg(tm *Message) error {
-	return errors.New("not implemented")
+	if len(j.indexStructure) == 0 {
+		return errors.New("creating JAM area not implemented")
+	}
+	jamh := jam_h{Signature: 0x4d414a, Revision: 1, Attribute: 0x02000001}
+	kl := packJamKludges(tm)
+	jamh.SubfieldLen = uint32(len(kl))
+	jamh.MSGIDcrc = crc32r(tm.Kludges["MSGID:"])
+	if val, ok := tm.Kludges["REPLYID:"]; ok {
+		jamh.REPLYcrc = crc32r(val)
+	} else {
+		jamh.REPLYcrc = 0xffffffff
+	}
+	jamh.PasswordCRC = 0xffffffff
+	jamh.DateWritten = uint32(tm.DateWritten.Unix())
+	jamh.DateReceived = uint32(tm.DateArrived.Unix())
+	jamh.DateProcessed = uint32(tm.DateArrived.Unix())
+	jamh.TxtLen = uint32(len(tm.Body))
+	jamh.MessageNumber = uint32(len(j.indexStructure)) + 1
+	var jam jam_sh
+	jam.ToCRC = crc32r(tm.To)
+	f, err := os.OpenFile(j.AreaPath+".jdt", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	offset, _ := f.Seek(0, 2)
+	jamh.Offset = uint32(offset)
+	log.Printf("offset: %d", offset)
+	f.Write([]byte(tm.Body))
+	f.Close()
+	f, err = os.OpenFile(j.AreaPath+".jhr", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	var jhr jhr_s
+	header := make([]byte, 1024)
+	f.Read(header)
+	headerb := bytes.NewBuffer(header)
+	if err := utils.ReadStructFromBuffer(headerb, &jhr); err != nil {
+		return err
+	}
+	jhr.ActiveMsgs += 1
+	buf := new(bytes.Buffer)
+	err = utils.WriteStructToBuffer(buf, &jhr)
+	if err != nil {
+		return err
+	}
+	f.Seek(0, 0)
+	f.Write(buf.Bytes())
+	buf.Reset()
+	offset, _ = f.Seek(0, 2)
+	jam.Offset = uint32(offset)
+	err = utils.WriteStructToBuffer(buf, &jamh)
+	if err != nil {
+		return err
+	}
+	f.Write(buf.Bytes())
+	f.Write(kl)
+	f.Close()
+	buf.Reset()
+	f, err = os.OpenFile(j.AreaPath+".jdx", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.Seek(0, 2)
+	err = utils.WriteStructToBuffer(buf, &jam)
+	if err != nil {
+		return err
+	}
+	f.Write(buf.Bytes())
+	f.Close()
+	j.indexStructure = append(j.indexStructure, jam_s{jamh.MessageNumber, jam})
+	return nil
 }
