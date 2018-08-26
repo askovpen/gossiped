@@ -32,6 +32,6 @@ func exitError(g *gocui.Gui, v *gocui.View) error {
 	ActiveWindow = parentWindow
 	g.DeleteView("ErrorMsg")
 	ActiveWindow = parentWindow
-	log.Printf("Aw: " + ActiveWindow)
+	//log.Printf("Aw: " + ActiveWindow)
 	return nil
 }

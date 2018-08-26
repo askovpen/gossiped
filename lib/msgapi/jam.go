@@ -10,8 +10,9 @@ import (
 	"github.com/askovpen/goated/lib/utils"
 	"hash/crc32"
 	"io/ioutil"
-	"log"
+	// "log"
 	"os"
+	// "sort"
 	"strings"
 	"time"
 )
@@ -236,6 +237,7 @@ func (j *JAM) readJDX() {
 			i++
 		}
 	}
+	// sort.Slice(j.indexStructure, func(a, b int) bool { return j.indexStructure[a].MessageNum < j.indexStructure[b].MessageNum })
 }
 
 func (j *JAM) readJLR() {
@@ -267,6 +269,7 @@ func (j *JAM) readJLR() {
 func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
 	for i, ji := range j.indexStructure {
 		if mId == ji.MessageNum {
+			// log.Printf("getPositionOfJamMsg(%d)->%d",mId, i)
 			return uint32(i)
 		}
 	}
@@ -282,6 +285,7 @@ func (j *JAM) GetLast() uint32 {
 	j.readJLR()
 	for _, l := range j.lastRead {
 		if l.UserCRC == crc32r(config.Config.Username) {
+			// log.Printf("GetLast()->%d",j.getPositionOfJamMsg(l.LastReadMsg) + 1)
 			return j.getPositionOfJamMsg(l.LastReadMsg) + 1
 		}
 	}
@@ -333,7 +337,7 @@ func (j *JAM) SetLast(l uint32) {
 			j.indexStructure[l-1].MessageNum,
 			j.indexStructure[l-1].MessageNum})
 	} else {
-		j.lastRead[found].LastReadMsg = l
+		j.lastRead[found].LastReadMsg = j.indexStructure[l-1].MessageNum // l
 		if j.indexStructure[l-1].MessageNum > j.lastRead[found].HighReadMsg {
 			j.lastRead[found].HighReadMsg = j.indexStructure[l-1].MessageNum
 		}
@@ -376,7 +380,7 @@ func packJamKludges(tm *Message) []byte {
 	packJamKludge(klb, 2, 0, []byte(tm.From))
 	packJamKludge(klb, 3, 0, []byte(tm.To))
 	packJamKludge(klb, 6, 0, []byte(tm.Subject))
-	log.Printf("klb: %#v", klb.Bytes())
+	// log.Printf("klb: %#v", klb.Bytes())
 	return klb.Bytes()
 }
 
@@ -409,7 +413,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	defer f.Close()
 	offset, _ := f.Seek(0, 2)
 	jamh.Offset = uint32(offset)
-	log.Printf("offset: %d", offset)
+	// log.Printf("offset: %d", offset)
 	f.Write([]byte(tm.Body))
 	f.Close()
 	f, err = os.OpenFile(j.AreaPath+".jhr", os.O_RDWR, 0644)
