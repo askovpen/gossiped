@@ -1,6 +1,8 @@
 username: Alexander N. Skovpen
 address: 2:5020/9696.128
-fidoconfig: /etc/ftn/hpt/config
+areafile:
+  path: /etc/ftn/hpt/config
+  type: fidoconfig
 log: ./app.log
 template: goated.tpl
 origin: Just Origin

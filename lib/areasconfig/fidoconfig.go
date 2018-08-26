@@ -1,4 +1,4 @@
-package fidoconfig
+package areasconfig
 
 import (
 	"bufio"
@@ -18,10 +18,9 @@ var (
 	defaultMsgType msgapi.EchoAreaMsgType
 )
 
-// Read fidoconfig
-func Read() error {
+func fidoConfigRead(fn string) error {
 	defaultMsgType = msgapi.EchoAreaMsgTypeMSG
-	readFile(config.Config.FidoConfig)
+	readFile(fn)
 
 	if len(msgapi.Areas) == 0 {
 		return errors.New("no Areas found")
@@ -40,8 +39,8 @@ func checkIncludePath(fn string) (string, error) {
 	if _, err := os.Stat(fn); err == nil {
 		return fn, nil
 	}
-	if _, err := os.Stat(filepath.Join(filepath.Dir(config.Config.FidoConfig), fn)); err == nil {
-		return filepath.Join(filepath.Dir(config.Config.FidoConfig), fn), nil
+	if _, err := os.Stat(filepath.Join(filepath.Dir(config.Config.AreaFile.Path), fn)); err == nil {
+		return filepath.Join(filepath.Dir(config.Config.AreaFile.Path), fn), nil
 	}
 	return "", errors.New(fn + " not found")
 }
