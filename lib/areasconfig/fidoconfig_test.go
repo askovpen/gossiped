@@ -1,4 +1,4 @@
-package fidoconfig
+package areasconfig
 
 import (
 	. "github.com/franela/goblin"

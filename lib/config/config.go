@@ -11,13 +11,23 @@ import (
 )
 
 type configS struct {
-	Username   string
-	FidoConfig string
-	Log        string
-	Address    *types.FidoAddr
-	Origin     string
-	Template   string
-	Chrs       string
+	Username string
+	AreaFile struct {
+		Path string
+		Type string
+	}
+	Areas []struct {
+		Name     string
+		Path     string
+		Type     string
+		BaseType string
+		Chrs     string
+	}
+	Log      string
+	Address  *types.FidoAddr
+	Origin   string
+	Template string
+	Chrs     string
 }
 
 //go:generate go run ../../util/autoversion/main.go

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/askovpen/goated/lib/areasconfig"
 	"github.com/askovpen/goated/lib/config"
-	"github.com/askovpen/goated/lib/fidoconfig"
 	"github.com/askovpen/goated/lib/ui"
 	"github.com/askovpen/gocui"
 	"log"
@@ -27,7 +27,7 @@ func main() {
 	defer f.Close()
 	log.SetOutput(f)
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	err = fidoconfig.Read()
+	err = areasconfig.Read()
 	if err != nil {
 		log.Print(err)
 		return
