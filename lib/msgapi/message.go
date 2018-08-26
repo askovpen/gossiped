@@ -1,12 +1,12 @@
 package msgapi
 
 import (
-	"errors"
+	// "errors"
 	"fmt"
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
-	"log"
+	// "log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -53,7 +53,7 @@ func (m *Message) ParseRaw() error {
 			m.Kludges["CHRS"] = strings.ToUpper(strings.Split(l, " ")[1])
 		}
 	}
-	log.Printf("ParseRaw(): %#v", m.Kludges)
+	//log.Printf("ParseRaw(): %#v", m.Kludges)
 	if m.FromAddr == nil {
 		if _, ok := m.Kludges["INTL"]; ok {
 			m.ToAddr = types.AddrFromString(strings.Split(m.Kludges["INTL"], " ")[0])
@@ -63,7 +63,9 @@ func (m *Message) ParseRaw() error {
 		}
 	}
 	if m.FromAddr == nil {
-		return errors.New("FromAddr not defined")
+		//return errors.New("FromAddr not defined")
+		m.Corrupted=true
+		m.FromAddr=&types.FidoAddr{}
 	}
 	if m.ToAddr == nil {
 		m.ToAddr = &types.FidoAddr{}
@@ -87,7 +89,7 @@ func (m *Message) Decode() {
 	if _, ok := m.Kludges["CHRS"]; ok {
 		enc = m.Kludges["CHRS"]
 	}
-	log.Printf("Decode(): %#v", m.Kludges)
+	//log.Printf("Decode(): %#v", m.Kludges)
 	m.Body = utils.DecodeCharmap(m.Body, enc)
 	m.From = utils.DecodeCharmap(m.From, enc)
 	m.To = utils.DecodeCharmap(m.To, enc)
@@ -198,7 +200,7 @@ func (m *Message) GetQuote() []string {
 			nm = append(nm, "\033[33;1m "+from+"> "+l+"\033[0m")
 		}
 	}
-	log.Print(from)
+	//log.Print(from)
 	return nm
 }
 

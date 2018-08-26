@@ -132,7 +132,7 @@ func areaPrev(g *gocui.Gui, v *gocui.View) error {
 func viewArea(g *gocui.Gui, v *gocui.View) error {
 	_, oy := v.Origin()
 	_, cy := v.Cursor()
-	log.Printf("view %d", oy+cy)
+	//log.Printf("view %d", oy+cy)
 	err := viewMsg(cy+oy-1, msgapi.Areas[cy+oy-1].GetLast())
 	if err != nil {
 		errorMsg(err.Error(), "AreaList")

@@ -6,7 +6,7 @@ import (
 	"github.com/askovpen/goated/lib/msgapi"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/gocui"
-	"log"
+	// "log"
 	"strings"
 )
 
@@ -193,7 +193,7 @@ func editMsgBodyMenuDown(g *gocui.Gui, v *gocui.View) error {
 }
 func saveMessage(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
-	log.Printf("cy %d", cy)
+	//log.Printf("cy %d", cy)
 	switch cy {
 	case 0:
 		g.DeleteView("MsgHeader")
