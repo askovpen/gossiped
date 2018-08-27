@@ -1,6 +1,6 @@
 # goated
 [![Build status](https://ci.appveyor.com/api/projects/status/b04rcghch4pskvmu/branch/master?svg=true)](https://ci.appveyor.com/project/askovpen/goated/branch/master)
-[![Go Reportcard](https://goreportcard.com/badge/github.com/askovpen/goated)](https://goreportcard.com/report/github.com/askovpen/goated)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0003329106c47a684e76598853636cd)](https://www.codacy.com/app/askovpen/goated)
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/askovpen/goated/blob/master/LICENSE.txt)
 
 *goAtEd* - ftn message editor
