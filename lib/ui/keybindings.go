@@ -20,6 +20,8 @@ func Keybindings(g *gocui.Gui) error {
 
 	g.SetKeybinding("MsgBody", gocui.KeyArrowDown, gocui.ModNone, scrollDown)
 	g.SetKeybinding("MsgBody", gocui.KeyArrowUp, gocui.ModNone, scrollUp)
+	g.SetKeybinding("MsgBody", gocui.KeyPgup, gocui.ModNone, scrollPgUp)
+	g.SetKeybinding("MsgBody", gocui.KeyPgdn, gocui.ModNone, scrollPgDn)
 	g.SetKeybinding("MsgBody", gocui.KeyArrowLeft, gocui.ModNone, prevMsg)
 	g.SetKeybinding("MsgBody", gocui.KeyArrowRight, gocui.ModNone, nextMsg)
 	g.SetKeybinding("MsgBody", '<', gocui.ModNone, firstMsg)
@@ -29,6 +31,7 @@ func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlK, gocui.ModNone, toggleKludges)
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlG, gocui.ModNone, editMsgNum)
 	g.SetKeybinding("MsgBody", gocui.KeyInsert, gocui.ModNone, editMsg)
+	g.SetKeybinding("MsgBody", gocui.KeyCtrlI, gocui.ModNone, editMsg)
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlQ, gocui.ModNone, answerMsg)
 	g.SetKeybinding("MsgBody", gocui.KeyF3, gocui.ModNone, answerMsg)
 	g.SetKeybinding("MsgBody", 'q', gocui.ModAlt, answerMsg)
