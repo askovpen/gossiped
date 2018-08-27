@@ -77,6 +77,9 @@ func (m *Message) ParseRaw() error {
 // Encode charset
 func (m *Message) Encode() {
 	enc := strings.Split(config.Config.Chrs, " ")[0]
+	if Areas[m.AreaID].GetChrs() != "" {
+		enc = strings.Split(Areas[m.AreaID].GetChrs(), " ")[0]
+	}
 	m.Body = utils.EncodeCharmap(m.Body, enc)
 	m.From = utils.EncodeCharmap(m.From, enc)
 	m.To = utils.EncodeCharmap(m.To, enc)

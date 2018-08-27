@@ -20,6 +20,7 @@ type MSG struct {
 	AreaPath    string
 	AreaName    string
 	AreaType    EchoAreaType
+	Chrs        string
 	lastreads   string
 	messageNums []uint32
 }
@@ -247,4 +248,14 @@ func (m *MSG) SaveMsg(tm *Message) error {
 	}
 	m.messageNums = append(m.messageNums, m.messageNums[len(m.messageNums)-1]+1)
 	return nil
+}
+
+// SetChrs set charset
+func (m *MSG) SetChrs(s string) {
+	m.Chrs = s
+}
+
+// GetChrs get charset
+func (m *MSG) GetChrs() string {
+	return m.Chrs
 }

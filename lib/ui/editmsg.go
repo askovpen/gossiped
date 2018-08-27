@@ -26,6 +26,9 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 		newMsg.Kludges = make(map[string]string)
 		newMsg.Kludges["PID:"] = config.PID
 		newMsg.Kludges["CHRS:"] = config.Config.Chrs
+		if msgapi.Areas[curAreaID].GetChrs() != "" {
+			newMsg.Kludges["CHRS:"] = msgapi.Areas[curAreaID].GetChrs()
+		}
 	}
 	if newMsgType == "answer" {
 		origMessage, _ = msgapi.Areas[curAreaID].GetMsg(curMsgNum)

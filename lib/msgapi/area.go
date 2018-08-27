@@ -27,6 +27,8 @@ type AreaPrimitive interface {
 	GetName() string
 	GetMsgType() EchoAreaMsgType
 	GetType() EchoAreaType
+	SetChrs(string)
+	GetChrs() string
 	SetLast(uint32)
 	SaveMsg(*Message) error
 }
