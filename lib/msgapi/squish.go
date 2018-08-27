@@ -413,9 +413,13 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	s.indexStructure = append(s.indexStructure, sqi)
 	return nil
 }
+
+// SetChrs set charset
 func (s *Squish) SetChrs(c string) {
 	s.Chrs = c
 }
+
+// GetChrs get charset
 func (s *Squish) GetChrs() string {
 	return s.Chrs
 }

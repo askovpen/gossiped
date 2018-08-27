@@ -462,9 +462,13 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	j.indexStructure = append(j.indexStructure, jamS{jamh.MessageNumber, jam})
 	return nil
 }
+
+// SetChrs set charset
 func (j *JAM) SetChrs(c string) {
 	j.Chrs = c
 }
+
+// GetChrs get charset
 func (j *JAM) GetChrs() string {
 	return j.Chrs
 }
