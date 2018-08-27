@@ -58,7 +58,7 @@ type sqiS struct {
 
 type sqdS struct {
 	Len, Rsvd1                                                uint16
-	NumMsg, HighMsg, SkipMsg, HighWater, Uid                  uint32
+	NumMsg, HighMsg, SkipMsg, HighWater, UID                  uint32
 	Base                                                      [80]byte
 	BeginFrame, LastFrame, FreeFrame, LastFreeFrame, EndFrame uint32
 	MaxMsg                                                    uint32
@@ -68,7 +68,7 @@ type sqdS struct {
 }
 
 type sqdH struct {
-	Id, NextFrame, PrevFrame, FrameLength, MsgLength, CLen uint32
+	ID, NextFrame, PrevFrame, FrameLength, MsgLength, CLen uint32
 	FrameType, Rsvd                                        uint16
 	Attr                                                   uint32
 	From, To                                               [36]byte
@@ -79,7 +79,7 @@ type sqdH struct {
 	Utc                                                    uint16
 	ReplyTo                                                uint32
 	Replies                                                [9]uint32
-	UMsgId                                                 uint32
+	UMsgID                                                 uint32
 	Date                                                   [20]byte
 }
 
@@ -112,8 +112,8 @@ func readSQDH(headerb *bytes.Buffer) (sqdH, error) {
 	if err := utils.ReadStructFromBuffer(headerb, &sqdh); err != nil {
 		return sqdh, err
 	}
-	if sqdh.Id != 0xafae4453 {
-		return sqdh, fmt.Errorf("Wrong Squish header %08x", sqdh.Id)
+	if sqdh.ID != 0xafae4453 {
+		return sqdh, fmt.Errorf("Wrong Squish header %08x", sqdh.ID)
 	}
 	return sqdh, nil
 }
@@ -324,7 +324,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 		kludges += "\x01" + kl + " " + v
 	}
 	kludges += "\x00"
-	sqdh.Id = 0xafae4453
+	sqdh.ID = 0xafae4453
 	sqdh.NextFrame = 0
 	sqdh.PrevFrame = s.indexStructure[lastIdx].Offset
 	sqdh.Attr = uint32(SquishLOCAL | SquishSEEN)
@@ -341,13 +341,13 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	} else {
 		sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint = 0, 0, 0, 0
 	}
-	sqdh.UMsgId = s.indexStructure[lastIdx].MessageNum + 1
+	sqdh.UMsgID = s.indexStructure[lastIdx].MessageNum + 1
 	sqdh.CLen = uint32(len(kludges))
 	body := kludges + tm.Body + "\x00"
 	sqdh.MsgLength = uint32(len(body)) + 266 - 28
 	sqdh.FrameLength = uint32(len(body)) + 266 - 28
 	sqi.CRC = bufHash32(tm.To)
-	sqi.MessageNum = sqdh.UMsgId
+	sqi.MessageNum = sqdh.UMsgID
 	f, err := os.OpenFile(s.AreaPath+".sqd", os.O_RDWR, 0644)
 	if err != nil {
 		return err
@@ -364,7 +364,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	sqi.Offset = sqd.EndFrame
 	sqd.NumMsg++
 	sqd.HighMsg++
-	sqd.Uid++
+	sqd.UID++
 	sqd.LastFrame = sqd.EndFrame
 	sqd.EndFrame = sqd.LastFrame + sqdh.FrameLength + 28
 	f.Seek(0, 0)
