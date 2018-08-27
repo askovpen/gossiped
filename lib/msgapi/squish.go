@@ -362,9 +362,9 @@ func (s *Squish) SaveMsg(tm *Message) error {
 		return err
 	}
 	sqi.Offset = sqd.EndFrame
-	sqd.NumMsg += 1
-	sqd.HighMsg += 1
-	sqd.Uid += 1
+	sqd.NumMsg++
+	sqd.HighMsg++
+	sqd.Uid++
 	sqd.LastFrame = sqd.EndFrame
 	sqd.EndFrame = sqd.LastFrame + sqdh.FrameLength + 28
 	f.Seek(0, 0)

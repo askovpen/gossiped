@@ -176,7 +176,7 @@ func editMsgBodyMenuUp(g *gocui.Gui, v *gocui.View) error {
 	if cy == 0 {
 		cy = 3
 	} else {
-		cy -= 1
+		cy--
 	}
 	v.SetCursor(cx, cy)
 	return nil
@@ -186,7 +186,7 @@ func editMsgBodyMenuDown(g *gocui.Gui, v *gocui.View) error {
 	if cy == 3 {
 		cy = 0
 	} else {
-		cy += 1
+		cy++
 	}
 	v.SetCursor(cx, cy)
 	return nil
