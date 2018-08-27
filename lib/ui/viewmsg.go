@@ -173,11 +173,46 @@ func quitMsgView(g *gocui.Gui, v *gocui.View) error {
 	}
 	return nil
 }
+func scrollPgDn(g *gocui.Gui, v *gocui.View) error {
+	ox, oy := v.Origin()
+	_, sy := v.Size()
+	log.Printf("vbl: %d, sy: %d, oy: %d", len(v.ViewBufferLines()), sy, oy)
+	if oy >= len(v.ViewBufferLines())-sy-1 {
+		return nil
+	}
+	if oy+sy <= len(v.ViewBufferLines())-sy-1 {
+		if err := v.SetOrigin(ox, oy+sy); err != nil {
+			return err
+		}
+	} else {
+		if err := v.SetOrigin(ox, len(v.ViewBufferLines())-sy-1); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func scrollPgUp(g *gocui.Gui, v *gocui.View) error {
+	ox, oy := v.Origin()
+	_, sy := v.Size()
+	if oy == 0 {
+		return nil
+	}
+	if oy-sy >= 0 {
+		if err := v.SetOrigin(ox, oy-sy); err != nil {
+			return err
+		}
+	} else {
+		if err := v.SetOrigin(ox, 0); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func scrollDown(g *gocui.Gui, v *gocui.View) error {
 	if v != nil {
 		ox, oy := v.Origin()
 		_, sy := v.Size()
-		if oy >= len(v.BufferLines())-sy-1 {
+		if oy >= len(v.ViewBufferLines())-sy-1 {
 			return nil
 		}
 		if err := v.SetOrigin(ox, oy+1); err != nil {
