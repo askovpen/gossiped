@@ -21,6 +21,7 @@ import (
 type JAM struct {
 	AreaPath, AreaName string
 	AreaType           EchoAreaType
+	Chrs               string
 	indexStructure     []jamS
 	lastRead           []jamL
 }
@@ -460,4 +461,10 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	f.Close()
 	j.indexStructure = append(j.indexStructure, jamS{jamh.MessageNumber, jam})
 	return nil
+}
+func (j *JAM) SetChrs(c string) {
+	j.Chrs = c
+}
+func (j *JAM) GetChrs() string {
+	return j.Chrs
 }

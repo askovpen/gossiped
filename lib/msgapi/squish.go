@@ -47,6 +47,7 @@ type Squish struct {
 	AreaPath       string
 	AreaName       string
 	AreaType       EchoAreaType
+	Chrs           string
 	indexStructure []sqiS
 }
 
@@ -411,4 +412,10 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	f.Close()
 	s.indexStructure = append(s.indexStructure, sqi)
 	return nil
+}
+func (s *Squish) SetChrs(c string) {
+	s.Chrs = c
+}
+func (s *Squish) GetChrs() string {
+	return s.Chrs
 }
