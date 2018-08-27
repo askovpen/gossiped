@@ -9,15 +9,15 @@ import (
 	"strings"
 )
 
-func viewMsg(areaId int, msgNum uint32) error {
-	if msgNum == 0 && msgapi.Areas[areaId].GetCount() != 0 {
+func viewMsg(areaID int, msgNum uint32) error {
+	if msgNum == 0 && msgapi.Areas[areaID].GetCount() != 0 {
 		msgNum = 1
 	}
 	msgEmpty := false
-	curAreaId = areaId
+	curAreaID = areaID
 	curMsgNum = msgNum
 	maxX, maxY := App.Size()
-	msg, err := msgapi.Areas[areaId].GetMsg(msgNum)
+	msg, err := msgapi.Areas[areaID].GetMsg(msgNum)
 	if err != nil {
 		if err.Error() == "Empty Area" {
 			msgEmpty = true
@@ -28,16 +28,16 @@ func viewMsg(areaId int, msgNum uint32) error {
 	}
 	StatusLine = fmt.Sprintf("Msg %d of %d (%d left)",
 		msgNum,
-		msgapi.Areas[areaId].GetCount(),
-		msgapi.Areas[areaId].GetCount()-msgNum)
+		msgapi.Areas[areaID].GetCount(),
+		msgapi.Areas[areaID].GetCount()-msgNum)
 	if msgEmpty {
 		MsgHeader, _ := App.SetView("MsgHeader", 0, 0, maxX-1, 5)
 		MsgHeader.Clear()
-		MsgHeader.Title = msgapi.Areas[areaId].GetName()
+		MsgHeader.Title = msgapi.Areas[areaID].GetName()
 		MsgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 		MsgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
-			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),
+			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaID].GetCount()),
 			"")
 		fmt.Fprintf(MsgHeader, " From :\n")
 		fmt.Fprintf(MsgHeader, " To   : \n")
@@ -47,15 +47,15 @@ func viewMsg(areaId int, msgNum uint32) error {
 		MsgBody.Wrap = true
 		MsgBody.Clear()
 	} else {
-		msgapi.Areas[areaId].SetLast(msgNum)
+		msgapi.Areas[areaID].SetLast(msgNum)
 		MsgHeader, _ := App.SetView("MsgHeader", 0, 0, maxX-1, 5)
 		MsgHeader.Wrap = false
 		MsgHeader.Clear()
-		MsgHeader.Title = msgapi.Areas[areaId].GetName()
+		MsgHeader.Title = msgapi.Areas[areaID].GetName()
 		MsgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 		MsgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
-			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()),
+			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaID].GetCount()),
 			strings.Join(msg.Attrs, " "))
 		fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s\n",
 			msg.From,
@@ -82,7 +82,7 @@ func viewMsg(areaId int, msgNum uint32) error {
 func prevMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
 	if curMsgNum > 1 {
-		err := viewMsg(curAreaId, curMsgNum-1)
+		err := viewMsg(curAreaID, curMsgNum-1)
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
 			return nil
@@ -94,8 +94,8 @@ func prevMsg(g *gocui.Gui, v *gocui.View) error {
 
 func nextMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
-	if curMsgNum < msgapi.Areas[curAreaId].GetCount() {
-		err := viewMsg(curAreaId, curMsgNum+1)
+	if curMsgNum < msgapi.Areas[curAreaID].GetCount() {
+		err := viewMsg(curAreaID, curMsgNum+1)
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
 			return nil
@@ -107,7 +107,7 @@ func nextMsg(g *gocui.Gui, v *gocui.View) error {
 
 func firstMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
-	viewMsg(curAreaId, 1)
+	viewMsg(curAreaID, 1)
 	ActiveWindow = "MsgBody"
 	return nil
 }
@@ -129,8 +129,8 @@ func editMsgNumEnter(g *gocui.Gui, v *gocui.View) error {
 	if err := g.DeleteView("editNumberTitle"); err != nil {
 		return err
 	}
-	if n > 0 && uint32(n) <= msgapi.Areas[curAreaId].GetCount() {
-		err := viewMsg(curAreaId, uint32(n))
+	if n > 0 && uint32(n) <= msgapi.Areas[curAreaID].GetCount() {
+		err := viewMsg(curAreaID, uint32(n))
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
 		}
@@ -150,7 +150,7 @@ func editMsgNum(g *gocui.Gui, v *gocui.View) error {
 	editableNumberTitle, _ := App.SetView("editNumberTitle", 14, 0, 24, 2)
 	editableNumberTitle.Frame = false
 	g.Cursor = true
-	fmt.Fprintf(editableNumberTitle, " of %d", msgapi.Areas[curAreaId].GetCount())
+	fmt.Fprintf(editableNumberTitle, " of %d", msgapi.Areas[curAreaID].GetCount())
 	App.SetCurrentView("editNumber")
 	ActiveWindow = "editNumber"
 	return nil
@@ -158,7 +158,7 @@ func editMsgNum(g *gocui.Gui, v *gocui.View) error {
 
 func lastMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
-	viewMsg(curAreaId, msgapi.Areas[curAreaId].GetCount())
+	viewMsg(curAreaID, msgapi.Areas[curAreaID].GetCount())
 	ActiveWindow = "MsgBody"
 	return nil
 }
@@ -237,7 +237,7 @@ func scrollUp(g *gocui.Gui, v *gocui.View) error {
 func toggleKludges(g *gocui.Gui, v *gocui.View) error {
 	showKludges = !showKludges
 	quitMsgView(g, v)
-	viewMsg(curAreaId, curMsgNum)
+	viewMsg(curAreaID, curMsgNum)
 	ActiveWindow = "MsgBody"
 	return nil
 }

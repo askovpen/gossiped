@@ -15,7 +15,7 @@ var (
 	// ActiveWindow name
 	ActiveWindow string
 	parentWindow string
-	curAreaId    int
+	curAreaID    int
 	curMsgNum    uint32
 	showKludges  bool
 	// StatusLine variable

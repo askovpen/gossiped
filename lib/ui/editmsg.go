@@ -22,13 +22,13 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
 	var origMessage *msgapi.Message
 	if newMsg == nil {
-		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: curAreaId}
+		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: curAreaID}
 		newMsg.Kludges = make(map[string]string)
 		newMsg.Kludges["PID:"] = config.PID
 		newMsg.Kludges["CHRS:"] = config.Config.Chrs
 	}
 	if newMsgType == "answer" {
-		origMessage, _ = msgapi.Areas[curAreaId].GetMsg(curMsgNum)
+		origMessage, _ = msgapi.Areas[curAreaID].GetMsg(curMsgNum)
 		newMsg.To = origMessage.From
 		newMsg.ToAddr = origMessage.FromAddr
 		newMsg.Kludges["REPLY:"] = origMessage.Kludges["MSGID:"]
@@ -38,7 +38,7 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	msgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 	msgHeader.Clear()
 	fmt.Fprintf(msgHeader, " Msg  : %-34s Pvt\n",
-		fmt.Sprintf("%d of %d", msgapi.Areas[curAreaId].GetCount()+1, msgapi.Areas[curAreaId].GetCount()+1))
+		fmt.Sprintf("%d of %d", msgapi.Areas[curAreaID].GetCount()+1, msgapi.Areas[curAreaID].GetCount()+1))
 	fmt.Fprintf(msgHeader, " From :\n")
 	fmt.Fprintf(msgHeader, " To   : \n")
 	fmt.Fprintf(msgHeader, " Subj : ")
@@ -63,14 +63,14 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	msgToName.Editable = true
 	if newMsgType == "answer" {
 		fmt.Fprintf(msgToName, "%s", origMessage.From)
-	} else if msgapi.Areas[curAreaId].GetType() != msgapi.EchoAreaTypeNetmail {
+	} else if msgapi.Areas[curAreaID].GetType() != msgapi.EchoAreaTypeNetmail {
 		fmt.Fprintf(msgToName, "All")
 	}
 	msgToAddr, _ := g.SetView("editToAddr", 43, 2, 57, 4)
 	msgToAddr.Clear()
 	msgToAddr.Frame = false
 	msgToAddr.Editable = true
-	if newMsgType == "answer" && msgapi.Areas[curAreaId].GetType() == msgapi.EchoAreaTypeNetmail {
+	if newMsgType == "answer" && msgapi.Areas[curAreaID].GetType() == msgapi.EchoAreaTypeNetmail {
 		fmt.Fprintf(msgToAddr, "%s", origMessage.FromAddr)
 	}
 	g.Cursor = true
@@ -91,7 +91,7 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 func editToNameNext(g *gocui.Gui, v *gocui.View) error {
 	vn, _ := g.View("editToName")
 	newMsg.To = strings.Trim(vn.Buffer(), "\n")
-	if msgapi.Areas[curAreaId].GetType() == msgapi.EchoAreaTypeNetmail {
+	if msgapi.Areas[curAreaID].GetType() == msgapi.EchoAreaTypeNetmail {
 		ActiveWindow = "editToAddr"
 	} else {
 		ActiveWindow = "editSubj"
@@ -134,7 +134,7 @@ func editToSubjBody(g *gocui.Gui, v *gocui.View) error {
 	var p int
 	var mv string
 	if newMsgType == "answer" {
-		origMessage, _ = msgapi.Areas[curAreaId].GetMsg(curMsgNum)
+		origMessage, _ = msgapi.Areas[curAreaID].GetMsg(curMsgNum)
 	}
 	vn, _ = g.View("editMsgBody")
 	if newMsgType == "answer" {
@@ -176,7 +176,7 @@ func editMsgBodyMenuUp(g *gocui.Gui, v *gocui.View) error {
 	if cy == 0 {
 		cy = 3
 	} else {
-		cy -= 1
+		cy--
 	}
 	v.SetCursor(cx, cy)
 	return nil
@@ -186,7 +186,7 @@ func editMsgBodyMenuDown(g *gocui.Gui, v *gocui.View) error {
 	if cy == 3 {
 		cy = 0
 	} else {
-		cy += 1
+		cy++
 	}
 	v.SetCursor(cx, cy)
 	return nil
@@ -204,11 +204,11 @@ func saveMessage(g *gocui.Gui, v *gocui.View) error {
 		g.DeleteView("editToAddr")
 		g.DeleteView("editSubj")
 		g.DeleteView("editMenuMsg")
-		err := msgapi.Areas[curAreaId].SaveMsg(newMsg.MakeBody())
+		err := msgapi.Areas[curAreaID].SaveMsg(newMsg.MakeBody())
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
 		} else {
-			viewMsg(curAreaId, curMsgNum)
+			viewMsg(curAreaID, curMsgNum)
 			ActiveWindow = "MsgBody"
 		}
 	case 1:
@@ -220,7 +220,7 @@ func saveMessage(g *gocui.Gui, v *gocui.View) error {
 		g.DeleteView("editToAddr")
 		g.DeleteView("editSubj")
 		g.DeleteView("editMenuMsg")
-		viewMsg(curAreaId, curMsgNum)
+		viewMsg(curAreaID, curMsgNum)
 		ActiveWindow = "MsgBody"
 	case 2:
 		g.DeleteView("editMenuMsg")

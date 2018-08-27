@@ -52,7 +52,7 @@ type jamH struct {
 }
 
 type jamL struct {
-	UserCRC, UserId, LastReadMsg, HighReadMsg uint32
+	UserCRC, UserID, LastReadMsg, HighReadMsg uint32
 }
 
 func (j *JAM) getAttrs(a uint32) (attrs []string) {
@@ -266,10 +266,9 @@ func (j *JAM) readJLR() {
 		}
 	}
 }
-func (j *JAM) getPositionOfJamMsg(mId uint32) uint32 {
+func (j *JAM) getPositionOfJamMsg(mID uint32) uint32 {
 	for i, ji := range j.indexStructure {
-		if mId == ji.MessageNum {
-			// log.Printf("getPositionOfJamMsg(%d)->%d",mId, i)
+		if mID == ji.MessageNum {
 			return uint32(i)
 		}
 	}
@@ -428,7 +427,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	if err := utils.ReadStructFromBuffer(headerb, &jhr); err != nil {
 		return err
 	}
-	jhr.ActiveMsgs += 1
+	jhr.ActiveMsgs++
 	buf := new(bytes.Buffer)
 	err = utils.WriteStructToBuffer(buf, &jhr)
 	if err != nil {

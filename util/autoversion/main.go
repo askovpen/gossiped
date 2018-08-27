@@ -35,7 +35,7 @@ func main() {
 	}
 	cc := 0
 	err = cIter.ForEach(func(c *object.Commit) error {
-		cc += 1
+		cc++
 		return nil
 	})
 	if err != nil {

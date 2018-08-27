@@ -40,9 +40,8 @@ func quitAreaList(g *gocui.Gui, v *gocui.View) error {
 func getAreaNew(m msgapi.AreaPrimitive) string {
 	if m.GetCount()-m.GetLast() > 0 {
 		return "\033[37;1m+\033[0m"
-	} else {
-		return " "
 	}
+	return " "
 }
 func areaPgup(g *gocui.Gui, v *gocui.View) error {
 	_, oy := v.Origin()

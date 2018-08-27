@@ -130,9 +130,8 @@ func getMsgBType(tokens []string) msgapi.EchoAreaMsgType {
 				return msgapi.EchoAreaMsgTypeJAM
 			} else if strings.EqualFold(tokens[i+1], "msg") {
 				return msgapi.EchoAreaMsgTypeMSG
-			} else {
-				return defaultMsgType
 			}
+			return defaultMsgType
 		}
 	}
 	return defaultMsgType
