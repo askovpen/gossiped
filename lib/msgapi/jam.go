@@ -389,7 +389,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	if len(j.indexStructure) == 0 {
 		return errors.New("creating JAM area not implemented")
 	}
-	jamh := jamH{Signature: 0x4d414a, Revision: 1, Attribute: 0x02000001}
+	jamh := jamH{Signature: 0x4d414a, Revision: 1, Attribute: 0x01000001}
 	kl := packJamKludges(tm)
 	jamh.SubfieldLen = uint32(len(kl))
 	jamh.MSGIDcrc = crc32r(tm.Kludges["MSGID:"])
