@@ -10,7 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 )
 
@@ -22,16 +21,6 @@ func fidoConfigRead(fn string) error {
 	defaultMsgType = msgapi.EchoAreaMsgTypeMSG
 	readFile(fn)
 
-	if len(msgapi.Areas) == 0 {
-		return errors.New("no Areas found")
-	}
-
-	sort.Slice(msgapi.Areas, func(i, j int) bool {
-		if msgapi.Areas[i].GetType() != msgapi.Areas[j].GetType() {
-			return msgapi.Areas[i].GetType() < msgapi.Areas[j].GetType()
-		}
-		return msgapi.Areas[i].GetName() < msgapi.Areas[j].GetName()
-	})
 	return nil
 }
 

@@ -4,16 +4,22 @@ import (
 	"errors"
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/msgapi"
-	//	"log"
+	"log"
 	"sort"
 	"strings"
 )
 
 // Read area configs
 func Read() error {
+	log.Printf(config.Config.AreaFile.Type)
 	switch config.Config.AreaFile.Type {
 	case "fidoconfig":
 		err := fidoConfigRead(config.Config.AreaFile.Path)
+		if err != nil {
+			return err
+		}
+	case "areas.bbs":
+		err := areasbbsConfigRead(config.Config.AreaFile.Path)
 		if err != nil {
 			return err
 		}
@@ -36,6 +42,10 @@ func Read() error {
 				msgapi.Areas = append(msgapi.Areas, a)
 			}
 		}
+	}
+
+	if len(msgapi.Areas) == 0 {
+		return errors.New("no Areas found")
 	}
 
 	sort.Slice(msgapi.Areas, func(i, j int) bool {
