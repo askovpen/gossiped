@@ -8,5 +8,9 @@ template: goated.tpl
 origin: Just Origin
 chrs: CP866 2 # <charset> <lvl> http://ftsc.org/docs/fts-5003.001
 areas:
+  - name: netmail
+    path: '/path/to/netmail'
+    type: netmail # netmail, local, echo, dupe, bad
+    basetype: msg # msg, squish, jam
   - name: utf-8
     chrs: UTF-8 4

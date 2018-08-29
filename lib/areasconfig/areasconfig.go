@@ -93,6 +93,10 @@ func getType(t string) msgapi.EchoAreaType {
 		return msgapi.EchoAreaTypeLocal
 	} else if strings.EqualFold(t, "netmail") {
 		return msgapi.EchoAreaTypeNetmail
+	} else if strings.EqualFold(t, "dupe") {
+		return msgapi.EchoAreaTypeDupe
+	} else if strings.EqualFold(t, "bad") {
+		return msgapi.EchoAreaTypeBad
 	}
 	return msgapi.EchoAreaTypeLocal
 }
