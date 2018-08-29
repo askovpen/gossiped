@@ -23,6 +23,11 @@ func Read() error {
 		if err != nil {
 			return err
 		}
+	case "squish":
+		err := squishConfigRead(config.Config.AreaFile.Path)
+		if err != nil {
+			return err
+		}
 	default:
 		return errors.New("unknown AreasConfig.Type '" + config.Config.AreaFile.Type + "'")
 	}
