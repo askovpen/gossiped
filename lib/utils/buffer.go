@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"io"
 	"log"
 	"reflect"
 )
@@ -30,7 +31,7 @@ func ReadStructFromBuffer(buffer *bytes.Buffer, data interface{}) error {
 			break
 		case reflect.String:
 			str, err := buffer.ReadString(0x00)
-			if err != nil {
+			if err != nil && err != io.EOF {
 				return err
 			}
 			v.Field(i).SetString(str)
