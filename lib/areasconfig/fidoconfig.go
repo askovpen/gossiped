@@ -64,6 +64,10 @@ func readFile(fn string) {
 				processArea(res[0], msgapi.EchoAreaTypeLocal)
 			} else if strings.EqualFold(res[1], "netmailarea") {
 				processArea(res[0], msgapi.EchoAreaTypeNetmail)
+			} else if strings.EqualFold(res[1], "dupearea") {
+				processArea(res[0], msgapi.EchoAreaTypeDupe)
+			} else if strings.EqualFold(res[1], "badarea") {
+				processArea(res[0], msgapi.EchoAreaTypeBad)
 			} else if strings.EqualFold(res[1], "EchoAreaDefaults") {
 				processDef(res[0])
 			}

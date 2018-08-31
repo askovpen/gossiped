@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"github.com/askovpen/goated/lib/msgapi"
 	"io/ioutil"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -23,13 +22,12 @@ func areasbbsConfigRead(fn string) error {
 	scanner := bufio.NewScanner(strings.NewReader(string(b[:])))
 	for scanner.Scan() {
 		res := re.FindAllString(scanner.Text(), -1)
-		if len(res) < 3 {
+		if len(res) < 2 {
 			continue
 		}
 		if len(res[0]) < 3 {
 			continue
 		}
-		log.Printf("%q", res)
 		switch res[0][0] {
 		case ';':
 			continue

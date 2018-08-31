@@ -35,7 +35,7 @@ func squishConfigRead(fn string) error {
 			aType = msgapi.EchoAreaTypeEcho
 		} else if strings.EqualFold(res[0], "netarea") {
 			aType = msgapi.EchoAreaTypeNetmail
-		} else if strings.EqualFold(res[0], "badaera") {
+		} else if strings.EqualFold(res[0], "badarea") {
 			aType = msgapi.EchoAreaTypeBad
 		} else if strings.EqualFold(res[0], "dupearea") {
 			aType = msgapi.EchoAreaTypeDupe
