@@ -11,6 +11,7 @@ environment:
   GOVERSION: 1.11
 
 before_build:
+  - set CGO_ENABLED=0
   - go version
   - go env
   - go get github.com/askovpen/gocui
