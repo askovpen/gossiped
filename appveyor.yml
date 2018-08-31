@@ -8,9 +8,10 @@ branches:
 
 environment:
   GOPATH: c:\gopath
-  GOVERSION: 1.10
+  GOVERSION: 1.11
 
 before_build:
+  - go version
   - go get github.com/askovpen/gocui
   - go get golang.org/x/text/transform
   - go get gopkg.in/yaml.v2
