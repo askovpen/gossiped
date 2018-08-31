@@ -8,9 +8,12 @@ branches:
 
 environment:
   GOPATH: c:\gopath
-  GOVERSION: 1.10
+  GOVERSION: 1.11
 
 before_build:
+  - set CGO_ENABLED=0
+  - go version
+  - go env
   - go get github.com/askovpen/gocui
   - go get golang.org/x/text/transform
   - go get gopkg.in/yaml.v2
@@ -46,7 +49,7 @@ build_script:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-win64.zip goated.exe config.example.yml goated.tpl)
 
 test_script:
-  - go test ./... -v -cover -race -coverprofile=coverage.txt -covermode=atomic
+  - go test ./... -v -cover
 
 #after_test:
 #  - ps: |
