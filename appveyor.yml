@@ -49,7 +49,7 @@ build_script:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-win64.zip goated.exe config.example.yml goated.tpl)
 
 test_script:
-  - go test ./... -v -cover
+  - go test ./... -v -cover --bench=. -benchmem
 
 #after_test:
 #  - ps: |

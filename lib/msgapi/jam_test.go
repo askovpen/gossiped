@@ -16,3 +16,10 @@ func TestJamCrc32r(t *testing.T) {
 		})
 	})
 }
+
+func BenchmarkJamCrc32r(b *testing.B) {
+	b.SetBytes(20)
+	for n := 0; n < b.N; n++ {
+		crc32r("Alexander N. Skovpen")
+	}
+}

@@ -22,3 +22,9 @@ func TestSquishBufHash32(t *testing.T) {
 		})
 	})
 }
+func BenchmarkSquishBufHash32(b *testing.B) {
+	b.SetBytes(20)
+	for n := 0; n < b.N; n++ {
+		bufHash32("Alexander N. Skovpen")
+	}
+}
