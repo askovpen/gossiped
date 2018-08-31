@@ -12,6 +12,7 @@ environment:
 
 before_build:
   - go version
+  - go env
   - go get github.com/askovpen/gocui
   - go get golang.org/x/text/transform
   - go get gopkg.in/yaml.v2
