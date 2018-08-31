@@ -2,6 +2,7 @@ package msgapi
 
 import (
 	. "github.com/franela/goblin"
+	"strconv"
 	"testing"
 )
 
@@ -15,4 +16,10 @@ func TestJamCrc32r(t *testing.T) {
 			g.Assert(crc32r("Alexander N. Skovpen")).Equal(uint32(0x30222bd1))
 		})
 	})
+}
+
+func BenchmarkJamCrc32r(b *testing.B) {
+  for n := 0; n < b.N; n++ {
+    crc32r(strconv.FormatInt(int64(b.N),10))
+  }
 }
