@@ -81,7 +81,7 @@ func (f *FidoAddr) UnmarshalYAML(unmarshal func(interface{}) error) (err error) 
 	var fm string
 	unmarshal(&fm)
 	tf := AddrFromString(fm)
-	if tf==nil {
+	if tf == nil {
 		return errors.New("wrong address")
 	}
 	f.zone = tf.zone
