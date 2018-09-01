@@ -314,10 +314,10 @@ func (s *Squish) SetLast(l uint32) {
 
 // SaveMsg save message
 func (s *Squish) SaveMsg(tm *Message) error {
-	if len(s.indexStructure) == 0 {
-		return errors.New("creating Squish area not implemented")
-	}
 	lastIdx := len(s.indexStructure) - 1
+	if len(s.indexStructure) == 0 {
+		lastIdx = 0
+	}
 	var sqdh sqdH
 	var sqi sqiS
 	kludges := ""
@@ -327,7 +327,9 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	kludges += "\x00"
 	sqdh.ID = 0xafae4453
 	sqdh.NextFrame = 0
-	sqdh.PrevFrame = s.indexStructure[lastIdx].Offset
+	if len(s.indexStructure) > 0 {
+		sqdh.PrevFrame = s.indexStructure[lastIdx].Offset
+	}
 	sqdh.Attr = uint32(SquishLOCAL | SquishSEEN)
 	tm.Encode()
 	copy(sqdh.From[:], tm.From)
@@ -342,25 +344,38 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	} else {
 		sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint = 0, 0, 0, 0
 	}
-	sqdh.UMsgID = s.indexStructure[lastIdx].MessageNum + 1
+	if len(s.indexStructure) == 0 {
+		sqdh.UMsgID = 1
+	} else {
+		sqdh.UMsgID = s.indexStructure[lastIdx].MessageNum + 1
+	}
 	sqdh.CLen = uint32(len(kludges))
 	body := kludges + tm.Body + "\x00"
 	sqdh.MsgLength = uint32(len(body)) + 266 - 28
 	sqdh.FrameLength = uint32(len(body)) + 266 - 28
 	sqi.CRC = bufHash32(tm.To)
 	sqi.MessageNum = sqdh.UMsgID
-	f, err := os.OpenFile(s.AreaPath+".sqd", os.O_RDWR, 0644)
+	f, err := os.OpenFile(s.AreaPath+".sqd", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	var header []byte
-	header = make([]byte, 256)
-	f.Read(header)
-	headerb := bytes.NewBuffer(header)
 	var sqd sqdS
-	if err := utils.ReadStructFromBuffer(headerb, &sqd); err != nil {
-		return err
+	headerb := new(bytes.Buffer)
+	if len(s.indexStructure) == 0 {
+		sqd.Len = 256
+		sqd.EndFrame = 256
+		sqd.UID = 1
+		sqd.BeginFrame = 256
+		sqd.SzSQHdr = 28
+	} else {
+		header = make([]byte, 256)
+		f.Read(header)
+		headerb = bytes.NewBuffer(header)
+		if err := utils.ReadStructFromBuffer(headerb, &sqd); err != nil {
+			return err
+		}
 	}
 	sqi.Offset = sqd.EndFrame
 	sqd.NumMsg++
@@ -376,22 +391,24 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	}
 	f.Write(buf.Bytes())
 	buf.Reset()
-	f.Seek(int64(sqdh.PrevFrame), 0)
-	header = make([]byte, 266)
-	f.Read(header)
-	headerb = bytes.NewBuffer(header)
-	prevSqdh, err := readSQDH(headerb)
-	if err != nil {
-		return err
+	if sqdh.PrevFrame > 0 {
+		f.Seek(int64(sqdh.PrevFrame), 0)
+		header = make([]byte, 266)
+		f.Read(header)
+		headerb = bytes.NewBuffer(header)
+		prevSqdh, err := readSQDH(headerb)
+		if err != nil {
+			return err
+		}
+		prevSqdh.NextFrame = sqi.Offset
+		err = utils.WriteStructToBuffer(buf, &prevSqdh)
+		if err != nil {
+			return err
+		}
+		f.Seek(int64(sqdh.PrevFrame), 0)
+		f.Write(buf.Bytes())
+		buf.Reset()
 	}
-	prevSqdh.NextFrame = sqi.Offset
-	err = utils.WriteStructToBuffer(buf, &prevSqdh)
-	if err != nil {
-		return err
-	}
-	f.Seek(int64(sqdh.PrevFrame), 0)
-	f.Write(buf.Bytes())
-	buf.Reset()
 	err = utils.WriteStructToBuffer(buf, &sqdh)
 	if err != nil {
 		return err
@@ -401,13 +418,17 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	buf.Reset()
 	f.Write([]byte(body))
 	f.Close()
-	f, err = os.OpenFile(s.AreaPath+".sqi", os.O_RDWR, 0644)
+	f, err = os.OpenFile(s.AreaPath+".sqi", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	utils.WriteStructToBuffer(buf, &sqi)
-	f.Seek(0, 2)
+	if len(s.indexStructure) == 0 {
+		f.Seek(0, 0)
+	} else {
+		f.Seek(0, 2)
+	}
 	f.Write(buf.Bytes())
 	f.Close()
 	s.indexStructure = append(s.indexStructure, sqi)
