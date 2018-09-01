@@ -6,7 +6,6 @@ import (
 	"github.com/askovpen/goated/lib/config"
 	"github.com/askovpen/goated/lib/types"
 	"github.com/askovpen/goated/lib/utils"
-	// "log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -69,6 +68,20 @@ func (m *Message) ParseRaw() error {
 	}
 	if m.ToAddr == nil {
 		m.ToAddr = &types.FidoAddr{}
+	}
+	if Areas[m.AreaID].GetType() == EchoAreaTypeNetmail {
+		if _, ok := m.Kludges["FMPT"]; ok {
+			a, err := strconv.ParseUint(m.Kludges["FMPT"], 10, 16)
+			if err == nil {
+				m.FromAddr.SetPoint(uint16(a))
+			}
+		}
+		if _, ok := m.Kludges["TOPT"]; ok {
+			a, err := strconv.ParseUint(m.Kludges["TOPT"], 10, 16)
+			if err == nil {
+				m.ToAddr.SetPoint(uint16(a))
+			}
+		}
 	}
 	m.Decode()
 	return nil
@@ -275,5 +288,6 @@ func (m *Message) MakeBody() *Message {
 	m.Body = strings.Join(strings.Split(m.Body, "\n"), "\x0d")
 	m.DateWritten = time.Now()
 	m.DateArrived = m.DateWritten
+	//time.Sleep(time.Second)
 	return m
 }
