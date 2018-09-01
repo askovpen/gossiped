@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	. "github.com/franela/goblin"
 	"gopkg.in/yaml.v2"
 	"testing"
@@ -51,6 +52,8 @@ func TestFidoAddr(t *testing.T) {
 			err = yaml.Unmarshal(d, f)
 			g.Assert(err).Equal(nil)
 			g.Assert(f).Equal(&FidoAddr{2, 5020, 9696, 0})
+			err = yaml.Unmarshal([]byte{0x32,0x32,0x32}, f)
+			g.Assert(err).Equal(errors.New("wrong address"))
 		})
 	})
 }

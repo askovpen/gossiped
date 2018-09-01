@@ -83,6 +83,9 @@ func (f *FidoAddr) UnmarshalYAML(unmarshal func(interface{}) error) (err error) 
 		return err
 	}
 	tf := AddrFromString(fm)
+	if tf==nil {
+		return errors.New("wrong address")
+	}
 	f.zone = tf.zone
 	f.net = tf.net
 	f.node = tf.node
