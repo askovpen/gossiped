@@ -9,7 +9,7 @@ func TestFidoAddr(t *testing.T) {
 	g := Goblin(t)
 	g.Describe("Check FidoAddr", func() {
 		g.It("check AddrFromString()", func() {
-			g.Assert(AddrFromString("2:5020/9696").Equal(&FidoAddr{2, 5020, 9696, 0})).Equal(true)
+			g.Assert(AddrFromString("2:5020/9696.5").Equal(&FidoAddr{2, 5020, 9696, 5})).Equal(true)
 		})
 		g.It("check AddrFromNum()", func() {
 			g.Assert(AddrFromNum(2, 5020, 9696, 0).Equal(&FidoAddr{2, 5020, 9696, 0})).Equal(true)
@@ -28,6 +28,15 @@ func TestFidoAddr(t *testing.T) {
 		})
 		g.It("check GetPoint()", func() {
 			g.Assert((&FidoAddr{2, 5020, 9696, 0}).GetPoint()).Equal(uint16(0))
+		})
+		g.It("check SetPoint() String()", func() {
+			g.Assert((&FidoAddr{2, 5020, 9696, 0}).SetPoint(5).String()).Equal("2:5020/9696.5")
+		})
+		g.It("check FQDN()", func() {
+			_,err:=(&FidoAddr{2, 5020, 9696, 5}).FQDN()
+			g.Assert(err.Error()).Equal("point")
+			f,err:=(&FidoAddr{2, 5020, 9696, 0}).FQDN()
+			g.Assert(f).Equal("f9696.n5020.z2.binkp.net")
 		})
 	})
 }

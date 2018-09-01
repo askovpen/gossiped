@@ -116,6 +116,7 @@ func (f *FidoAddr) GetPoint() uint16 {
 }
 
 // SetPoint set point
-func (f *FidoAddr) SetPoint(p uint16) {
+func (f *FidoAddr) SetPoint(p uint16) *FidoAddr {
 	f.point = p
+	return f
 }
