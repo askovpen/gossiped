@@ -17,8 +17,6 @@ get: format
 	@go get -u  gopkg.in/yaml.v2
 	@echo get goblin
 	@go get -u  github.com/franela/goblin
-	@echo get go-git
-	@go get -u  gopkg.in/src-d/go-git.v4
 
 generate: get
 	@echo Generating version.go
