@@ -14,6 +14,7 @@ func TestMSG(t *testing.T) {
 		AreaName: "test",
 		AreaType: EchoAreaTypeNetmail,
 	}
+	Areas = Areas[:0]
 	Areas = append(Areas, Area)
 	g := Goblin(t)
 	g.Describe("Check MSG read/write", func() {

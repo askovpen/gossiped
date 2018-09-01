@@ -3,8 +3,8 @@ package msgapi
 import (
 	"github.com/askovpen/goated/lib/types"
 	. "github.com/franela/goblin"
-	"testing"
 	"os"
+	"testing"
 	"time"
 )
 
@@ -32,6 +32,8 @@ func TestSquish(t *testing.T) {
 		AreaName: "test",
 		AreaType: EchoAreaTypeEcho,
 	}
+	Areas = Areas[:0]
+	Areas = append(Areas, Area)
 	g := Goblin(t)
 	g.Describe("Check Squish read/write", func() {
 		m := &Message{
