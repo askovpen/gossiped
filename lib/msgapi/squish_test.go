@@ -4,6 +4,7 @@ import (
 	"github.com/askovpen/goated/lib/types"
 	. "github.com/franela/goblin"
 	"testing"
+	"os"
 	"time"
 )
 
@@ -65,6 +66,9 @@ func TestSquish(t *testing.T) {
 			g.Assert(Area.GetLast()).Equal(uint32(1))
 		})
 	})
+	os.Remove("../../testdata/sqtest.sqd")
+	os.Remove("../../testdata/sqtest.sqi")
+	os.Remove("../../testdata/sqtest.sql")
 }
 func BenchmarkSquishBufHash32(b *testing.B) {
 	b.SetBytes(20)
