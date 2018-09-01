@@ -275,5 +275,6 @@ func (m *Message) MakeBody() *Message {
 	m.Body = strings.Join(strings.Split(m.Body, "\n"), "\x0d")
 	m.DateWritten = time.Now()
 	m.DateArrived = m.DateWritten
+	//time.Sleep(time.Second)
 	return m
 }

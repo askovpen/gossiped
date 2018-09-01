@@ -213,9 +213,15 @@ func (m *MSG) SetLast(l uint32) {
 
 // SaveMsg save message
 func (m *MSG) SaveMsg(tm *Message) error {
-	if len(m.messageNums) == 0 {
-		return errors.New("creating MSG area not implemented")
+	if _, err := os.Stat(m.AreaPath); os.IsNotExist(err) {
+		err = os.MkdirAll(m.AreaPath, 0755)
+		if err != nil {
+			return err
+		}
 	}
+	//if len(m.messageNums) == 0 {
+	//	return errors.New("creating MSG area not implemented")
+	//}
 	var msgm msgS
 	msgm.Attr = MSGLOCAL
 	tm.Encode()
@@ -239,14 +245,25 @@ func (m *MSG) SaveMsg(tm *Message) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(
-		filepath.Join(m.AreaPath, strconv.FormatUint(uint64(m.messageNums[len(m.messageNums)-1]+1), 10)+".msg"),
-		buf.Bytes(),
-		0644)
+	if len(m.messageNums) == 0 {
+		err = ioutil.WriteFile(
+			filepath.Join(m.AreaPath, "1.msg"),
+			buf.Bytes(),
+			0644)
+	} else {
+		err = ioutil.WriteFile(
+			filepath.Join(m.AreaPath, strconv.FormatUint(uint64(m.messageNums[len(m.messageNums)-1]+1), 10)+".msg"),
+			buf.Bytes(),
+			0644)
+	}
 	if err != nil {
 		return err
 	}
-	m.messageNums = append(m.messageNums, m.messageNums[len(m.messageNums)-1]+1)
+	if len(m.messageNums) == 0 {
+		m.messageNums = append(m.messageNums, 1)
+	} else {
+		m.messageNums = append(m.messageNums, m.messageNums[len(m.messageNums)-1]+1)
+	}
 	return nil
 }
 
