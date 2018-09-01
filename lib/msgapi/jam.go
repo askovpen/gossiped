@@ -36,7 +36,7 @@ type jamSH struct {
 }
 
 type jhrS struct {
-	Signature                           [4]byte
+	Signature                           uint32
 	DateCreated, ModCounter, ActiveMsgs uint32
 	PasswordCRC, BaseMsgNum, Highwater  uint32
 	RSRVD                               [996]byte
@@ -386,9 +386,9 @@ func packJamKludges(tm *Message) []byte {
 
 // SaveMsg save message
 func (j *JAM) SaveMsg(tm *Message) error {
-	if len(j.indexStructure) == 0 {
-		return errors.New("creating JAM area not implemented")
-	}
+	//	if len(j.indexStructure) == 0 {
+	//		return errors.New("creating JAM area not implemented")
+	//	}
 	jamh := jamH{Signature: 0x4d414a, Revision: 1, Attribute: 0x01000001}
 	kl := packJamKludges(tm)
 	jamh.SubfieldLen = uint32(len(kl))
@@ -406,7 +406,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	jamh.MessageNumber = uint32(len(j.indexStructure)) + 1
 	var jam jamSH
 	jam.ToCRC = crc32r(tm.To)
-	f, err := os.OpenFile(j.AreaPath+".jdt", os.O_RDWR, 0644)
+	f, err := os.OpenFile(j.AreaPath+".jdt", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
@@ -416,17 +416,24 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	// log.Printf("offset: %d", offset)
 	f.Write([]byte(tm.Body))
 	f.Close()
-	f, err = os.OpenFile(j.AreaPath+".jhr", os.O_RDWR, 0644)
+	f, err = os.OpenFile(j.AreaPath+".jhr", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	var jhr jhrS
-	header := make([]byte, 1024)
-	f.Read(header)
-	headerb := bytes.NewBuffer(header)
-	if err := utils.ReadStructFromBuffer(headerb, &jhr); err != nil {
-		return err
+	if len(j.indexStructure) == 0 {
+		jhr.Signature = 0x4d414a
+		jhr.PasswordCRC = 0xffffffff
+		jhr.BaseMsgNum = 1
+		jhr.DateCreated = uint32(time.Now().Unix())
+	} else {
+		header := make([]byte, 1024)
+		f.Read(header)
+		headerb := bytes.NewBuffer(header)
+		if err := utils.ReadStructFromBuffer(headerb, &jhr); err != nil {
+			return err
+		}
 	}
 	jhr.ActiveMsgs++
 	buf := new(bytes.Buffer)
@@ -447,12 +454,16 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	f.Write(kl)
 	f.Close()
 	buf.Reset()
-	f, err = os.OpenFile(j.AreaPath+".jdx", os.O_RDWR, 0644)
+	f, err = os.OpenFile(j.AreaPath+".jdx", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	f.Seek(0, 2)
+	if len(j.indexStructure) == 0 {
+		f.Seek(0, 0)
+	} else {
+		f.Seek(0, 2)
+	}
 	err = utils.WriteStructToBuffer(buf, &jam)
 	if err != nil {
 		return err
