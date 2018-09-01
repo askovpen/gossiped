@@ -2,48 +2,33 @@ package main
 
 import (
 	"fmt"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
-	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"io/ioutil"
-	"path/filepath"
+	"os/exec"
 	"strings"
+	"time"
 )
 
+type MTag struct {
+	Name string
+	dt   time.Time
+}
+
+func P(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
 func main() {
-	cwd, err := filepath.Abs("../..")
-	if err != nil {
-		panic(err)
-	}
-	r, err := git.PlainOpen(cwd)
-	if err != nil {
-		panic(err)
-	}
-	head, _ := r.Head()
-	tags, _ := r.Tags()
-	var tag *plumbing.Reference
-	err = tags.ForEach(func(t *plumbing.Reference) error {
-		tag = t
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
-	cIter, err := r.Log(&git.LogOptions{})
-	if err != nil {
-		panic(err)
-	}
-	cc := 0
-	err = cIter.ForEach(func(c *object.Commit) error {
-		cc++
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
-	vgo := fmt.Sprintf("package config\n\nvar (\n\tVersion = \"%s-%d-%s\"\n)\n", strings.Split(string(tag.Name()), "-")[1], cc, head.Hash().String()[0:8])
+	out, err := exec.Command("git", "describe", "--tags").Output()
+	P(err)
+	ver := strings.Trim(strings.Split(string(out), "-")[1], "\n")
+	out, err = exec.Command("git", "rev-list", "HEAD", "--count").Output()
+	P(err)
+	cc := strings.Trim(string(out), "\n")
+	out, err = exec.Command("git", "rev-parse", "HEAD").Output()
+	P(err)
+	h := strings.Trim(string(out), "\n")
+	vgo := fmt.Sprintf("package config\n\nvar (\n\tVersion = \"%s-%s-%s\"\n)\n", ver, cc, h[0:8])
 	err = ioutil.WriteFile("../../lib/config/version.go", []byte(vgo), 0644)
-	if err != nil {
-		panic(err)
-	}
+	P(err)
 }
