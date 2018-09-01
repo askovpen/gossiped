@@ -3,7 +3,7 @@ package msgapi
 import (
 	"github.com/askovpen/goated/lib/types"
 	. "github.com/franela/goblin"
-	//"os"
+	"os"
 	"testing"
 	"time"
 )
@@ -49,5 +49,5 @@ func TestMSG(t *testing.T) {
 			g.Assert(Area.GetLast()).Equal(uint32(1))
 		})
 	})
-	//os.RemoveAll("../../testdata/test")
+	os.RemoveAll("../../testdata/test")
 }
