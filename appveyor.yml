@@ -18,7 +18,6 @@ before_build:
   - go get golang.org/x/text/transform
   - go get gopkg.in/yaml.v2
   - go get github.com/franela/goblin
-  - go get gopkg.in/src-d/go-git.v4
   - go generate ./...
 
 build_script:
