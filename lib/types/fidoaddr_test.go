@@ -54,8 +54,6 @@ func TestFidoAddr(t *testing.T) {
 			g.Assert(f).Equal(&FidoAddr{2, 5020, 9696, 0})
 			err = yaml.Unmarshal([]byte{0x32,0x32,0x32}, f)
 			g.Assert(err).Equal(errors.New("wrong address"))
-			err = yaml.Unmarshal([]byte{0x00}, f)
-			g.Assert(err).Equal(errors.New("yaml: control characters are not allowed"))
 		})
 	})
 }

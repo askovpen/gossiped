@@ -79,9 +79,7 @@ func AddrFromNum(zone uint16, net uint16, node uint16, point uint16) *FidoAddr {
 // UnmarshalYAML for UnmarshalYAML
 func (f *FidoAddr) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
 	var fm string
-	if err := unmarshal(&fm); err != nil {
-		return err
-	}
+	unmarshal(&fm)
 	tf := AddrFromString(fm)
 	if tf==nil {
 		return errors.New("wrong address")
