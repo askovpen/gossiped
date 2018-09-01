@@ -79,10 +79,11 @@ func AddrFromNum(zone uint16, net uint16, node uint16, point uint16) *FidoAddr {
 // UnmarshalYAML for UnmarshalYAML
 func (f *FidoAddr) UnmarshalYAML(unmarshal func(interface{}) error) (err error) {
 	var fm string
-	if err := unmarshal(&fm); err != nil {
-		return err
-	}
+	unmarshal(&fm)
 	tf := AddrFromString(fm)
+	if tf == nil {
+		return errors.New("wrong address")
+	}
 	f.zone = tf.zone
 	f.net = tf.net
 	f.node = tf.node
@@ -116,6 +117,7 @@ func (f *FidoAddr) GetPoint() uint16 {
 }
 
 // SetPoint set point
-func (f *FidoAddr) SetPoint(p uint16) {
+func (f *FidoAddr) SetPoint(p uint16) *FidoAddr {
 	f.point = p
+	return f
 }
