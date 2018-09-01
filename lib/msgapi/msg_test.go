@@ -3,7 +3,7 @@ package msgapi
 import (
 	"github.com/askovpen/goated/lib/types"
 	. "github.com/franela/goblin"
-	"os"
+	//"os"
 	"testing"
 	"time"
 )
@@ -36,6 +36,18 @@ func TestMSG(t *testing.T) {
 		g.It("add msg", func() {
 			g.Assert(Area.SaveMsg(m)).Equal(nil)
 		})
+		g.It("check num msgs", func() {
+			g.Assert(Area.GetCount()).Equal(uint32(2))
+		})
+		g.It("read msg", func() {
+			nm, err := Area.GetMsg(1)
+			g.Assert(err).Equal(nil)
+			g.Assert(nm.FromAddr).Equal(types.AddrFromNum(2, 5020, 9696, 1))
+		})
+		g.It("get/set last", func() {
+			Area.SetLast(1)
+			g.Assert(Area.GetLast()).Equal(uint32(1))
+		})
 	})
-	os.RemoveAll("../../testdata/test")
+	//os.RemoveAll("../../testdata/test")
 }
