@@ -31,8 +31,6 @@ func areasbbsConfigRead(fn string) error {
 		switch res[0][0] {
 		case ';':
 			continue
-		case 'P':
-			continue
 		case '$':
 			area := &msgapi.Squish{AreaName: res[1], AreaPath: res[0][1:], AreaType: msgapi.EchoAreaTypeEcho}
 			msgapi.Areas = append(msgapi.Areas, area)

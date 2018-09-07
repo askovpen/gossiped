@@ -3,7 +3,7 @@
 $/var/spool/ftn/mail/fluid.info fluid.info                   2:5020/12000
 P     mclaren.power.pit.stop      
 $/var/spool/ftn/mail/mo.echo mo.echo                      2:5020/570 2:5020/9696.128
-$/var/spool/ftn/mail/mo.fidopoika mo.fidopoika                 2:5020/12000
+;$/var/spool/ftn/mail/mo.fidopoika mo.fidopoika                 2:5020/12000
 $/var/spool/ftn/mail/mo.vietnamka mo.vietnamka                 2:5020/12000
 $/var/spool/ftn/mail/n5020.point n5020.point                  2:5020/9696.128 2:5020/715
 $/var/spool/ftn/mail/n5020.sysop n5020.sysop                  2:5020/9696.128 2:5020/715
@@ -32,7 +32,7 @@ $/var/spool/ftn/mail/ru.binkd ru.binkd                     2:5020/715 2:5020/969
 $/var/spool/ftn/mail/alt.hacker alt.hacker                   2:5020/12000
 $/var/spool/ftn/mail/715.techinfo 715.techinfo                 2:5020/715
 $/var/spool/ftn/mail/715.echo 715.echo                     2:5020/715 2:5020/9696.128
-$/var/spool/ftn/mail/715.pvt 715.pvt                      2:5020/715
+!/var/spool/ftn/mail/715.pvt 715.pvt                      2:5020/715
 P     su.pol                       2:5020/715 2:5020/9696.128
 P     ru.sex                       2:5020/715 2:5020/9696.128
 P     r50.sysop.drunk              2:5020/715 2:5020/9696.128 2:5020/9696.111

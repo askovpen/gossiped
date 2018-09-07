@@ -12,7 +12,7 @@ func TestAreasbbsConfig(t *testing.T) {
 	g.Describe("Check AreasbbsConfig", func() {
 		g.It("check areasbbsConfigRead()", func() {
 			areasbbsConfigRead("../../testdata/areas.bbs")
-			g.Assert(len(msgapi.Areas)).Equal(26)
+			g.Assert(len(msgapi.Areas)).Equal(25)
 		})
 	})
 }
