@@ -227,6 +227,9 @@ func (s *Squish) GetLast() uint32 {
 			return uint32(i + 1)
 		}
 	}
+	if ret != 0 {
+		return uint32(len(s.indexStructure))
+	}
 	return 0
 }
 
