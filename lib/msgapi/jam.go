@@ -273,6 +273,9 @@ func (j *JAM) getPositionOfJamMsg(mID uint32) uint32 {
 			return uint32(i)
 		}
 	}
+	if mID != 0 {
+		return uint32(len(j.indexStructure))
+	}
 	return 0
 }
 
