@@ -50,7 +50,7 @@ build_script:
 
 test_script:
   - go test ./... -v -cover -coverprofile=coverage.txt --bench=. -benchmem
-  - go test -v  | c:\gopath\bin\go2xunit >xunit.xml
+  - go test -v ./... | c:\gopath\bin\go2xunit >xunit.xml
   - ps: $wc = New-Object 'System.Net.WebClient' && $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\xunit.xml))
 after_test:
   - ps: |
