@@ -18,6 +18,7 @@ before_build:
   - go get golang.org/x/text/transform
   - go get gopkg.in/yaml.v2
   - go get github.com/franela/goblin
+  - go get github.com/tebeka/go2xunit
   - go generate ./...
 
 build_script:
@@ -49,7 +50,8 @@ build_script:
 
 test_script:
   - go test ./... -v -cover -coverprofile=coverage.txt --bench=. -benchmem
-
+  - go test -v ./... | c:\gopath\bin\go2xunit >xunit.xml
+  - ps: $wc = New-Object 'System.Net.WebClient'; $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\xunit.xml))
 after_test:
   - ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
