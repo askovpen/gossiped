@@ -50,6 +50,7 @@ func TestSquish(t *testing.T) {
 		}
 		m.MakeBody()
 		g.It("create msg", func() {
+			g.Assert(len(*Area.GetMessages())).Equal(0)
 			g.Assert(Area.SaveMsg(m)).Equal(nil)
 		})
 		g.It("add msg", func() {
@@ -66,6 +67,7 @@ func TestSquish(t *testing.T) {
 		g.It("get/set last", func() {
 			Area.SetLast(1)
 			g.Assert(Area.GetLast()).Equal(uint32(1))
+			g.Assert(len(*Area.GetMessages())).Equal(2)
 		})
 	})
 	os.Remove("../../testdata/sqtest.sqd")

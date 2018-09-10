@@ -24,6 +24,7 @@ type JAM struct {
 	Chrs               string
 	indexStructure     []jamS
 	lastRead           []jamL
+	messages           []MessageListItem
 }
 
 type jamS struct {
@@ -485,4 +486,25 @@ func (j *JAM) SetChrs(c string) {
 // GetChrs get charset
 func (j *JAM) GetChrs() string {
 	return j.Chrs
+}
+
+// GetMessages get headers
+func (j *JAM) GetMessages() *[]MessageListItem {
+	if len(j.messages) > 0 || len(j.indexStructure) == 0 {
+		return &j.messages
+	}
+	for i := uint32(0); i < j.GetCount(); i++ {
+		m, err := j.GetMsg(i + 1)
+		if err != nil {
+			continue
+		}
+		j.messages = append(j.messages, MessageListItem{
+			MsgNum:      uint32(i + 1),
+			From:        m.From,
+			To:          m.To,
+			Subject:     m.Subject,
+			DateWritten: m.DateWritten,
+		})
+	}
+	return &j.messages
 }

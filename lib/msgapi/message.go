@@ -12,6 +12,15 @@ import (
 	"time"
 )
 
+// MessageListItem struct
+type MessageListItem struct {
+	MsgNum      uint32
+	From        string
+	To          string
+	Subject     string
+	DateWritten time.Time
+}
+
 // Message struct
 type Message struct {
 	Area        string

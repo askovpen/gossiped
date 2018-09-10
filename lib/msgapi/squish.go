@@ -49,6 +49,7 @@ type Squish struct {
 	AreaType       EchoAreaType
 	Chrs           string
 	indexStructure []sqiS
+	messages       []MessageListItem
 }
 
 type sqiS struct {
@@ -446,4 +447,26 @@ func (s *Squish) SetChrs(c string) {
 // GetChrs get charset
 func (s *Squish) GetChrs() string {
 	return s.Chrs
+}
+
+// GetMessages get headers
+func (s *Squish) GetMessages() *[]MessageListItem {
+	if len(s.messages) > 0 || len(s.indexStructure) == 0 {
+		return &s.messages
+	}
+
+	for i := uint32(0); i < s.GetCount(); i++ {
+		m, err := s.GetMsg(i + 1)
+		if err != nil {
+			continue
+		}
+		s.messages = append(s.messages, MessageListItem{
+			MsgNum:      uint32(i + 1),
+			From:        m.From,
+			To:          m.To,
+			Subject:     m.Subject,
+			DateWritten: m.DateWritten,
+		})
+	}
+	return &s.messages
 }
