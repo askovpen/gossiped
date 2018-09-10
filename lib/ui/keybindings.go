@@ -32,9 +32,11 @@ func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlG, gocui.ModNone, editMsgNum)
 	g.SetKeybinding("MsgBody", gocui.KeyInsert, gocui.ModNone, editMsg)
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlI, gocui.ModNone, editMsg)
-	g.SetKeybinding("MsgBody", gocui.KeyCtrlQ, gocui.ModNone, answerMsg)
-	g.SetKeybinding("MsgBody", gocui.KeyF3, gocui.ModNone, answerMsg)
 	g.SetKeybinding("MsgBody", 'q', gocui.ModAlt, answerMsg)
+	g.SetKeybinding("MsgBody", gocui.KeyCtrlQ, gocui.ModNone, answerMsg)
+	g.SetKeybinding("MsgBody", 'l', gocui.ModAlt, listMsgs)
+	g.SetKeybinding("MsgBody", gocui.KeyCtrlL, gocui.ModNone, listMsgs)
+	g.SetKeybinding("MsgBody", gocui.KeyF3, gocui.ModNone, answerMsg)
 
 	g.SetKeybinding("editToName", gocui.KeyEnter, gocui.ModNone, editToNameNext)
 	g.SetKeybinding("editToName", gocui.KeyTab, gocui.ModNone, editToNameNext)
@@ -49,6 +51,14 @@ func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("editMsgBody", gocui.KeyCtrlS, gocui.ModNone, editMsgBodyMenu)
 	g.SetKeybinding("editMsgBody", gocui.KeyF2, gocui.ModNone, editMsgBodyMenu)
 	g.SetKeybinding("editMsgBody", gocui.KeyEsc, gocui.ModNone, editMsgBodyMenu)
+
+	g.SetKeybinding("listMsgs", gocui.KeyEnter, gocui.ModNone, selectMessage)
+	g.SetKeybinding("listMsgs", gocui.KeyEsc, gocui.ModNone, cancelSelectMessage)
+	g.SetKeybinding("listMsgs", gocui.KeyArrowUp, gocui.ModNone, upSelectMessage)
+	g.SetKeybinding("listMsgs", gocui.KeyArrowDown, gocui.ModNone, downSelectMessage)
+	g.SetKeybinding("listMsgs", gocui.KeyPgup, gocui.ModNone, pgUpSelectMessage)
+	g.SetKeybinding("listMsgs", gocui.KeyPgdn, gocui.ModNone, pgDnSelectMessage)
+
 	g.SetKeybinding("editMenuMsg", gocui.KeyEnter, gocui.ModNone, saveMessage)
 	g.SetKeybinding("editMenuMsg", gocui.KeyArrowUp, gocui.ModNone, editMsgBodyMenuUp)
 	g.SetKeybinding("editMenuMsg", gocui.KeyArrowDown, gocui.ModNone, editMsgBodyMenuDown)

@@ -33,4 +33,5 @@ type AreaPrimitive interface {
 	GetChrs() string
 	SetLast(uint32)
 	SaveMsg(*Message) error
+	GetMessages() *[]MessageListItem
 }

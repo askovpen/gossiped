@@ -23,6 +23,7 @@ type MSG struct {
 	Chrs        string
 	lastreads   string
 	messageNums []uint32
+	messages    []MessageListItem
 }
 
 type msgS struct {
@@ -278,4 +279,25 @@ func (m *MSG) SetChrs(s string) {
 // GetChrs get charset
 func (m *MSG) GetChrs() string {
 	return m.Chrs
+}
+
+// GetMessages get headers
+func (m *MSG) GetMessages() *[]MessageListItem {
+	if len(m.messages) > 0 || len(m.messageNums) == 0 {
+		return &m.messages
+	}
+	for i := uint32(0); i < m.GetCount(); i++ {
+		mm, err := m.GetMsg(i + 1)
+		if err != nil {
+			continue
+		}
+		m.messages = append(m.messages, MessageListItem{
+			MsgNum:      uint32(i + 1),
+			From:        mm.From,
+			To:          mm.To,
+			Subject:     mm.Subject,
+			DateWritten: mm.DateWritten,
+		})
+	}
+	return &m.messages
 }

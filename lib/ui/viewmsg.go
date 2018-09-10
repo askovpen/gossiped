@@ -234,10 +234,117 @@ func scrollUp(g *gocui.Gui, v *gocui.View) error {
 	}
 	return nil
 }
+
 func toggleKludges(g *gocui.Gui, v *gocui.View) error {
 	showKludges = !showKludges
 	quitMsgView(g, v)
 	viewMsg(curAreaID, curMsgNum)
+	ActiveWindow = "MsgBody"
+	return nil
+}
+
+func listMsgs(g *gocui.Gui, v *gocui.View) error {
+	maxX, maxY := App.Size()
+	_, sy := v.Size()
+	ml := msgapi.Areas[curAreaID].GetMessages()
+	if len(*ml) == 0 {
+		return nil
+	}
+	v, _ = App.SetView("listMsgs", 0, 1, maxX-1, maxY-2)
+	v.Title = "List Messages"
+	v.Highlight = true
+	v.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
+	v.FrameFgColor = gocui.ColorRed | gocui.AttrBold
+	v.SelBgColor = gocui.ColorBlue
+	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
+	fmt.Fprintf(v, "\033[33;1m%5s  %-19s %-19s %-"+strconv.FormatInt(int64(maxX-60), 10)+"s %-10s\033[0m\n",
+		"Msg", "From", "To", "Subj", "Written")
+	for _, mh := range *ml {
+		fmt.Fprintf(v, "%5d  %-19.19s %-19.19s %-"+strconv.FormatInt(int64(maxX-60), 10)+"."+strconv.FormatInt(int64(maxX-60), 10)+"s %-10.10s\n",
+			mh.MsgNum,
+			mh.From,
+			mh.To,
+			mh.Subject,
+			mh.DateWritten.Format("02 Jan 06"))
+	}
+	if int(curMsgNum) < sy+2 {
+		v.SetCursor(0, int(curMsgNum))
+	} else {
+		v.SetOrigin(0, int(curMsgNum)-sy-2)
+		v.SetCursor(0, sy+2)
+	}
+	ActiveWindow = "listMsgs"
+	return nil
+}
+func upSelectMessage(g *gocui.Gui, v *gocui.View) error {
+	_, oy := v.Origin()
+	_, cy := v.Cursor()
+	if cy > 1 {
+		v.SetCursor(0, cy-1)
+	} else if oy > 0 {
+		v.SetOrigin(0, oy-1)
+	}
+	return nil
+}
+
+func pgUpSelectMessage(g *gocui.Gui, v *gocui.View) error {
+	_, sy := v.Size()
+	_, oy := v.Origin()
+	if oy < sy-1 {
+		if oy > 0 {
+			v.SetOrigin(0, 0)
+		} else {
+			v.SetCursor(0, 1)
+		}
+	} else {
+		v.SetOrigin(0, oy-sy+1)
+	}
+	return nil
+}
+
+func downSelectMessage(g *gocui.Gui, v *gocui.View) error {
+	_, sy := v.Size()
+	_, oy := v.Origin()
+	_, cy := v.Cursor()
+	if cy < sy-1 {
+		v.SetCursor(0, cy+1)
+	} else if uint32(cy+oy) < msgapi.Areas[curAreaID].GetCount() {
+		v.SetOrigin(0, oy+1)
+	}
+	return nil
+}
+
+func selectMessage(g *gocui.Gui, v *gocui.View) error {
+	_, oy := v.Origin()
+	_, cy := v.Cursor()
+	g.DeleteView("listMsgs")
+	err := viewMsg(curAreaID, uint32(oy+cy))
+	if err != nil {
+		errorMsg(err.Error(), "AreaList")
+		return nil
+	}
+	ActiveWindow = "MsgBody"
+	return nil
+}
+
+func pgDnSelectMessage(g *gocui.Gui, v *gocui.View) error {
+	_, sy := v.Size()
+	_, oy := v.Origin()
+	_, cy := v.Cursor()
+	if int(msgapi.Areas[curAreaID].GetCount())-oy < sy-1 && cy != sy {
+		v.SetCursor(0, int(msgapi.Areas[curAreaID].GetCount())-oy)
+	} else if cy < sy-1 {
+		v.SetCursor(0, sy-1)
+	} else if int(msgapi.Areas[curAreaID].GetCount())-oy > sy-1 {
+		v.SetOrigin(0, oy+sy-1)
+		if int(msgapi.Areas[curAreaID].GetCount())-(oy+sy-1) < sy-1 {
+			v.SetCursor(0, int(msgapi.Areas[curAreaID].GetCount())-(oy+sy-1))
+		}
+	}
+	return nil
+}
+func cancelSelectMessage(g *gocui.Gui, v *gocui.View) error {
+	g.DeleteView("listMsgs")
 	ActiveWindow = "MsgBody"
 	return nil
 }
