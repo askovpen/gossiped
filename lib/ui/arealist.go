@@ -28,6 +28,7 @@ func quitAreaList(g *gocui.Gui, v *gocui.View) error {
 	v.Title = "Quit goAtEd?"
 	v.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 	v.FrameFgColor = gocui.ColorRed | gocui.AttrBold
+	v.FrameBgColor = gocui.ColorBlack
 	fmt.Fprintf(v, "     Yes!     \n      No       ")
 	v.Highlight = true
 	v.SelBgColor = gocui.ColorBlue
@@ -155,6 +156,7 @@ func CreateAreaList() error {
 	AreaList.SelFgColor = gocui.ColorWhite | gocui.AttrBold
 	AreaList.FgColor = gocui.ColorWhite
 	AreaList.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
+	AreaList.FrameBgColor = gocui.ColorBlack
 	AreaList.Clear()
 	fmt.Fprintf(AreaList, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6s %6s \033[0m\n",
 		"EchoID", "Msgs", "New")

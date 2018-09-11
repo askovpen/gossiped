@@ -36,6 +36,7 @@ func viewMsg(areaID int, msgNum uint32) error {
 		MsgHeader.Title = msgapi.Areas[areaID].GetName()
 		MsgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 		MsgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
+		MsgHeader.FrameBgColor = gocui.ColorBlack
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
 			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaID].GetCount()),
 			"")
@@ -53,6 +54,7 @@ func viewMsg(areaID int, msgNum uint32) error {
 		MsgHeader.Clear()
 		MsgHeader.Title = msgapi.Areas[areaID].GetName()
 		MsgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
+		MsgHeader.TitleBgColor = gocui.ColorBlack
 		MsgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
 			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaID].GetCount()),
@@ -255,6 +257,7 @@ func listMsgs(g *gocui.Gui, v *gocui.View) error {
 	v.Highlight = true
 	v.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 	v.FrameFgColor = gocui.ColorRed | gocui.AttrBold
+	v.FrameBgColor = gocui.ColorBlack
 	v.SelBgColor = gocui.ColorBlue
 	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
 	fmt.Fprintf(v, "\033[33;1m%5s  %-19s %-19s %-"+strconv.FormatInt(int64(maxX-60), 10)+"s %-10s\033[0m\n",

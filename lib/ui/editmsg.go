@@ -39,6 +39,7 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	maxX, maxY := g.Size()
 	msgHeader, _ := g.SetView("MsgHeader", 0, 0, maxX-1, 5)
 	msgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
+	msgHeader.FrameBgColor = gocui.ColorBlack
 	msgHeader.Clear()
 	fmt.Fprintf(msgHeader, " Msg  : %-34s Pvt\n",
 		fmt.Sprintf("%d of %d", msgapi.Areas[curAreaID].GetCount()+1, msgapi.Areas[curAreaID].GetCount()+1))
@@ -168,6 +169,7 @@ func editMsgBodyMenu(g *gocui.Gui, v *gocui.View) error {
 	v.Highlight = true
 	v.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 	v.FrameFgColor = gocui.ColorRed | gocui.AttrBold
+	v.FrameBgColor = gocui.ColorBlack
 	v.SelBgColor = gocui.ColorBlue
 	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
 	fmt.Fprintf(v, " Yes!             \n No, Drop         \n Continue Writing \n Edit Header      ")
