@@ -325,6 +325,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	var sqdh sqdH
 	var sqi sqiS
 	kludges := ""
+	tm.Encode()
 	for kl, v := range tm.Kludges {
 		kludges += "\x01" + kl + " " + v
 	}
@@ -335,7 +336,6 @@ func (s *Squish) SaveMsg(tm *Message) error {
 		sqdh.PrevFrame = s.indexStructure[lastIdx].Offset
 	}
 	sqdh.Attr = uint32(SquishLOCAL | SquishSEEN)
-	tm.Encode()
 	copy(sqdh.From[:], tm.From)
 	copy(sqdh.To[:], tm.To)
 	copy(sqdh.Subject[:], tm.Subject)
