@@ -309,7 +309,7 @@ func downSelectMessage(g *gocui.Gui, v *gocui.View) error {
 	_, sy := v.Size()
 	_, oy := v.Origin()
 	_, cy := v.Cursor()
-	if cy < sy-1 {
+	if cy < sy-1 && uint32(cy) < msgapi.Areas[curAreaID].GetCount() && uint32(cy+oy) < msgapi.Areas[curAreaID].GetCount() {
 		v.SetCursor(0, cy+1)
 	} else if uint32(cy+oy) < msgapi.Areas[curAreaID].GetCount() {
 		v.SetOrigin(0, oy+1)
