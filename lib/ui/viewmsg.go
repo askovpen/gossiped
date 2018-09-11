@@ -262,9 +262,14 @@ func listMsgs(g *gocui.Gui, v *gocui.View) error {
 	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
 	fmt.Fprintf(v, "\033[33;1m%5s  %-19s %-19s %-"+strconv.FormatInt(int64(maxX-60), 10)+"s %-10s\033[0m\n",
 		"Msg", "From", "To", "Subj", "Written")
-	for _, mh := range *ml {
-		fmt.Fprintf(v, "%5d  %-19.19s %-19.19s %-"+strconv.FormatInt(int64(maxX-60), 10)+"."+strconv.FormatInt(int64(maxX-60), 10)+"s %-10.10s\n",
+	for i, mh := range *ml {
+		ch := " "
+		if i == int(curMsgNum-1) {
+			ch = "\033[37;1m,\033[0m"
+		}
+		fmt.Fprintf(v, "%5d%s %-19.19s %-19.19s %-"+strconv.FormatInt(int64(maxX-60), 10)+"."+strconv.FormatInt(int64(maxX-60), 10)+"s %-10.10s\n",
 			mh.MsgNum,
+			ch,
 			mh.From,
 			mh.To,
 			mh.Subject,
