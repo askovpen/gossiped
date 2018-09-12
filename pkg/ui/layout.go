@@ -36,7 +36,7 @@ func Layout(g *gocui.Gui) error {
 	statusTime.Clear()
 	fmt.Fprintf(status, StatusLine)
 	fmt.Fprintf(statusTime, StatusTime)
-	err = CreateAreaList()
+	err = CreateAreaList(g)
 	if err != nil {
 		log.Print(err)
 	}

@@ -8,8 +8,6 @@ import (
 var (
 	// App gui
 	App *gocui.Gui
-	// AreaList variable
-	AreaList *gocui.View
 	// AreaPosition variable
 	AreaPosition uint16
 	// ActiveWindow name
@@ -21,9 +19,16 @@ var (
 	// StatusLine variable
 	StatusLine string
 	// StatusTime variable
-	StatusTime string
-	newMsg     *msgapi.Message
-	newMsgType string
+	StatusTime   string
+	newMsg       *msgapi.Message
+	newMsgType   int
+	newMsgAreaID int
+)
+
+const (
+	newMsgTypeAnswer        = 1
+	newMsgTypeAnswerNewArea = 2
+	newMsgTypeForward       = 4
 )
 
 // Quit application

@@ -23,7 +23,7 @@
 ;   ----------------------------------------------------------------------
 @Forward=============================================================================
 @Forward* Forwarded by @CName (@CAddr)
-@Forward* Area : @OEcho (@ODesc)
+@Forward* Area : @OEcho
 @Forward* From : @OName, @OAddr (@ODate @OTime)
 @Forward* To   : @DName
 @Forward* Subj : @Subject

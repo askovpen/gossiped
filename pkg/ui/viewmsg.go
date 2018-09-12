@@ -351,6 +351,7 @@ func pgDnSelectMessage(g *gocui.Gui, v *gocui.View) error {
 	}
 	return nil
 }
+
 func cancelSelectMessage(g *gocui.Gui, v *gocui.View) error {
 	g.DeleteView("listMsgs")
 	ActiveWindow = "MsgBody"
