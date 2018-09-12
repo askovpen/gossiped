@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/askovpen/goated/lib/areasconfig"
-	"github.com/askovpen/goated/lib/config"
-	"github.com/askovpen/goated/lib/ui"
+	"github.com/askovpen/goated/pkg/areasconfig"
+	"github.com/askovpen/goated/pkg/config"
+	"github.com/askovpen/goated/pkg/ui"
 	"github.com/askovpen/gocui"
 	"log"
 	"os"

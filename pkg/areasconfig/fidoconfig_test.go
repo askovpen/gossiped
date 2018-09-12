@@ -1,7 +1,7 @@
 package areasconfig
 
 import (
-	"github.com/askovpen/goated/lib/msgapi"
+	"github.com/askovpen/goated/pkg/msgapi"
 	. "github.com/franela/goblin"
 	"os"
 	"testing"

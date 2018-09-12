@@ -2,7 +2,7 @@ package ui
 
 import (
 	"fmt"
-	"github.com/askovpen/goated/lib/msgapi"
+	"github.com/askovpen/goated/pkg/msgapi"
 	"github.com/askovpen/gocui"
 	"log"
 	"strconv"

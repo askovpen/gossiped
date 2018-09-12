@@ -2,9 +2,9 @@ package ui
 
 import (
 	"fmt"
-	"github.com/askovpen/goated/lib/config"
-	"github.com/askovpen/goated/lib/msgapi"
-	"github.com/askovpen/goated/lib/types"
+	"github.com/askovpen/goated/pkg/config"
+	"github.com/askovpen/goated/pkg/msgapi"
+	"github.com/askovpen/goated/pkg/types"
 	"github.com/askovpen/gocui"
 	// "log"
 	"strings"

@@ -2,8 +2,8 @@ package areasconfig
 
 import (
 	"errors"
-	"github.com/askovpen/goated/lib/config"
-	"github.com/askovpen/goated/lib/msgapi"
+	"github.com/askovpen/goated/pkg/config"
+	"github.com/askovpen/goated/pkg/msgapi"
 	"log"
 	"sort"
 	"strings"

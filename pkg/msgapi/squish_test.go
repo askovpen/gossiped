@@ -1,7 +1,7 @@
 package msgapi
 
 import (
-	"github.com/askovpen/goated/lib/types"
+	"github.com/askovpen/goated/pkg/types"
 	. "github.com/franela/goblin"
 	"os"
 	"testing"

@@ -3,9 +3,9 @@ package msgapi
 import (
 	// "errors"
 	"fmt"
-	"github.com/askovpen/goated/lib/config"
-	"github.com/askovpen/goated/lib/types"
-	"github.com/askovpen/goated/lib/utils"
+	"github.com/askovpen/goated/pkg/config"
+	"github.com/askovpen/goated/pkg/types"
+	"github.com/askovpen/goated/pkg/utils"
 	"regexp"
 	"strconv"
 	"strings"
