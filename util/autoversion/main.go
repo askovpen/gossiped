@@ -29,6 +29,6 @@ func main() {
 	P(err)
 	h := strings.Trim(string(out), "\n")
 	vgo := fmt.Sprintf("package config\n\nvar (\n\tVersion = \"%s-%s-%s\"\n)\n", ver, cc, h[0:8])
-	err = ioutil.WriteFile("../../lib/config/version.go", []byte(vgo), 0644)
+	err = ioutil.WriteFile("../../pkg/config/version.go", []byte(vgo), 0644)
 	P(err)
 }
