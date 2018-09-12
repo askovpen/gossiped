@@ -197,6 +197,37 @@ func (m *Message) ToEditNewView() (string, int) {
 
 }
 
+// GetForward get forward
+func (m *Message) GetForward() []string {
+	reO := regexp.MustCompile("^ \\* Origin: ")
+	reT := regexp.MustCompile("^--- ")
+	re := regexp.MustCompile(">+")
+	var nm []string
+	for _, l := range strings.Split(m.Body, "\x0d") {
+		if len(l) > 0 && l[0] == 1 {
+			continue
+		} else if len(l) > 8 && l[0:9] == "SEEN-BY: " {
+			continue
+		} else if ind := re.FindStringIndex(l); ind != nil {
+			ind2 := strings.Index(l, "<")
+			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
+				if (ind[1]-ind[0])%2 == 0 {
+					nm = append(nm, "\033[37;1m"+l+"\033[0m")
+				} else {
+					nm = append(nm, "\033[33;1m"+l+"\033[0m")
+				}
+			} else {
+				nm = append(nm, l)
+			}
+		} else {
+			l = reO.ReplaceAllString(l, " + Origin: ")
+			l = reT.ReplaceAllString(l, "-+- ")
+			nm = append(nm, l)
+		}
+	}
+	return nm
+}
+
 // GetQuote get quote
 func (m *Message) GetQuote() []string {
 	var nm []string
@@ -261,6 +292,55 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 					}
 				} else if len(l) > 5 && l[0:6] == "@Quote" {
 					nm = append(nm, om.GetQuote()...)
+				} else if len(l) > 6 && l[0:7] == "@CFName" {
+					nm = append(nm, r.Replace(l))
+				}
+			} else {
+				nm = append(nm, r.Replace(l))
+			}
+		} else {
+			nm = append(nm, l)
+		}
+	}
+	nm = append(nm, "\033[37;1m--- "+config.LongPID+"\033[0m")
+	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
+	return strings.Join(nm, "\n"), p
+}
+
+// ToEditForwardView export view
+func (m *Message) ToEditForwardView(om *Message) (string, int) {
+	var nm []string
+	p := 0
+	r := strings.NewReplacer(
+		"@pseudo", m.To,
+		"@CFName", strings.Split(m.From, " ")[0],
+		"@ODate", om.DateWritten.Format("02 Jan 06"),
+		"@OTime", om.DateWritten.Format("15:04:05"),
+		"@OName", om.From,
+		"@OAddr", om.FromAddr.String(),
+		"@DName", om.To,
+		"@OEcho", Areas[om.AreaID].GetName(),
+		"@Subject", om.Subject,
+		"@CAddr", config.Config.Address.String(),
+		"@CName", config.Config.Username)
+	for _, l := range config.Template {
+		if len(l) > 0 {
+			if l[0] == '@' {
+				if len(l) > 7 && l[0:8] == "@Forward" {
+					if len(l) == 8 {
+						nm = append(nm, "")
+					} else {
+						nm = append(nm, r.Replace(l[8:]))
+					}
+				} else if len(l) > 8 && l[0:9] == "@Position" {
+					p = len(nm)
+					if len(l) == 9 {
+						nm = append(nm, "")
+					} else {
+						nm = append(nm, r.Replace(l[9:]))
+					}
+				} else if len(l) > 7 && l[0:8] == "@Message" {
+					nm = append(nm, om.GetForward()...)
 				} else if len(l) > 6 && l[0:7] == "@CFName" {
 					nm = append(nm, r.Replace(l))
 				}

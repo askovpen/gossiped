@@ -6,6 +6,11 @@ type EchoAreaMsgType string
 // EchoAreaType Area type
 type EchoAreaType uint8
 
+var (
+	// Areas list
+	Areas []AreaPrimitive
+)
+
 // types
 const (
 	EchoAreaMsgTypeJAM        EchoAreaMsgType = "JAM"

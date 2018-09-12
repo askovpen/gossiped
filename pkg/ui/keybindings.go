@@ -37,6 +37,17 @@ func Keybindings(g *gocui.Gui) error {
 	g.SetKeybinding("MsgBody", 'l', gocui.ModAlt, listMsgs)
 	g.SetKeybinding("MsgBody", gocui.KeyCtrlL, gocui.ModNone, listMsgs)
 	g.SetKeybinding("MsgBody", gocui.KeyF3, gocui.ModNone, answerMsg)
+	g.SetKeybinding("MsgBody", 'n', gocui.ModAlt, answerMsgAreaList)
+	g.SetKeybinding("MsgBody", gocui.KeyCtrlN, gocui.ModNone, answerMsgAreaList)
+	g.SetKeybinding("MsgBody", 'f', gocui.ModAlt, forwardAreaList)
+	g.SetKeybinding("MsgBody", gocui.KeyCtrlF, gocui.ModNone, forwardAreaList)
+
+	g.SetKeybinding("iAreaList", gocui.KeyArrowDown, gocui.ModNone, areaNext)
+	g.SetKeybinding("iAreaList", gocui.KeyArrowUp, gocui.ModNone, areaPrev)
+	g.SetKeybinding("iAreaList", gocui.KeyPgdn, gocui.ModNone, areaPgdn)
+	g.SetKeybinding("iAreaList", gocui.KeyPgup, gocui.ModNone, areaPgup)
+	g.SetKeybinding("iAreaList", gocui.KeyEsc, gocui.ModNone, answerMsgAreaListEscape)
+	g.SetKeybinding("iAreaList", gocui.KeyEnter, gocui.ModNone, answerMsgNewArea)
 
 	g.SetKeybinding("editToName", gocui.KeyEnter, gocui.ModNone, editToNameNext)
 	g.SetKeybinding("editToName", gocui.KeyTab, gocui.ModNone, editToNameNext)

@@ -6,43 +6,60 @@ import (
 	"github.com/askovpen/goated/pkg/msgapi"
 	"github.com/askovpen/goated/pkg/types"
 	"github.com/askovpen/gocui"
-	// "log"
+	//"log"
 	"strings"
 )
 
+func answerMsgNewArea(g *gocui.Gui, v *gocui.View) error {
+	_, oy := v.Origin()
+	_, cy := v.Cursor()
+	newMsgAreaID = oy + cy - 1
+	g.DeleteView("iAreaList")
+	editMsg(g, v)
+	return nil
+}
+
 func answerMsg(g *gocui.Gui, v *gocui.View) error {
-	newMsgType = "answer"
+	newMsgType = newMsgTypeAnswer
 	err := editMsg(g, v)
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
 func editMsg(g *gocui.Gui, v *gocui.View) error {
 	quitMsgView(g, v)
 	var origMessage *msgapi.Message
+	if newMsgType == 0 {
+		newMsgAreaID = curAreaID
+	}
 	if newMsg == nil {
-		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: curAreaID}
+		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: newMsgAreaID}
 		newMsg.Kludges = make(map[string]string)
 		newMsg.Kludges["PID:"] = config.PID
 		newMsg.Kludges["CHRS:"] = config.Config.Chrs
-		if msgapi.Areas[curAreaID].GetChrs() != "" {
-			newMsg.Kludges["CHRS:"] = msgapi.Areas[curAreaID].GetChrs()
+		if msgapi.Areas[newMsgAreaID].GetChrs() != "" {
+			newMsg.Kludges["CHRS:"] = msgapi.Areas[newMsgAreaID].GetChrs()
 		}
 	}
-	if newMsgType == "answer" {
+	if (newMsgType & newMsgTypeAnswer) != 0 {
 		origMessage, _ = msgapi.Areas[curAreaID].GetMsg(curMsgNum)
 		newMsg.To = origMessage.From
 		newMsg.ToAddr = origMessage.FromAddr
 		newMsg.Kludges["REPLY:"] = origMessage.Kludges["MSGID:"]
+	} else if (newMsgType & newMsgTypeForward) != 0 {
+		origMessage, _ = msgapi.Areas[curAreaID].GetMsg(curMsgNum)
 	}
 	maxX, maxY := g.Size()
 	msgHeader, _ := g.SetView("MsgHeader", 0, 0, maxX-1, 5)
 	msgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
 	msgHeader.FrameBgColor = gocui.ColorBlack
+	msgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
+	msgHeader.Title = msgapi.Areas[newMsgAreaID].GetName()
 	msgHeader.Clear()
 	fmt.Fprintf(msgHeader, " Msg  : %-34s Pvt\n",
-		fmt.Sprintf("%d of %d", msgapi.Areas[curAreaID].GetCount()+1, msgapi.Areas[curAreaID].GetCount()+1))
+		fmt.Sprintf("%d of %d", msgapi.Areas[newMsgAreaID].GetCount()+1, msgapi.Areas[newMsgAreaID].GetCount()+1))
 	fmt.Fprintf(msgHeader, " From :\n")
 	fmt.Fprintf(msgHeader, " To   : \n")
 	fmt.Fprintf(msgHeader, " Subj : ")
@@ -65,16 +82,16 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	msgToName.Clear()
 	msgToName.Frame = false
 	msgToName.Editable = true
-	if newMsgType == "answer" {
+	if (newMsgType & newMsgTypeAnswer) != 0 {
 		fmt.Fprintf(msgToName, "%s", origMessage.From)
-	} else if msgapi.Areas[curAreaID].GetType() != msgapi.EchoAreaTypeNetmail {
+	} else if msgapi.Areas[newMsgAreaID].GetType() != msgapi.EchoAreaTypeNetmail {
 		fmt.Fprintf(msgToName, "All")
 	}
 	msgToAddr, _ := g.SetView("editToAddr", 43, 2, 57, 4)
 	msgToAddr.Clear()
 	msgToAddr.Frame = false
 	msgToAddr.Editable = true
-	if newMsgType == "answer" && msgapi.Areas[curAreaID].GetType() == msgapi.EchoAreaTypeNetmail {
+	if (newMsgType&newMsgTypeAnswer) != 0 && msgapi.Areas[newMsgAreaID].GetType() == msgapi.EchoAreaTypeNetmail {
 		fmt.Fprintf(msgToAddr, "%s", origMessage.FromAddr)
 	}
 	g.Cursor = true
@@ -83,9 +100,12 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 	msgSubj.Clear()
 	msgSubj.Frame = false
 	msgSubj.Editable = true
-	if newMsgType == "answer" {
+	if (newMsgType & newMsgTypeAnswer) != 0 {
 		fmt.Fprintf(msgSubj, "%s", origMessage.Subject)
 		ActiveWindow = "editSubj"
+	} else if (newMsgType & newMsgTypeForward) != 0 {
+		fmt.Fprintf(msgSubj, "%s", origMessage.Subject)
+		ActiveWindow = "editToName"
 	} else {
 		ActiveWindow = "editToName"
 	}
@@ -137,12 +157,14 @@ func editToSubjBody(g *gocui.Gui, v *gocui.View) error {
 	var origMessage *msgapi.Message
 	var p int
 	var mv string
-	if newMsgType == "answer" {
+	if (newMsgType&newMsgTypeAnswer) != 0 || (newMsgType&newMsgTypeForward) != 0 {
 		origMessage, _ = msgapi.Areas[curAreaID].GetMsg(curMsgNum)
 	}
 	vn, _ = g.View("editMsgBody")
-	if newMsgType == "answer" {
+	if (newMsgType & newMsgTypeAnswer) != 0 {
 		mv, p = newMsg.ToEditAnswerView(origMessage)
+	} else if (newMsgType & newMsgTypeForward) != 0 {
+		mv, p = newMsg.ToEditForwardView(origMessage)
 	} else {
 		mv, p = newMsg.ToEditNewView()
 	}
@@ -198,7 +220,7 @@ func editMsgBodyMenuDown(g *gocui.Gui, v *gocui.View) error {
 }
 func saveMessage(g *gocui.Gui, v *gocui.View) error {
 	_, cy := v.Cursor()
-	//log.Printf("cy %d", cy)
+	g.Cursor = false
 	switch cy {
 	case 0:
 		g.DeleteView("MsgHeader")
@@ -209,7 +231,9 @@ func saveMessage(g *gocui.Gui, v *gocui.View) error {
 		g.DeleteView("editToAddr")
 		g.DeleteView("editSubj")
 		g.DeleteView("editMenuMsg")
-		err := msgapi.Areas[curAreaID].SaveMsg(newMsg.MakeBody())
+		err := msgapi.Areas[newMsgAreaID].SaveMsg(newMsg.MakeBody())
+		newMsgType = 0
+		newMsg = nil
 		if err != nil {
 			errorMsg(err.Error(), "AreaList")
 		} else {
@@ -217,6 +241,8 @@ func saveMessage(g *gocui.Gui, v *gocui.View) error {
 			ActiveWindow = "MsgBody"
 		}
 	case 1:
+		newMsg = nil
+		newMsgType = 0
 		g.DeleteView("MsgHeader")
 		g.DeleteView("editMsgBody")
 		g.DeleteView("editFromName")

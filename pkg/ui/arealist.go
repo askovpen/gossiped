@@ -24,7 +24,7 @@ func quitUp(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 func quitAreaList(g *gocui.Gui, v *gocui.View) error {
-	v, _ = App.SetView("QuitMsg", 2, 1, 17, 4)
+	v, _ = g.SetView("QuitMsg", 2, 1, 17, 4)
 	v.Title = "Quit goAtEd?"
 	v.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 	v.FrameFgColor = gocui.ColorRed | gocui.AttrBold
@@ -34,7 +34,7 @@ func quitAreaList(g *gocui.Gui, v *gocui.View) error {
 	v.SelBgColor = gocui.ColorBlue
 	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
 	ActiveWindow = "QuitMsg"
-	App.SetCurrentView("QuitMsg")
+	g.SetCurrentView("QuitMsg")
 	return nil
 }
 
@@ -144,33 +144,88 @@ func viewArea(g *gocui.Gui, v *gocui.View) error {
 }
 
 // CreateAreaList create arealist
-func CreateAreaList() error {
-	maxX, maxY := App.Size()
-	AreaList, err := App.SetView("AreaList", 0, 0, maxX-1, maxY-2)
+func CreateAreaList(g *gocui.Gui) error {
+	maxX, maxY := g.Size()
+	v, err := g.SetView("AreaList", 0, 0, maxX-1, maxY-2)
 	if err != nil && err != gocui.ErrUnknownView {
 		return err
 	}
-	AreaList.Wrap = false
-	AreaList.Highlight = true
-	AreaList.SelBgColor = gocui.ColorBlue
-	AreaList.SelFgColor = gocui.ColorWhite | gocui.AttrBold
-	AreaList.FgColor = gocui.ColorWhite
-	AreaList.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
-	AreaList.FrameBgColor = gocui.ColorBlack
-	AreaList.Clear()
-	fmt.Fprintf(AreaList, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6s %6s \033[0m\n",
+	v.Wrap = false
+	v.Highlight = true
+	v.SelBgColor = gocui.ColorBlue
+	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
+	v.FgColor = gocui.ColorWhite
+	v.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
+	v.FrameBgColor = gocui.ColorBlack
+	v.Clear()
+	fmt.Fprintf(v, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6s %6s \033[0m\n",
 		"EchoID", "Msgs", "New")
 	for i, a := range msgapi.Areas {
-		fmt.Fprintf(AreaList, "%4d%s %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6d %6d \n",
+		fmt.Fprintf(v, "%4d%s %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6d %6d \n",
 			i+1,
 			getAreaNew(a),
 			a.GetName(),
 			a.GetCount(),
 			a.GetCount()-a.GetLast())
 	}
-	_, cy := AreaList.Cursor()
+	_, cy := v.Cursor()
 	if cy == 0 {
-		areaNext(App, AreaList)
+		areaNext(App, v)
 	}
+	return nil
+}
+
+func answerMsgAreaList(g *gocui.Gui, v *gocui.View) error {
+	newMsgType = newMsgTypeAnswer | newMsgTypeAnswerNewArea
+	inlineAreaList(g, "answerMsgAreaList")
+	return nil
+}
+
+func forwardAreaList(g *gocui.Gui, v *gocui.View) error {
+	newMsgType = newMsgTypeForward
+	inlineAreaList(g, "forwardMsg")
+	return nil
+}
+
+func inlineAreaList(g *gocui.Gui, t string) error {
+	maxX, maxY := g.Size()
+	title := ""
+	switch t {
+	case "answerMsgAreaList":
+		title = "Answer In Area:"
+	case "forwardMsg":
+		title = "Forward To Area:"
+	}
+	v, _ := g.SetView("iAreaList", 0, 5, maxX-1, maxY-1)
+	v.Wrap = false
+	v.Title = title
+	v.Highlight = true
+	v.SelBgColor = gocui.ColorBlue
+	v.SelFgColor = gocui.ColorWhite | gocui.AttrBold
+	v.FgColor = gocui.ColorWhite
+	v.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
+	v.FrameBgColor = gocui.ColorBlack
+	ActiveWindow = "iAreaList"
+	fmt.Fprintf(v, "\033[33;1m Area %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6s %6s \033[0m\n",
+		"EchoID", "Msgs", "New")
+	for i, a := range msgapi.Areas {
+		fmt.Fprintf(v, "%4d%s %-"+strconv.FormatInt(int64(maxX-23), 10)+"s %6d %6d \n",
+			i+1,
+			getAreaNew(a),
+			a.GetName(),
+			a.GetCount(),
+			a.GetCount()-a.GetLast())
+	}
+	_, cy := v.Cursor()
+	if cy == 0 {
+		areaNext(g, v)
+	}
+	return nil
+}
+
+func answerMsgAreaListEscape(g *gocui.Gui, v *gocui.View) error {
+	newMsgType = 0
+	g.DeleteView("iAreaList")
+	ActiveWindow = "MsgBody"
 	return nil
 }
