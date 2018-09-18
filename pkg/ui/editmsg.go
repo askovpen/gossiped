@@ -38,7 +38,7 @@ func editMsg(g *gocui.Gui, v *gocui.View) error {
 		newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: newMsgAreaID}
 		newMsg.Kludges = make(map[string]string)
 		newMsg.Kludges["PID:"] = config.PID
-		newMsg.Kludges["CHRS:"] = config.Config.Chrs
+		newMsg.Kludges["CHRS:"] = config.Config.Chrs.Default
 		if msgapi.Areas[newMsgAreaID].GetChrs() != "" {
 			newMsg.Kludges["CHRS:"] = msgapi.Areas[newMsgAreaID].GetChrs()
 		}

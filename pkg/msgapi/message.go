@@ -98,7 +98,7 @@ func (m *Message) ParseRaw() error {
 
 // Encode charset
 func (m *Message) Encode() {
-	enc := strings.Split(config.Config.Chrs, " ")[0]
+	enc := strings.Split(config.Config.Chrs.Default, " ")[0]
 	if Areas[m.AreaID].GetChrs() != "" {
 		enc = strings.Split(Areas[m.AreaID].GetChrs(), " ")[0]
 	}
@@ -110,9 +110,12 @@ func (m *Message) Encode() {
 
 // Decode charset
 func (m *Message) Decode() {
-	enc := strings.Split(config.Config.Chrs, " ")[0]
+	enc := strings.Split(config.Config.Chrs.Default, " ")[0]
 	if _, ok := m.Kludges["CHRS"]; ok {
 		enc = m.Kludges["CHRS"]
+		if enc == "IBMPC" {
+			enc = config.Config.Chrs.IBMPC
+		}
 	}
 	//log.Printf("Decode(): %#v", m.Kludges)
 	m.Body = utils.DecodeCharmap(m.Body, enc)

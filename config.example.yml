@@ -6,7 +6,9 @@ areafile:
 log: ./app.log
 template: goated.tpl
 origin: Just Origin
-chrs: CP866 2 # <charset> <lvl> http://ftsc.org/docs/fts-5003.001
+chrs:
+  default: CP866 2 # <charset> <lvl> http://ftsc.org/docs/fts-5003.001
+  ibmpc: CP866
 areas:
   - name: netmail
     path: '/path/to/netmail'
