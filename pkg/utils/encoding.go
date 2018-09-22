@@ -12,8 +12,8 @@ import (
 func DecodeCharmap(s string, c string) string {
 	sr := strings.NewReader(s)
 	var tr *transform.Reader
-	switch c {
-	case "CP866", "+7_FIDO", "+7":
+	switch strings.ToUpper(c) {
+	case "CP866", "+7_FIDO", "+7", "IBM866":
 		tr = transform.NewReader(sr, charmap.CodePage866.NewDecoder())
 	case "CP850":
 		tr = transform.NewReader(sr, charmap.CodePage850.NewDecoder())
