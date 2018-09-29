@@ -21,6 +21,7 @@ func answerMsgNewArea(g *gocui.Gui, v *gocui.View) error {
 
 func answerMsg(g *gocui.Gui, v *gocui.View) error {
 	newMsgType = newMsgTypeAnswer
+	newMsgAreaID = curAreaID
 	err := editMsg(g, v)
 	if err != nil {
 		return err
