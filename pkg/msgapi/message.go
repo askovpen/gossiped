@@ -96,6 +96,19 @@ func (m *Message) ParseRaw() error {
 	return nil
 }
 
+func (m *Message) parseTabs(s string) string {
+	for i:=0;i<len(s);i++ {
+		if s[i]=='\x09' {
+			ts:=8-(i%8)
+			for j:=0;j<ts;j++ {
+				s=s[:i]+" "+s[i:]
+				i++
+			}
+		}
+	}
+	return s
+}
+
 // Encode charset
 func (m *Message) Encode() {
 	enc := strings.Split(config.Config.Chrs.Default, " ")[0]
@@ -129,6 +142,7 @@ func (m *Message) ToView(showKludges bool) string {
 	var nm []string
 	re := regexp.MustCompile(">+")
 	for _, l := range strings.Split(m.Body, "\x0d") {
+		l=m.parseTabs(l)
 		if len(l) > 1 && l[0] == 1 {
 			if showKludges {
 				nm = append(nm, "\033[30;1m@"+l[1:]+"\033[0m")
