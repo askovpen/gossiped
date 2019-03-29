@@ -4,14 +4,14 @@ import (
 	"errors"
 	"github.com/askovpen/goated/pkg/config"
 	"github.com/askovpen/goated/pkg/msgapi"
-	"log"
+	// "log"
 	"sort"
 	"strings"
 )
 
 // Read area configs
 func Read() error {
-	log.Printf(config.Config.AreaFile.Type)
+	// log.Printf(config.Config.AreaFile.Type)
 	switch config.Config.AreaFile.Type {
 	case "fidoconfig":
 		err := fidoConfigRead(config.Config.AreaFile.Path)
