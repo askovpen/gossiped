@@ -30,6 +30,8 @@ type Message struct {
 	DateWritten time.Time
 	DateArrived time.Time
 	Attrs       []string
+	ReplyTo     uint32
+	Replies     []uint32
 	Body        string
 	FromAddr    *types.FidoAddr
 	ToAddr      *types.FidoAddr

@@ -10,7 +10,7 @@ import (
 	"github.com/askovpen/goated/pkg/utils"
 	"hash/crc32"
 	"io/ioutil"
-	// "log"
+	//"log"
 	"os"
 	// "sort"
 	"strings"
@@ -81,6 +81,15 @@ func (j *JAM) getAttrs(a uint32) (attrs []string) {
 	return
 }
 
+func (j *JAM) getOffsetByNum(num uint32) (offset uint32) {
+	for i, is := range j.indexStructure {
+		if is.MessageNum == num {
+			return uint32(i) + 1
+		}
+	}
+	return 0
+}
+
 // GetMsg return msg
 func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	if len(j.indexStructure) == 0 {
@@ -123,6 +132,17 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	rm.DateWritten = rm.DateWritten.Add(time.Duration(tofs) * -time.Second)
 	rm.DateArrived = rm.DateArrived.Add(time.Duration(tofs) * -time.Second)
 	rm.Attrs = j.getAttrs(jamh.Attribute)
+	if jamh.ReplyTo > 0 {
+		rm.ReplyTo = j.getOffsetByNum(jamh.ReplyTo)
+	} else {
+		jamh.ReplyTo = 0
+	}
+	if jamh.Reply1st > 0 {
+		rm.Replies = append(rm.Replies, j.getOffsetByNum(jamh.Reply1st))
+	}
+	//if jamh.ReplyNext>0 {
+	//  rm.Replies = append(rm.Replies,j.getOffsetByNum(jamh.ReplyNext))
+	//}
 	deleted := false
 	if jamh.Attribute&0x80000000 > 0 {
 		deleted = true

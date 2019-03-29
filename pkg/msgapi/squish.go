@@ -110,6 +110,15 @@ func (s *Squish) getAttrs(a uint32) (attrs []string) {
 	return
 }
 
+func (s *Squish) getOffsetByNum(num uint32) (offset uint32) {
+	for i, is := range s.indexStructure {
+		if is.MessageNum == num {
+			return uint32(i) + 1
+		}
+	}
+	return 0
+}
+
 func readSQDH(headerb *bytes.Buffer) (sqdH, error) {
 	var sqdh sqdH
 	if err := utils.ReadStructFromBuffer(headerb, &sqdh); err != nil {
@@ -164,6 +173,17 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	rm.Body = string(body[:])
 	rm.DateWritten = getTime(sqdh.DateWritten)
 	rm.DateArrived = getTime(sqdh.DateArrived)
+	if sqdh.ReplyTo > 0 {
+		rm.ReplyTo = s.getOffsetByNum(sqdh.ReplyTo) //s.indexStructure[sqdh.ReplyTo].MessageNum - 1
+	} else {
+		rm.ReplyTo = 0
+	}
+	for _, reply := range sqdh.Replies {
+		if reply > 0 {
+			//rm.Replies = append(rm.Replies, s.indexStructure[reply-1].MessageNum)
+			rm.Replies = append(rm.Replies, s.getOffsetByNum(reply))
+		}
+	}
 	kla := strings.Split(rm.Body[1:sqdh.CLen], "\x01")
 	for i := range kla {
 		kla[i] = strings.Trim(kla[i], "\x00")
