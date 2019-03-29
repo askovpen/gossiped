@@ -56,8 +56,15 @@ func viewMsg(areaID int, msgNum uint32) error {
 		MsgHeader.TitleFgColor = gocui.ColorYellow | gocui.AttrBold
 		MsgHeader.TitleBgColor = gocui.ColorBlack
 		MsgHeader.FrameFgColor = gocui.ColorBlue | gocui.AttrBold
+		repl := ""
+		if msg.ReplyTo > 0 {
+			repl = fmt.Sprintf("-%d ", msg.ReplyTo)
+		}
+		for _, rn := range msg.Replies {
+			repl += fmt.Sprintf("+%d ", rn)
+		}
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
-			fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaID].GetCount()),
+			fmt.Sprintf("%d of %d %s", msgNum, msgapi.Areas[areaID].GetCount(), repl),
 			strings.Join(msg.Attrs, " "))
 		fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s\n",
 			msg.From,
