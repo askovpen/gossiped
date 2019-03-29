@@ -14,6 +14,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
 )
 
 // SquishAttrs Squish Attributes
@@ -281,12 +282,16 @@ func setTime(t time.Time) (rt uint32) {
 	return
 }
 func bufHash32(str string) (h uint32) {
-	str = strings.ToLower(str)
+	//str = strings.ToLower(str)
 	strb := []byte(str)
+	//strb=bytes.ToLower(strb)
 	h = 0
 	for i := range strb {
 		if strb[i] == 0 {
 			continue
+		}
+		if strb[i]<0x7f {
+		  strb[i]=byte(unicode.ToLower(rune(strb[i])))
 		}
 		h = (h << 4) + uint32(strb[i])
 		g := h & 0xF0000000
