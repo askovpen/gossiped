@@ -290,8 +290,8 @@ func bufHash32(str string) (h uint32) {
 		if strb[i] == 0 {
 			continue
 		}
-		if strb[i]<0x7f {
-		  strb[i]=byte(unicode.ToLower(rune(strb[i])))
+		if strb[i] < 0x7f {
+			strb[i] = byte(unicode.ToLower(rune(strb[i])))
 		}
 		h = (h << 4) + uint32(strb[i])
 		g := h & 0xF0000000
