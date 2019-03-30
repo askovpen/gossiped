@@ -68,8 +68,8 @@ func Read() error {
 		}
 		Template = append(Template, l)
 	}
-	if len(Config.Tearline)==0 {
-	  Config.Tearline=LongPID
+	if len(Config.Tearline) == 0 {
+		Config.Tearline = LongPID
 	}
 	return nil
 }
