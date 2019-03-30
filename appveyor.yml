@@ -9,8 +9,6 @@ branches:
 environment:
   GOPATH: c:\gopath
 
-stack: go 1.12
-
 before_build:
   - set CGO_ENABLED=0
   - go version
