@@ -11,11 +11,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a15a22cd71163e8ee4aa0898527aded0fdd2626f593c69729d591deff09c5ac4"
+  digest = "1:274a873aa98837ede6cf04b66b42b0fa5012d681934849dfc2e7a6b164483f61"
   name = "github.com/askovpen/termbox-go"
   packages = ["."]
   pruneopts = "UT"
-  revision = "62f3056ff9414ba9f3f4bf513aaa9863a9b84ea9"
+  revision = "33150277f9026ea5be5f5163d26911b454a955af"
 
 [[projects]]
   digest = "1:0afa63759ae8c5aa13d813346e414e7ed3bde76a98f48b9ebe3272f5a5e2f7ec"
