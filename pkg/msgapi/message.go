@@ -210,7 +210,7 @@ func (m *Message) ToEditNewView() (string, int) {
 			nm = append(nm, l)
 		}
 	}
-	nm = append(nm, "\033[37;1m--- "+config.LongPID+"\033[0m")
+	nm = append(nm, "\033[37;1m--- "+config.Config.Tearline+"\033[0m")
 	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
 	return strings.Join(nm, "\n"), p
 
@@ -321,7 +321,7 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 			nm = append(nm, l)
 		}
 	}
-	nm = append(nm, "\033[37;1m--- "+config.LongPID+"\033[0m")
+	nm = append(nm, "\033[37;1m--- "+config.Config.Tearline+"\033[0m")
 	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
 	return strings.Join(nm, "\n"), p
 }
@@ -370,7 +370,7 @@ func (m *Message) ToEditForwardView(om *Message) (string, int) {
 			nm = append(nm, l)
 		}
 	}
-	nm = append(nm, "\033[37;1m--- "+config.LongPID+"\033[0m")
+	nm = append(nm, "\033[37;1m--- "+config.Config.Tearline+"\033[0m")
 	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
 	return strings.Join(nm, "\n"), p
 }

@@ -26,6 +26,7 @@ type configS struct {
 	Log      string
 	Address  *types.FidoAddr
 	Origin   string
+	Tearline string
 	Template string
 	Chrs     struct {
 		Default string
@@ -66,6 +67,9 @@ func Read() error {
 			continue
 		}
 		Template = append(Template, l)
+	}
+	if len(Config.Tearline) == 0 {
+		Config.Tearline = LongPID
 	}
 	return nil
 }
