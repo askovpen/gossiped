@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"github.com/askovpen/goated/pkg/config"
 	"github.com/askovpen/goated/pkg/msgapi"
 	"github.com/askovpen/gocui"
 	"log"
@@ -66,10 +67,11 @@ func viewMsg(areaID int, msgNum uint32) error {
 		fmt.Fprintf(MsgHeader, " Msg  : %-34s %-36s\n",
 			fmt.Sprintf("%d of %d %s", msgNum, msgapi.Areas[areaID].GetCount(), repl),
 			strings.Join(msg.Attrs, " "))
-		fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s\n",
+		fmt.Fprintf(MsgHeader, " From : %-34s %-15s %-18s %-40s\n",
 			msg.From,
 			msg.FromAddr.String(),
-			msg.DateWritten.Format("02 Jan 06 15:04:05"))
+			msg.DateWritten.Format("02 Jan 06 15:04:05"),
+			config.GetCity(msg.FromAddr.ShortString()))
 		fmt.Fprintf(MsgHeader, " To   : %-34s %-15s %-18s\n",
 			msg.To,
 			msg.ToAddr.String(),

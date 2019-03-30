@@ -40,6 +40,7 @@ var (
 	PID      = "ATED+" + runtime.GOOS[0:3] + " " + Version
 	LongPID  = "goAtEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
 	Template []string
+	city     map[string]string
 )
 
 // Read config
@@ -71,5 +72,22 @@ func Read() error {
 	if len(Config.Tearline) == 0 {
 		Config.Tearline = LongPID
 	}
+	readCity()
 	return nil
+}
+func readCity() {
+	yamlFile, err := ioutil.ReadFile("city.yaml")
+	if err != nil {
+		return
+	}
+	err = yaml.Unmarshal(yamlFile, &city)
+	if err != nil {
+		return
+	}
+}
+func GetCity(sa string) string {
+	if val, ok := city[sa]; ok {
+		return val
+	}
+	return "unknown"
 }
