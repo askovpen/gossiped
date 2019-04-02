@@ -83,7 +83,7 @@ func EncodeCharmap(s string, c string) string {
 	default:
 		enc = charmap.ISO8859_1.NewEncoder()
 	}
-	out, err := enc.String(s)
+	out, err := encoding.ReplaceUnsupported(enc).String(s)
 	if err != nil {
 		panic(err)
 	}
