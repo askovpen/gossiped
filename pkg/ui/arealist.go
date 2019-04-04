@@ -107,6 +107,9 @@ func areaPrev(g *gocui.Gui, v *gocui.View) error {
 		ox, oy := v.Origin()
 		cx, cy := v.Cursor()
 		if cy > 1 {
+			if (cy+oy-2 >= len(msgapi.Areas)) || (cy+oy-2 < 0) {
+				return nil
+			}
 			StatusLine = fmt.Sprintf(" %s: %d msgs, %d unread",
 				msgapi.Areas[cy+oy-2].GetName(),
 				msgapi.Areas[cy+oy-2].GetCount(),
