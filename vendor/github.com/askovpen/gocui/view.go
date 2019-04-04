@@ -10,8 +10,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/mattn/go-runewidth"
 	"github.com/askovpen/termbox-go"
+	"github.com/mattn/go-runewidth"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor
