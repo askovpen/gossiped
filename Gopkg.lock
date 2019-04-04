@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f0d6cd4cef7c77ee87afc21195201cda66c03e100a07116c8f544c9778b991c8"
+  digest = "1:d06bbb1d99d38ea53f1f40c4aaca823d7fe6d6fcecf118e1e80ef9630292015b"
   name = "github.com/askovpen/gocui"
   packages = ["."]
   pruneopts = "UT"
-  revision = "fe1e9c7c6ac7c9ecbe105a6c06a25df39b41a814"
+  revision = "b459cde343b202127a0bc818d8f789790a89bd6c"
 
 [[projects]]
   branch = "master"
