@@ -6,6 +6,7 @@ package gocui
 
 import (
 	"errors"
+
 	"github.com/mattn/go-runewidth"
 )
 
@@ -69,15 +70,15 @@ func (v *View) EditWrite(ch rune) {
 
 // EditHome cursor set to home.
 func (v *View) EditHome() error {
-	v.SetCursor(0, v.cy)
+	v.SetCursor(0,v.cy)
 	return nil
 }
 
 // EditEnd cursor set to end.
 func (v *View) EditEnd() error {
 	_, y := v.ox+v.cx, v.oy+v.cy
-	_, y, _ = v.realPosition(0, y)
-	v.SetCursor(len(v.lines[y]), v.cy)
+	_, y,_ = v.realPosition(0, y)
+	v.SetCursor(len(v.lines[y]),v.cy)
 	return nil
 }
 
@@ -95,13 +96,6 @@ func (v *View) EditDeleteLine() error {
 	}
 
 	v.lines = append(v.lines[:y], v.lines[y+1:]...)
-
-	if len(v.lines) == 0 {
-		v.lines = append(v.lines, nil)
-	} else if len(v.lines) == y {
-		v.MoveCursor(0, -1, true)
-	}
-
 	return nil
 }
 

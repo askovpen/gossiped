@@ -3,8 +3,8 @@ package areasconfig
 import (
 	"bufio"
 	"errors"
-	"github.com/askovpen/goated/pkg/config"
-	"github.com/askovpen/goated/pkg/msgapi"
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/askovpen/gossiped/pkg/msgapi"
 	"io/ioutil"
 	"log"
 	"os"

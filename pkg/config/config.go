@@ -2,7 +2,7 @@ package config
 
 import (
 	"errors"
-	"github.com/askovpen/goated/pkg/types"
+	"github.com/askovpen/gossiped/pkg/types"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
