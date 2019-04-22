@@ -467,7 +467,7 @@ func (t *EditBody) getRealPos(str string, tp int) int {
 // InputHandler returns the handler for this primitive.
 func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 	return t.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
-		_, _, width, height := t.GetInnerRect()
+		_, _, width, _ := t.GetInnerRect()
 		add := func(r rune) {
 			//newText := i.text[:i.cursorPos] + string(r) + i.text[i.cursorPos:]
 			line := t.index[t.cur.Y]
@@ -510,28 +510,55 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 				t.cur.Y++
 				t.index = nil
 			}
+			if t.cur.Y-t.lineOffset >= t.pageSize {
+				t.lineOffset++
+			}
+
+		}
+		bck := func() {
+			line := t.index[t.cur.Y]
+			pos := t.getRealPos(t.buffer[line.Line][line.Pos:line.NextPos], t.cur.X)
+			if t.cur.X > 0 {
+				//log.Print(charWidth(t.buffer[line.Line], t.cur.X-1))
+				t.buffer[line.Line] = t.buffer[line.Line][:line.Pos+pos-charWidth(t.buffer[line.Line], t.cur.X-1)] + t.buffer[line.Line][line.Pos+pos:]
+				t.cur.X--
+				t.index[line.Line].NextPos--
+				//t.index = nil
+			} else if t.cur.Y > 0 {
+				ln := stringWidth(t.buffer[line.Line])
+				t.buffer[line.Line-1] = t.buffer[line.Line-1] + t.buffer[line.Line]
+				t.buffer = append(t.buffer[:line.Line], t.buffer[line.Line+1:]...)
+				t.cur.Y--
+				t.cur.X = stringWidth(t.buffer[line.Line-1]) - ln
+				t.index = nil
+			}
+			if t.cur.Y-t.lineOffset == 0 {
+				t.lineOffset--
+			}
+
+		}
+		del := func() {
+			line := t.index[t.cur.Y]
+			pos := t.getRealPos(t.buffer[line.Line][line.Pos:line.NextPos], t.cur.X)
+			if t.cur.X < stringWidth(t.buffer[line.Line]) {
+				t.buffer[line.Line] = t.buffer[line.Line][:line.Pos+pos] + t.buffer[line.Line][line.Pos+pos+charWidth(t.buffer[line.Line], t.cur.X):]
+				//t.index[line.Line].NextPos--
+				t.index = nil
+			} else if t.cur.Y < len(t.index)-1 {
+				t.buffer[line.Line] = t.buffer[line.Line] + t.buffer[line.Line+1]
+				t.buffer = append(t.buffer[:line.Line+1], t.buffer[line.Line+2:]...)
+				t.index = nil
+			}
 		}
 		key := event.Key()
-
-		//if key == tcell.KeyEscape || key == tcell.KeyEnter || key == tcell.KeyTab || key == tcell.KeyBacktab {
-		//	if t.done != nil {
-		//		t.done(key)
-		//	}
-		//	return
-		//}
-
 		switch key {
 		case tcell.KeyRune:
 			add(event.Rune())
-			/*
-				case tcell.KeyHome:
-					t.trackEnd = false
-					t.lineOffset = 0
-					t.columnOffset = 0
-				case tcell.KeyEnd:
-					t.trackEnd = true
-					t.columnOffset = 0
-			*/
+		case tcell.KeyHome:
+			t.cur.X = 0
+		case tcell.KeyEnd:
+			line := t.index[t.cur.Y]
+			t.cur.X = stringWidth(t.buffer[line.Line])
 		case tcell.KeyUp:
 			t.trackEnd = false
 			if t.cur.Y > 0 {
@@ -544,6 +571,10 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 			if t.cur.Y-t.lineOffset == 0 {
 				t.lineOffset--
 			}
+		case tcell.KeyBackspace, tcell.KeyBackspace2:
+			bck()
+		case tcell.KeyDelete:
+			del()
 		case tcell.KeyEnter:
 			ent()
 		case tcell.KeyDown:
@@ -554,7 +585,7 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 					t.cur.X = stringWidth(t.buffer[line.Line][line.Pos:line.NextPos])
 				}
 			}
-			if t.cur.Y-t.lineOffset > height {
+			if t.cur.Y-t.lineOffset >= t.pageSize {
 				t.lineOffset++
 			}
 		case tcell.KeyLeft:

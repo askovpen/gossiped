@@ -4,6 +4,7 @@ import (
 	"math"
 	"regexp"
 	//"sort"
+	//"log"
 	"strconv"
 
 	"github.com/gdamore/tcell"
@@ -406,6 +407,24 @@ func TaggedStringWidth(text string) int {
 // stringWidth returns the number of horizontal cells needed to print the given
 // text. It splits the text into its grapheme clusters, calculates each
 // cluster's width, and adds them up to a total.
+func charWidth(text string, pos int) (width int) {
+	g := uniseg.NewGraphemes(text)
+	i := 0
+	for g.Next() {
+		chWidth := 0
+		for _, r := range g.Runes() {
+			chWidth += len(string(r))
+		}
+		//		log.Printf("%q %d",g.Runes(), chWidth)
+		if chWidth > 0 {
+			if i == pos {
+				return chWidth
+			}
+			i++
+		}
+	}
+	return 0
+}
 func stringWidth(text string) (width int) {
 	g := uniseg.NewGraphemes(text)
 	for g.Next() {
