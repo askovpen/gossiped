@@ -2,22 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  digest = "1:f0d6cd4cef7c77ee87afc21195201cda66c03e100a07116c8f544c9778b991c8"
-  name = "github.com/askovpen/gocui"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "fe1e9c7c6ac7c9ecbe105a6c06a25df39b41a814"
-
-[[projects]]
-  branch = "master"
-  digest = "1:274a873aa98837ede6cf04b66b42b0fa5012d681934849dfc2e7a6b164483f61"
-  name = "github.com/askovpen/termbox-go"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "33150277f9026ea5be5f5163d26911b454a955af"
-
-[[projects]]
   digest = "1:0afa63759ae8c5aa13d813346e414e7ed3bde76a98f48b9ebe3272f5a5e2f7ec"
   name = "github.com/franela/goblin"
   packages = ["."]
@@ -26,12 +10,55 @@
   version = "0.0.2"
 
 [[projects]]
+  digest = "1:0e16b03c72bd42739ca68d055c10369e60d17838428f512f3b29ae115ba788e0"
+  name = "github.com/gdamore/encoding"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6289cdc94c00ac4aa177771c5fce7af2f96b626d"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:937011a37a09b93be68052dfb3195fcfbff33b9472b37401b54027e9954906fb"
+  name = "github.com/gdamore/tcell"
+  packages = [
+    ".",
+    "terminfo",
+  ]
+  pruneopts = "UT"
+  revision = "aaadc574a6ed8dc3abe56036ca130dcee1ee6b6e"
+  version = "v1.1.1"
+
+[[projects]]
+  digest = "1:39de67207027b7374272d5ec9b1bf85457714150ba1263e8d236316629dad570"
+  name = "github.com/lucasb-eyer/go-colorful"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "30298f24079860c4dee452fdef6519b362a4a026"
+  version = "v1.0.2"
+
+[[projects]]
   digest = "1:0356f3312c9bd1cbeda81505b7fd437501d8e778ab66998ef69f00d7f9b3a0d7"
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
   pruneopts = "UT"
   revision = "3ee7d812e62a0804a7d0a324e0249ca2db3476d3"
   version = "v0.0.4"
+
+[[projects]]
+  branch = "master"
+  digest = "1:65d59a5b6a44b52bc2449479cc40de6da03398ef9c6323ea868c9ac752b9d441"
+  name = "github.com/rivo/tview"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "90b4da1bd64ceee13d2e7d782b315b819190f7bf"
+
+[[projects]]
+  branch = "master"
+  digest = "1:ab2d8dae71aefc7057f8da6a765968d46cb4190aee8ba247c46afc129d45a3bf"
+  name = "github.com/rivo/uniseg"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f699dde9c340bcc39b69a4c67369832af73ec72e"
 
 [[projects]]
   digest = "1:e2e7f5211c3327ff52e02773e4fd477842b2fed07ead33ec342970de162610ac"
@@ -61,8 +88,11 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/askovpen/gocui",
     "github.com/franela/goblin",
+    "github.com/gdamore/tcell",
+    "github.com/mattn/go-runewidth",
+    "github.com/rivo/tview",
+    "github.com/rivo/uniseg",
     "golang.org/x/text/encoding",
     "golang.org/x/text/encoding/charmap",
     "golang.org/x/text/transform",
