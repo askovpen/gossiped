@@ -23,6 +23,9 @@ func (f *FidoAddr) Equal(fn *FidoAddr) bool {
 }
 
 func (f *FidoAddr) String() string {
+	if f == nil {
+		return ""
+	}
 	if f.zone == 0 {
 		return ""
 	}

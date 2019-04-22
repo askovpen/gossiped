@@ -6,11 +6,11 @@ import (
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/utils"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"log"
 )
 
 // MessageListItem struct
@@ -213,7 +213,7 @@ func (m *Message) ToEditNewView() (string, int) {
 	}
 	nm = append(nm, "--- "+config.Config.Tearline)
 	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
-	log.Printf("pp: %d",p)
+	log.Printf("pp: %d", p)
 	return strings.Join(nm, "\n"), p
 
 }

@@ -11,7 +11,10 @@ import (
 
 func (a *App) InsertMsg(areaId int) (string, tview.Primitive, bool, bool) {
 	newMsg := &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: areaId}
-	eh := NewEditHeader(config.Config.Username, config.Config.Address.String(), "", "", "")
+	if msgapi.Areas[areaId].GetType() != msgapi.EchoAreaTypeNetmail {
+		newMsg.To = "All"
+	}
+	eh := NewEditHeader(newMsg)
 	eh.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).

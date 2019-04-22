@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	//"github.com/mattn/go-runewidth"
@@ -19,9 +20,10 @@ type EditHeader struct {
 	sPosition [5]int
 	sCoords   [5]coords
 	done      func([5][]rune)
+	msg       *msgapi.Message
 }
 
-func NewEditHeader(from, fromAddr, to, toAddr, subj string) *EditHeader {
+func NewEditHeader(msg *msgapi.Message) *EditHeader {
 	eh := &EditHeader{
 		Box: tview.NewBox().SetBackgroundColor(tcell.ColorDefault),
 		sCoords: [5]coords{
@@ -32,14 +34,15 @@ func NewEditHeader(from, fromAddr, to, toAddr, subj string) *EditHeader {
 			coords{f: 8, t: 67, y: 3},
 		},
 		sInputs: [5][]rune{
-			[]rune(from),
-			[]rune(fromAddr),
-			[]rune(to),
-			[]rune(toAddr),
-			[]rune(subj),
+			[]rune(msg.From),
+			[]rune(msg.FromAddr.String()),
+			[]rune(msg.To),
+			[]rune(msg.ToAddr.String()),
+			[]rune(msg.Subject),
 		},
-		sPosition: [5]int{len(from), len(fromAddr), len(to), len(toAddr), len(subj)},
+		sPosition: [5]int{len(msg.From), len(msg.FromAddr.String()), len(msg.To), len(msg.ToAddr.String()), len(msg.Subject)},
 		sIndex:    0,
+		msg:       msg,
 	}
 	return eh
 }
@@ -77,6 +80,8 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 			e.sIndex++
 			if e.sIndex == 5 {
 				e.sIndex = 0
+			} else if msgapi.Areas[e.msg.AreaID].GetType() != msgapi.EchoAreaTypeNetmail && e.sIndex == 3 {
+				e.sIndex = 4
 			}
 		case tcell.KeyRight:
 			if e.sPosition[e.sIndex] < len(e.sInputs[e.sIndex]) {
@@ -92,6 +97,11 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 					if len(e.sInputs[0]) > 0 && len(e.sInputs[1]) > 0 && len(e.sInputs[2]) > 0 {
 						e.done(e.sInputs)
 					}
+				}
+			} else {
+				e.sIndex++
+				if msgapi.Areas[e.msg.AreaID].GetType() != msgapi.EchoAreaTypeNetmail && e.sIndex == 3 {
+					e.sIndex = 4
 				}
 			}
 		case tcell.KeyBackspace, tcell.KeyBackspace2:

@@ -379,6 +379,22 @@ func (t *EditBody) Draw(screen tcell.Screen) {
 		foregroundColor := index.ForegroundColor
 		backgroundColor := index.BackgroundColor
 		attributes := index.Attributes
+		re := regexp.MustCompile(">+")
+		if len(text) > 10 && text[0:11] == " * Origin: " {
+			attributes = "b"
+		} else if len(text) > 3 && text[0:4] == "--- " {
+			attributes = "b"
+		} else if len(text) > 3 && text[0:4] == "... " {
+			attributes = "b"
+		} else if ind := re.FindStringIndex(text); ind != nil {
+			ind2 := strings.Index(text, "<")
+			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
+				attributes = "b"
+				if (ind[1]-ind[0])%2 != 0 {
+					foregroundColor = "yellow"
+				}
+			}
+		}
 
 		// Process tags.
 		colorTagIndices, colorTags, _, _, escapeIndices, strippedText, _ := decomposeString(text, t.dynamicColors)
@@ -568,7 +584,7 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 					t.cur.X = stringWidth(t.buffer[line.Line][line.Pos:line.NextPos])
 				}
 			}
-			if t.cur.Y-t.lineOffset == 0 {
+			if t.cur.Y-t.lineOffset+1 <= 0 {
 				t.lineOffset--
 			}
 		case tcell.KeyBackspace, tcell.KeyBackspace2:
@@ -599,13 +615,33 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 				t.cur.X++
 			}
 			//t.columnOffset++
-			/*
-				case tcell.KeyPgDn, tcell.KeyCtrlF:
-					t.lineOffset += t.pageSize
-				case tcell.KeyPgUp, tcell.KeyCtrlB:
-					t.trackEnd = false
-					t.lineOffset -= t.pageSize
-			*/
+
+		case tcell.KeyPgDn, tcell.KeyCtrlF:
+			if t.cur.Y < len(t.index)-t.pageSize-1 {
+				t.cur.Y += t.pageSize
+				t.lineOffset += t.pageSize
+			} else {
+				t.cur.Y = len(t.index) - 1
+			}
+			line := t.index[t.cur.Y]
+			if t.cur.X >= stringWidth(t.buffer[line.Line][line.Pos:line.NextPos]) {
+				t.cur.X = stringWidth(t.buffer[line.Line][line.Pos:line.NextPos])
+			}
+
+		case tcell.KeyPgUp, tcell.KeyCtrlB:
+			if t.cur.Y > t.pageSize {
+				t.cur.Y -= t.pageSize
+				t.lineOffset -= t.pageSize
+				t.trackEnd = false
+			} else {
+				t.lineOffset = 0
+				t.cur.Y = 0
+			}
+			line := t.index[t.cur.Y]
+			if t.cur.X >= stringWidth(t.buffer[line.Line][line.Pos:line.NextPos]) {
+				t.cur.X = stringWidth(t.buffer[line.Line][line.Pos:line.NextPos])
+			}
+
 		}
 	})
 }

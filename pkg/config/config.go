@@ -37,8 +37,8 @@ type configS struct {
 //go:generate go run ../../util/autoversion/main.go
 var (
 	Config   configS
-	PID      = "ATED+" + runtime.GOOS[0:3] + " " + Version
-	LongPID  = "goAtEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
+	PID      = "gossipEd+" + runtime.GOOS[0:3] + " " + Version
+	LongPID  = "gossipEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
 	Template []string
 	city     map[string]string
 )
