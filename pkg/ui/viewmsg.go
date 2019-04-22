@@ -5,6 +5,7 @@ import (
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
+	"strconv"
 )
 
 func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool, bool) {
@@ -19,6 +20,13 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		return fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum), modal, true, true
 	}
 	msgapi.Areas[areaId].SetLast(msgNum)
+	if msgapi.Areas[areaId].GetCount()-msgapi.Areas[areaId].GetLast() > 0 {
+		a.al.SetCell(areaId+1, 0, tview.NewTableCell(strconv.FormatInt(int64(areaId), 10)+"[::b]+").SetAlign(tview.AlignRight))
+	} else {
+		a.al.SetCell(areaId+1, 0, tview.NewTableCell(strconv.FormatInt(int64(areaId), 10)+" ").SetAlign(tview.AlignRight))
+	}
+	a.al.SetCell(areaId+1, 2, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaId].GetCount()), 10)).SetAlign(tview.AlignRight))
+	a.al.SetCell(areaId+1, 3, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaId].GetCount()-msgapi.Areas[areaId].GetLast()), 10)).SetAlign(tview.AlignRight))
 	header := tview.NewTextView().
 		SetWrap(false)
 	header.SetBorder(true).

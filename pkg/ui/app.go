@@ -9,6 +9,7 @@ type App struct {
 	Layout      *tview.Flex
 	Pages       *tview.Pages
 	SB          *StatusBar
+	al          *tview.Table
 	showKludges bool
 }
 

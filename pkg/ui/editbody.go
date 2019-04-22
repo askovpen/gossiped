@@ -268,7 +268,7 @@ func (t *EditBody) reindexBuffer(width int) {
 
 		// Create index from split lines.
 		var (
-			originalPos             int
+			originalPos                                  int
 			foregroundColor, backgroundColor, attributes string
 		)
 		for _, splitLine := range splitLines {
@@ -481,34 +481,34 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 					t.cur.X = 0
 				}
 			}
-					//t.index=nil
+			//t.index=nil
 		}
-		ent:=func() {
+		ent := func() {
 			line := t.index[t.cur.Y]
 			pos := t.getRealPos(t.buffer[line.Line][line.Pos:line.NextPos], t.cur.X)
-			if t.cur.X==stringWidth(t.buffer[line.Line][line.Pos:line.NextPos]) {
-				t.buffer=append(t.buffer,"")
-				copy(t.buffer[line.Line+2:],t.buffer[line.Line+1:])
-				t.buffer[line.Line+1]=""
-				t.cur.X=0
+			if t.cur.X == stringWidth(t.buffer[line.Line][line.Pos:line.NextPos]) {
+				t.buffer = append(t.buffer, "")
+				copy(t.buffer[line.Line+2:], t.buffer[line.Line+1:])
+				t.buffer[line.Line+1] = ""
+				t.cur.X = 0
 				t.cur.Y++
-				t.index=nil
-			} else if t.cur.X>0 {
-				tmp:=t.buffer[line.Line][line.Pos+pos:line.NextPos]
-				t.buffer=append(t.buffer,"")
-				copy(t.buffer[line.Line+2:],t.buffer[line.Line+1:])
-				t.buffer[line.Line+1]=tmp
-				t.buffer[line.Line]=t.buffer[line.Line][line.Pos:pos]
-				t.cur.X=0
+				t.index = nil
+			} else if t.cur.X > 0 {
+				tmp := t.buffer[line.Line][line.Pos+pos : line.NextPos]
+				t.buffer = append(t.buffer, "")
+				copy(t.buffer[line.Line+2:], t.buffer[line.Line+1:])
+				t.buffer[line.Line+1] = tmp
+				t.buffer[line.Line] = t.buffer[line.Line][line.Pos:pos]
+				t.cur.X = 0
 				t.cur.Y++
-				t.index=nil
-				
+				t.index = nil
+
 			} else {
-				t.buffer=append(t.buffer,"")
-				copy(t.buffer[line.Line+1:],t.buffer[line.Line:])
-				t.buffer[line.Line]=""
+				t.buffer = append(t.buffer, "")
+				copy(t.buffer[line.Line+1:], t.buffer[line.Line:])
+				t.buffer[line.Line] = ""
 				t.cur.Y++
-				t.index=nil
+				t.index = nil
 			}
 		}
 		key := event.Key()
