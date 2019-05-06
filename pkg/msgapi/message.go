@@ -6,7 +6,7 @@ import (
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/utils"
-	"log"
+	//"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -213,7 +213,7 @@ func (m *Message) ToEditNewView() (string, int) {
 	}
 	nm = append(nm, "--- "+config.Config.Tearline)
 	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
-	log.Printf("pp: %d", p)
+	//log.Printf("pp: %d", p)
 	return strings.Join(nm, "\n"), p
 
 }
@@ -233,9 +233,9 @@ func (m *Message) GetForward() []string {
 			ind2 := strings.Index(l, "<")
 			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
 				if (ind[1]-ind[0])%2 == 0 {
-					nm = append(nm, "\033[37;1m"+l+"\033[0m")
+					nm = append(nm, l)
 				} else {
-					nm = append(nm, "\033[33;1m"+l+"\033[0m")
+					nm = append(nm, l)
 				}
 			} else {
 				nm = append(nm, l)
@@ -372,8 +372,8 @@ func (m *Message) ToEditForwardView(om *Message) (string, int) {
 			nm = append(nm, l)
 		}
 	}
-	nm = append(nm, "\033[37;1m--- "+config.Config.Tearline+"\033[0m")
-	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
+	nm = append(nm, "--- "+config.Config.Tearline)
+	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
 	return strings.Join(nm, "\n"), p
 }
 

@@ -3,7 +3,7 @@ package ui
 import (
 	"bytes"
 	"fmt"
-	"log"
+	//"log"
 	"regexp"
 	"strings"
 	"sync"
@@ -83,7 +83,7 @@ func NewEditBody() *EditBody {
 	}
 }
 func (t *EditBody) getCursor(p int) cursor {
-	log.Printf("p: %d", p)
+	//log.Printf("p: %d", p)
 	_, _, width, _ := t.GetInnerRect()
 	c := cursor{}
 	t.reindexBuffer(width)

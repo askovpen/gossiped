@@ -64,28 +64,31 @@ func (a *App) InsertMsg(areaId int, msgType int) (string, tview.Primitive, bool,
 	if a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeAnswer {
 		a.im.postArea = areaId
 	}
-	a.im.newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: areaId}
+	a.im.newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: a.im.postArea}
 	a.im.newMsg.Kludges = make(map[string]string)
 	a.im.newMsg.Kludges["PID:"] = config.PID
 	a.im.newMsg.Kludges["CHRS:"] = config.Config.Chrs.Default
 	if msgapi.Areas[areaId].GetChrs() != "" {
-		a.im.newMsg.Kludges["CHRS:"] = msgapi.Areas[areaId].GetChrs()
+		a.im.newMsg.Kludges["CHRS:"] = msgapi.Areas[a.im.postArea].GetChrs()
 	}
-	if msgapi.Areas[areaId].GetType() != msgapi.EchoAreaTypeNetmail && (a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeForward) {
+	if msgapi.Areas[a.im.postArea].GetType() != msgapi.EchoAreaTypeNetmail && (a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeForward) {
 		a.im.newMsg.To = "All"
 	}
-	if (a.im.newMsgType & newMsgTypeAnswer) != 0 {
+	if (a.im.newMsgType&newMsgTypeAnswer) != 0 || (a.im.newMsgType&newMsgTypeAnswerNewArea) != 0 {
 		omsg, _ = msgapi.Areas[areaId].GetMsg(msgapi.Areas[a.im.curArea].GetLast())
 		a.im.newMsg.To = omsg.From
 		a.im.newMsg.ToAddr = omsg.FromAddr
 		a.im.newMsg.Kludges["REPLY:"] = omsg.Kludges["MSGID:"]
+		a.im.newMsg.Subject = omsg.Subject
+	} else if (a.im.newMsgType & newMsgTypeForward) != 0 {
+		omsg, _ = msgapi.Areas[areaId].GetMsg(msgapi.Areas[a.im.curArea].GetLast())
 		a.im.newMsg.Subject = omsg.Subject
 	}
 	a.im.eh = NewEditHeader(a.im.newMsg)
 	a.im.eh.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).
-		SetTitle(" " + msgapi.Areas[areaId].GetName() + " ").
+		SetTitle(" " + msgapi.Areas[a.im.postArea].GetName() + " ").
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
 	a.im.eb = NewEditBody().
@@ -104,8 +107,10 @@ func (a *App) InsertMsg(areaId int, msgType int) (string, tview.Primitive, bool,
 			var p int
 			if a.im.newMsgType == 0 {
 				mv, p = a.im.newMsg.ToEditNewView()
-			} else if a.im.newMsgType == newMsgTypeAnswer {
+			} else if a.im.newMsgType == newMsgTypeAnswer || a.im.newMsgType == newMsgTypeAnswerNewArea {
 				mv, p = a.im.newMsg.ToEditAnswerView(omsg)
+			} else if a.im.newMsgType == newMsgTypeForward {
+				mv, p = a.im.newMsg.ToEditForwardView(omsg)
 			}
 			a.im.eb.SetText(mv, p)
 		}

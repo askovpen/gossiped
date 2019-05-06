@@ -89,11 +89,17 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		} else if event.Key() == tcell.KeyCtrlK || (event.Rune() == 'k' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.showKludges = !a.showKludges
 			body.SetText(msg.ToView(a.showKludges))
-		} else if event.Key() == tcell.KeyCtrlQ || (event.Rune() == 'q' && event.Modifiers()&tcell.ModAlt > 0) {
+		} else if event.Key() == tcell.KeyCtrlQ || event.Key() == tcell.KeyF3 || (event.Rune() == 'q' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.Pages.AddPage(a.InsertMsg(areaId, newMsgTypeAnswer))
 			a.Pages.AddPage(a.InsertMsgMenu())
 			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()))
-		} else if event.Key() == tcell.KeyInsert {
+		} else if event.Key() == tcell.KeyCtrlN || (event.Rune() == 'n' && event.Modifiers()&tcell.ModAlt > 0) {
+			a.Pages.AddPage(a.showAreaList(areaId, newMsgTypeAnswerNewArea))
+			a.Pages.ShowPage("AreaListModal")
+		} else if event.Key() == tcell.KeyCtrlF || (event.Rune() == 'f' && event.Modifiers()&tcell.ModAlt > 0) {
+			a.Pages.AddPage(a.showAreaList(areaId, newMsgTypeForward))
+			a.Pages.ShowPage("AreaListModal")
+		} else if event.Key() == tcell.KeyInsert || event.Key() == tcell.KeyCtrlI {
 			a.Pages.AddPage(a.InsertMsg(areaId, 0))
 			a.Pages.AddPage(a.InsertMsgMenu())
 			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()))
@@ -107,4 +113,24 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		AddItem(header, 6, 1, false).
 		AddItem(body, 0, 1, true)
 	return fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum), layout, true, true
+}
+
+func (a *App) showAreaList(areaId int, newMsgType int) (string, tview.Primitive, bool, bool) {
+	modal := NewModalAreaList().
+		SetDoneFunc(func(buttonIndex int) {
+			a.im.postArea = buttonIndex - 1
+			a.Pages.HidePage("AreaListModal")
+			a.Pages.RemovePage("AreaListModal")
+			a.Pages.AddPage(a.InsertMsg(areaId, newMsgType))
+			a.Pages.AddPage(a.InsertMsgMenu())
+			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()))
+			a.App.SetFocus(a.Pages)
+		})
+	if newMsgType == newMsgTypeAnswerNewArea {
+		modal.SetText("Answer In Area:")
+	}
+	if newMsgType == newMsgTypeForward {
+		modal.SetText("Forward To Area:")
+	}
+	return "AreaListModal", modal, true, true
 }
