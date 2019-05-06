@@ -10,6 +10,7 @@ type App struct {
 	Pages       *tview.Pages
 	SB          *StatusBar
 	al          *tview.Table
+	im          IM
 	showKludges bool
 }
 

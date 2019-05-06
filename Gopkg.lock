@@ -61,7 +61,7 @@
   revision = "f699dde9c340bcc39b69a4c67369832af73ec72e"
 
 [[projects]]
-  digest = "1:e2e7f5211c3327ff52e02773e4fd477842b2fed07ead33ec342970de162610ac"
+  digest = "1:7093ab359f15c3663a7cfdc539e9eaf44635bc46376d8b888fe480b3ccfbad4d"
   name = "golang.org/x/text"
   packages = [
     "encoding",
@@ -73,8 +73,8 @@
     "unicode/cldr",
   ]
   pruneopts = "UT"
-  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
-  version = "v0.3.0"
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
 
 [[projects]]
   digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"

@@ -86,12 +86,16 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum))
 				}
 			}
-		} else if event.Key() == tcell.KeyCtrlH {
+		} else if event.Key() == tcell.KeyCtrlK || (event.Rune() == 'k' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.showKludges = !a.showKludges
 			body.SetText(msg.ToView(a.showKludges))
-		} else if event.Key() == tcell.KeyCtrlQ {
+		} else if event.Key() == tcell.KeyCtrlQ || (event.Rune() == 'q' && event.Modifiers()&tcell.ModAlt > 0) {
+			a.Pages.AddPage(a.InsertMsg(areaId, newMsgTypeAnswer))
+			a.Pages.AddPage(a.InsertMsgMenu())
+			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()))
 		} else if event.Key() == tcell.KeyInsert {
-			a.Pages.AddPage(a.InsertMsg(areaId))
+			a.Pages.AddPage(a.InsertMsg(areaId, 0))
+			a.Pages.AddPage(a.InsertMsgMenu())
 			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()))
 		}
 

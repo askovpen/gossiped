@@ -7,34 +7,113 @@ import (
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
+	//"log"
 )
 
-func (a *App) InsertMsg(areaId int) (string, tview.Primitive, bool, bool) {
-	newMsg := &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: areaId}
-	if msgapi.Areas[areaId].GetType() != msgapi.EchoAreaTypeNetmail {
-		newMsg.To = "All"
+const (
+	newMsgTypeAnswer        = 1
+	newMsgTypeAnswerNewArea = 2
+	newMsgTypeForward       = 4
+)
+
+type IM struct {
+	eb         *EditBody
+	eh         *EditHeader
+	newMsg     *msgapi.Message
+	curArea    int
+	postArea   int
+	newMsgType int
+}
+
+func (a *App) InsertMsgMenu() (string, tview.Primitive, bool, bool) {
+	modal := NewModalMenu().
+		SetY(6).
+		SetText("Save?").
+		AddButtons([]string{"Yes", "No, Drop", "Continue Writing", "Edit Header"}).
+		SetDoneFunc(func(buttonIndex int) {
+			switch b := buttonIndex; b {
+			case 0:
+				a.im.newMsg.Body = a.im.eb.GetText(false)
+				msgapi.Areas[a.im.postArea].SaveMsg(a.im.newMsg.MakeBody())
+				a.Pages.HidePage("InsertMsgMenu")
+				a.Pages.RemovePage("InsertMsgMenu")
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[a.im.curArea].GetName(), msgapi.Areas[a.im.curArea].GetLast()))
+				a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[a.im.curArea].GetName()))
+				a.App.SetFocus(a.Pages)
+			case 1:
+				a.Pages.HidePage("InsertMsgMenu")
+				a.Pages.RemovePage("InsertMsgMenu")
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[a.im.curArea].GetName(), msgapi.Areas[a.im.curArea].GetLast()))
+				a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[a.im.curArea].GetName()))
+				a.App.SetFocus(a.Pages)
+			case 2:
+				a.Pages.HidePage("InsertMsgMenu")
+				a.App.SetFocus(a.im.eb)
+			case 3:
+				a.Pages.HidePage("InsertMsgMenu")
+				a.App.SetFocus(a.im.eh)
+			}
+		})
+	return "InsertMsgMenu", modal, false, false
+}
+
+func (a *App) InsertMsg(areaId int, msgType int) (string, tview.Primitive, bool, bool) {
+	var omsg *msgapi.Message
+	a.im.curArea = areaId
+	a.im.newMsgType = msgType
+	if a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeAnswer {
+		a.im.postArea = areaId
 	}
-	eh := NewEditHeader(newMsg)
-	eh.SetBorder(true).
+	a.im.newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: areaId}
+	a.im.newMsg.Kludges = make(map[string]string)
+	a.im.newMsg.Kludges["PID:"] = config.PID
+	a.im.newMsg.Kludges["CHRS:"] = config.Config.Chrs.Default
+	if msgapi.Areas[areaId].GetChrs() != "" {
+		a.im.newMsg.Kludges["CHRS:"] = msgapi.Areas[areaId].GetChrs()
+	}
+	if msgapi.Areas[areaId].GetType() != msgapi.EchoAreaTypeNetmail && (a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeForward) {
+		a.im.newMsg.To = "All"
+	}
+	if (a.im.newMsgType & newMsgTypeAnswer) != 0 {
+		omsg, _ = msgapi.Areas[areaId].GetMsg(msgapi.Areas[a.im.curArea].GetLast())
+		a.im.newMsg.To = omsg.From
+		a.im.newMsg.ToAddr = omsg.FromAddr
+		a.im.newMsg.Kludges["REPLY:"] = omsg.Kludges["MSGID:"]
+		a.im.newMsg.Subject = omsg.Subject
+	}
+	a.im.eh = NewEditHeader(a.im.newMsg)
+	a.im.eh.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).
 		SetTitle(" " + msgapi.Areas[areaId].GetName() + " ").
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
-	eb := NewEditBody()
-	eh.SetDoneFunc(func(r [5][]rune) {
-		newMsg.From = string(r[0])
-		newMsg.FromAddr = types.AddrFromString(string(r[1]))
-		newMsg.To = string(r[2])
-		newMsg.ToAddr = types.AddrFromString(string(r[3]))
-		newMsg.Subject = string(r[4])
-		mv, p := newMsg.ToEditNewView()
-		eb.SetText(mv, p)
-		a.App.SetFocus(eb)
+	a.im.eb = NewEditBody().
+		SetDoneFunc(func() {
+			a.Pages.ShowPage("InsertMsgMenu")
+			//log.Printf("%q",a.App.GetFocus())
+		})
+	a.im.eh.SetDoneFunc(func(r [5][]rune) {
+		a.im.newMsg.From = string(r[0])
+		a.im.newMsg.FromAddr = types.AddrFromString(string(r[1]))
+		a.im.newMsg.To = string(r[2])
+		a.im.newMsg.ToAddr = types.AddrFromString(string(r[3]))
+		a.im.newMsg.Subject = string(r[4])
+		if len(a.im.eb.GetText(false)) == 0 {
+			var mv string
+			var p int
+			if a.im.newMsgType == 0 {
+				mv, p = a.im.newMsg.ToEditNewView()
+			} else if a.im.newMsgType == newMsgTypeAnswer {
+				mv, p = a.im.newMsg.ToEditAnswerView(omsg)
+			}
+			a.im.eb.SetText(mv, p)
+		}
+		a.App.SetFocus(a.im.eb)
 	})
 	layout := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(eh, 6, 1, true).
-		AddItem(eb, 0, 1, false)
+		AddItem(a.im.eh, 6, 1, true).
+		AddItem(a.im.eb, 0, 1, false)
 	return fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()), layout, true, true
 }

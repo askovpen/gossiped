@@ -40,7 +40,7 @@ func NewEditHeader(msg *msgapi.Message) *EditHeader {
 			[]rune(msg.ToAddr.String()),
 			[]rune(msg.Subject),
 		},
-		sPosition: [5]int{len(msg.From), len(msg.FromAddr.String()), len(msg.To), len(msg.ToAddr.String()), len(msg.Subject)},
+		sPosition: [5]int{stringWidth(msg.From), stringWidth(msg.FromAddr.String()), stringWidth(msg.To), stringWidth(msg.ToAddr.String()), stringWidth(msg.Subject)},
 		sIndex:    0,
 		msg:       msg,
 	}

@@ -10,14 +10,16 @@ import (
 )
 
 func (a *App) AreaListQuit() (string, tview.Primitive, bool, bool) {
-	modal := tview.NewModal().
+	modal := NewModalMenu().
 		SetText("Quit GOssipEd?").
 		AddButtons([]string{"Quit", "Cancel"}).
-		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-			if buttonLabel == "Quit" {
+		SetDoneFunc(func(buttonIndex int) {
+			if buttonIndex == 0 {
 				a.App.Stop()
 			} else {
 				a.Pages.HidePage("AreaListQuit")
+				a.App.SetFocus(a.al)
+				//a.Pages.SwitchToPage("AreaList")
 			}
 		})
 	return "AreaListQuit", modal, false, false
@@ -92,5 +94,4 @@ func (a *App) onSelected(row int, column int) {
 		a.Pages.AddPage(a.ViewMsg(row-1, msgapi.Areas[row-1].GetLast()))
 		a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[row-1].GetName(), msgapi.Areas[row-1].GetLast()))
 	}
-
 }

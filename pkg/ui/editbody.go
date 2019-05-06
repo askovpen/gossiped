@@ -66,7 +66,7 @@ type EditBody struct {
 
 	changed func()
 
-	done func(tcell.Key)
+	done func()
 
 	cur cursor
 }
@@ -131,7 +131,7 @@ func (t *EditBody) SetChangedFunc(handler func()) *EditBody {
 	return t
 }
 
-func (t *EditBody) SetDoneFunc(handler func(key tcell.Key)) *EditBody {
+func (t *EditBody) SetDoneFunc(handler func()) *EditBody {
 	t.done = handler
 	return t
 }
@@ -460,8 +460,9 @@ func (t *EditBody) Draw(screen tcell.Screen) {
 			return false
 		})
 	}
-
-	screen.ShowCursor(t.cur.X, y+t.cur.Y-t.lineOffset)
+	if t.HasFocus() {
+		screen.ShowCursor(t.cur.X, y+t.cur.Y-t.lineOffset)
+	}
 }
 func (t *EditBody) getRealPos(str string, tp int) int {
 	p := 0
@@ -535,10 +536,10 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 			line := t.index[t.cur.Y]
 			pos := t.getRealPos(t.buffer[line.Line][line.Pos:line.NextPos], t.cur.X)
 			if t.cur.X > 0 {
-				//log.Print(charWidth(t.buffer[line.Line], t.cur.X-1))
-				t.buffer[line.Line] = t.buffer[line.Line][:line.Pos+pos-charWidth(t.buffer[line.Line], t.cur.X-1)] + t.buffer[line.Line][line.Pos+pos:]
+				cw := charWidth(t.buffer[line.Line], t.cur.X-1)
+				t.buffer[line.Line] = t.buffer[line.Line][:line.Pos+pos-cw] + t.buffer[line.Line][line.Pos+pos:]
 				t.cur.X--
-				t.index[line.Line].NextPos--
+				t.index[line.Line].NextPos -= cw
 				//t.index = nil
 			} else if t.cur.Y > 0 {
 				ln := stringWidth(t.buffer[line.Line])
@@ -641,6 +642,8 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 			if t.cur.X >= stringWidth(t.buffer[line.Line][line.Pos:line.NextPos]) {
 				t.cur.X = stringWidth(t.buffer[line.Line][line.Pos:line.NextPos])
 			}
+		case tcell.KeyF2:
+			t.done()
 
 		}
 	})

@@ -266,15 +266,15 @@ func (m *Message) GetQuote() []string {
 			ind2 := strings.Index(l, "<")
 			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
 				if (ind[1]-ind[0])%2 == 0 {
-					nm = append(nm, "\033[33;1m"+l[0:ind[0]+1]+">"+l[ind[0]+1:]+"\033[0m")
+					nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
 				} else {
-					nm = append(nm, "\033[37;1m"+l[0:ind[0]+1]+">"+l[ind[0]+1:]+"\033[0m")
+					nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
 				}
 			} else {
-				nm = append(nm, "\033[33;1m "+from+"> "+l+"\033[0m")
+				nm = append(nm, " "+from+"> "+l)
 			}
 		} else {
-			nm = append(nm, "\033[33;1m "+from+"> "+l+"\033[0m")
+			nm = append(nm, " "+from+"> "+l)
 		}
 	}
 	//log.Print(from)
@@ -323,8 +323,8 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 			nm = append(nm, l)
 		}
 	}
-	nm = append(nm, "\033[37;1m--- "+config.Config.Tearline+"\033[0m")
-	nm = append(nm, "\033[37;1m * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")\033[0m")
+	nm = append(nm, "--- "+config.Config.Tearline)
+	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
 	return strings.Join(nm, "\n"), p
 }
 
