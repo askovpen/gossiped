@@ -554,6 +554,24 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 			}
 
 		}
+		delLine := func() {
+			line := t.index[t.cur.Y]
+			if t.cur.Y < len(t.index)-1 {
+				t.buffer[line.Line] = t.buffer[line.Line+1]
+				t.buffer = append(t.buffer[:line.Line+1], t.buffer[line.Line+2:]...)
+				t.index = nil
+			} else if t.cur.Y > 0 {
+				t.cur.Y--
+				t.buffer = t.buffer[:line.Line]
+				t.index = nil
+			} else {
+				t.buffer = []string{""}
+				t.index = nil
+			}
+			if t.cur.Y-t.lineOffset == 0 {
+				t.lineOffset--
+			}
+		}
 		del := func() {
 			line := t.index[t.cur.Y]
 			pos := t.getRealPos(t.buffer[line.Line][line.Pos:line.NextPos], t.cur.X)
@@ -590,6 +608,8 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 			}
 		case tcell.KeyBackspace, tcell.KeyBackspace2:
 			bck()
+		case tcell.KeyCtrlY:
+			delLine()
 		case tcell.KeyDelete:
 			del()
 		case tcell.KeyEnter:
