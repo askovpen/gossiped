@@ -2,7 +2,7 @@ package areasconfig
 
 import (
 	"bufio"
-	"github.com/askovpen/goated/pkg/msgapi"
+	"github.com/askovpen/gossiped/pkg/msgapi"
 	"io/ioutil"
 	//"log"
 	"os"

@@ -4,7 +4,7 @@ areafile:
   path: /etc/ftn/hpt/config
   type: fidoconfig # fidoconfig, areas.bbs, squish
 log: ./app.log
-template: goated.tpl
+template: gossiped.tpl
 origin: Just Origin
 tearline: ''
 chrs:

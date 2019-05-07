@@ -1,37 +1,35 @@
 package ui
 
 import (
-	"github.com/askovpen/goated/pkg/msgapi"
-	"github.com/askovpen/gocui"
+	"github.com/rivo/tview"
 )
 
-var (
-	// App gui
-	App *gocui.Gui
-	// AreaPosition variable
-	AreaPosition uint16
-	// ActiveWindow name
-	ActiveWindow string
-	parentWindow string
-	curAreaID    int
-	curMsgNum    uint32
-	showKludges  bool
-	// StatusLine variable
-	StatusLine string
-	// StatusTime variable
-	StatusTime   string
-	newMsg       *msgapi.Message
-	newMsgType   int
-	newMsgAreaID int
-)
+type App struct {
+	App         *tview.Application
+	Layout      *tview.Flex
+	Pages       *tview.Pages
+	SB          *StatusBar
+	al          *tview.Table
+	im          IM
+	showKludges bool
+}
 
-const (
-	newMsgTypeAnswer        = 1
-	newMsgTypeAnswerNewArea = 2
-	newMsgTypeForward       = 4
-)
+func NewApp() *App {
+	a := &App{}
+	a.App = tview.NewApplication()
 
-// Quit application
-func Quit(g *gocui.Gui, v *gocui.View) error {
-	return gocui.ErrQuit
+	a.Pages = tview.NewPages()
+	a.Pages.AddPage(a.AreaList())
+	a.Pages.AddPage(a.AreaListQuit())
+
+	a.SB = NewStatusBar(a)
+	a.SB.Run()
+	a.Layout = tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(a.Pages, 0, 1, true).
+		AddItem(a.SB.SB, 1, 1, false)
+	return a
+}
+func (a *App) Run() error {
+	return a.App.SetRoot(a.Layout, true).Run()
 }

@@ -26,12 +26,9 @@
 
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/askovpen/gocui"
-
-[[constraint]]
   name = "github.com/franela/goblin"
   version = "0.0.2"
+
 
 [[constraint]]
   name = "golang.org/x/text"

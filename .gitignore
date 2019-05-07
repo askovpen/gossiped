@@ -1,5 +1,5 @@
 *.log
-goated
-goated.exe
+gossiped
+gossiped.exe
 pkg/config/version.go
 config.yml

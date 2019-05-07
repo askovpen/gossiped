@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"github.com/askovpen/goated/pkg/utils"
+	"github.com/askovpen/gossiped/pkg/utils"
 	"io/ioutil"
 	"log"
 	"os"
