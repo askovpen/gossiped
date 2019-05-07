@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"strconv"
+	"strings"
 )
 
 func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool, bool) {
@@ -35,8 +36,15 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		SetTitle(" " + msgapi.Areas[areaId].GetName() + " ").
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
+	repl := ""
+	if msg.ReplyTo > 0 {
+		repl = fmt.Sprintf("-%d ", msg.ReplyTo)
+	}
+	for _, rn := range msg.Replies {
+		repl += fmt.Sprintf("+%d ", rn)
+	}
 	htxt := fmt.Sprintf(" Msg  : %-34s %-36s\n",
-		fmt.Sprintf("%d of %d", msgNum, msgapi.Areas[areaId].GetCount()), "Pvt")
+		fmt.Sprintf("%d of %d %s", msgNum, msgapi.Areas[areaId].GetCount(), repl), strings.Join(msg.Attrs, " "))
 	htxt += fmt.Sprintf(" From : %-34s %-15s %-18s\n",
 		msg.From,
 		msg.FromAddr.String(),
