@@ -1,12 +1,12 @@
-# goated
-[![Build status](https://ci.appveyor.com/api/projects/status/b04rcghch4pskvmu/branch/master?svg=true)](https://ci.appveyor.com/project/askovpen/goated/branch/master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0003329106c47a684e76598853636cd)](https://www.codacy.com/app/askovpen/goated)
-[![codecov](https://codecov.io/gh/askovpen/goated/branch/master/graph/badge.svg)](https://codecov.io/gh/askovpen/goated)
+# gossiped
+[![Build status](https://ci.appveyor.com/api/projects/status/b04rcghch4pskvmu/branch/master?svg=true)](https://ci.appveyor.com/project/askovpen/gossiped/branch/master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0003329106c47a684e76598853636cd)](https://www.codacy.com/app/askovpen/gossiped)
+[![codecov](https://codecov.io/gh/askovpen/gossiped/branch/master/graph/badge.svg)](https://codecov.io/gh/askovpen/gossiped)
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/askovpen/goated/blob/master/LICENSE.txt)
 
-*goAtEd* - ftn message editor
+*gossipEd* - ftn message editor
 
-[Wiki](https://github.com/askovpen/goated/wiki)
+[Wiki](https://github.com/askovpen/gossiped/wiki)
 
 supported bases:
   - MSG/Opus
