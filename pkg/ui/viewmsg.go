@@ -99,10 +99,25 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		} else if event.Key() == tcell.KeyCtrlF || (event.Rune() == 'f' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.Pages.AddPage(a.showAreaList(areaId, newMsgTypeForward))
 			a.Pages.ShowPage("AreaListModal")
+		} else if event.Key() == tcell.KeyCtrlL || (event.Rune() == 'l' && event.Modifiers()&tcell.ModAlt > 0) {
+			a.Pages.AddPage(a.showMessageList(areaId))
+			a.Pages.ShowPage("MessageListModal")
 		} else if event.Key() == tcell.KeyInsert || event.Key() == tcell.KeyCtrlI {
 			a.Pages.AddPage(a.InsertMsg(areaId, 0))
 			a.Pages.AddPage(a.InsertMsgMenu())
 			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()))
+		} else if event.Rune() == '<' {
+			if msgNum != 1 {
+				a.Pages.AddPage(a.ViewMsg(areaId, 1))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), 1))
+				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum))
+			}
+		} else if event.Rune() == '>' {
+			if msgNum != msgapi.Areas[areaId].GetCount() {
+				a.Pages.AddPage(a.ViewMsg(areaId, msgapi.Areas[areaId].GetCount()))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgapi.Areas[areaId].GetCount()))
+				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum))
+			}
 		}
 
 		return event
@@ -115,6 +130,18 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 	return fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum), layout, true, true
 }
 
+func (a *App) showMessageList(areaId int) (string, tview.Primitive, bool, bool) {
+	modal := NewModalMessageList(areaId).
+		SetDoneFunc(func(msgNum uint32) {
+			a.Pages.HidePage("MessageListModal")
+			a.Pages.RemovePage("MessageListModal")
+			a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgapi.Areas[areaId].GetLast()))
+			a.Pages.AddPage(a.ViewMsg(areaId, msgNum))
+			a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum))
+			a.App.SetFocus(a.Pages)
+		})
+	return "MessageListModal", modal, true, true
+}
 func (a *App) showAreaList(areaId int, newMsgType int) (string, tview.Primitive, bool, bool) {
 	modal := NewModalAreaList().
 		SetDoneFunc(func(buttonIndex int) {
