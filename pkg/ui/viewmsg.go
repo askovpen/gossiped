@@ -29,7 +29,8 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 	a.al.SetCell(areaId+1, 2, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaId].GetCount()), 10)).SetAlign(tview.AlignRight))
 	a.al.SetCell(areaId+1, 3, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaId].GetCount()-msgapi.Areas[areaId].GetLast()), 10)).SetAlign(tview.AlignRight))
 	header := tview.NewTextView().
-		SetWrap(false)
+		SetWrap(false).
+		SetTextColor(tcell.ColorSilver)
 	header.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).
@@ -56,7 +57,7 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 	htxt += fmt.Sprintf(" Subj : %-50s",
 		msg.Subject)
 	header.SetText(htxt)
-	body := tview.NewTextView().SetWrap(true).SetWordWrap(true)
+	body := tview.NewTextView().SetWrap(true).SetWordWrap(true).SetTextColor(tcell.ColorSilver)
 	body.SetDynamicColors(true)
 	body.SetText(msg.ToView(a.showKludges))
 	body.SetDoneFunc(func(key tcell.Key) {

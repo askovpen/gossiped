@@ -39,7 +39,7 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 	a.al.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue)
-	a.al.SetSelectedStyle(tcell.ColorWhite, tcell.ColorBlue, tcell.AttrBold)
+	a.al.SetSelectedStyle(tcell.ColorWhite, tcell.ColorNavy, tcell.AttrBold)
 	a.al.SetCell(
 		0, 0, tview.NewTableCell(" Area").
 			SetTextColor(tcell.ColorYellow).
@@ -74,13 +74,13 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 	})
 	for i, ar := range msgapi.Areas {
 		if ar.GetCount()-ar.GetLast() > 0 {
-			a.al.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+"[::b]+").SetAlign(tview.AlignRight))
+			a.al.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+"[::b]+").SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
 		} else {
-			a.al.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+" ").SetAlign(tview.AlignRight))
+			a.al.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+" ").SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
 		}
-		a.al.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()))
-		a.al.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).SetAlign(tview.AlignRight))
-		a.al.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).SetAlign(tview.AlignRight))
+		a.al.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()).SetTextColor(tcell.ColorSilver))
+		a.al.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
+		a.al.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
 	}
 	return "AreaList", a.al, true, true
 }
