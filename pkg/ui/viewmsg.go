@@ -103,7 +103,7 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		} else if event.Key() == tcell.KeyCtrlK || (event.Rune() == 'k' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.showKludges = !a.showKludges
 			body.SetText(msg.ToView(a.showKludges))
-		} else if event.Key() == tcell.KeyCtrlQ || event.Key() == tcell.KeyF3 || (event.Rune() == 'q' && event.Modifiers()&tcell.ModAlt > 0) {
+		} else if event.Key() == tcell.KeyCtrlQ || event.Key() == tcell.KeyF3 || (event.Rune() == 'q') {
 			a.Pages.AddPage(a.InsertMsg(areaId, newMsgTypeAnswer))
 			a.Pages.AddPage(a.InsertMsgMenu())
 			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaId].GetName()))
