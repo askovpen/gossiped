@@ -28,6 +28,11 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 	}
 	a.al.SetCell(areaId+1, 2, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaId].GetCount()), 10)).SetAlign(tview.AlignRight))
 	a.al.SetCell(areaId+1, 3, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaId].GetCount()-msgapi.Areas[areaId].GetLast()), 10)).SetAlign(tview.AlignRight))
+	a.sb.SetStatus(fmt.Sprintf("Msg %d of %d (%d left)",
+		msgNum,
+		msgapi.Areas[areaId].GetCount(),
+		msgapi.Areas[areaId].GetCount()-msgNum,
+	))
 	header := tview.NewTextView().
 		SetWrap(false).
 		SetTextColor(tcell.ColorSilver)

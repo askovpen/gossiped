@@ -32,6 +32,11 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 			if row < 1 {
 				row = 1
 			}
+			a.sb.SetStatus(fmt.Sprintf("%s: %d msgs, %d unread",
+				msgapi.Areas[row-1].GetName(),
+				msgapi.Areas[row-1].GetCount(),
+				msgapi.Areas[row-1].GetCount()-msgapi.Areas[row-1].GetLast(),
+			))
 		})
 	a.al.SetSelectedFunc(func(row int, column int) {
 		a.onSelected(row, column)
