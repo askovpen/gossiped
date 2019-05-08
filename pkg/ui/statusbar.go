@@ -40,7 +40,7 @@ func NewStatusBar(app *App) *StatusBar {
 	return sb
 }
 func (sb StatusBar) SetStatus(s string) {
-	sb.status.SetText(" [::b][white]"+s)
+	sb.status.SetText(" [::b][white]" + s)
 }
 func (sb StatusBar) Run() {
 	sb.statusTime.SetText("[::b][white]" + time.Now().Format("15:04:05"))

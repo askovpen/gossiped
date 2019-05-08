@@ -73,12 +73,12 @@ type EditBody struct {
 
 func NewEditBody() *EditBody {
 	return &EditBody{
-		Box:           tview.NewBox(),
-		lineOffset:    -1,
-		align:         tview.AlignLeft,
-		wrap:          true,
-		wordWrap:      true,
-//		textColor:     tview.Styles.PrimaryTextColor,
+		Box:        tview.NewBox(),
+		lineOffset: -1,
+		align:      tview.AlignLeft,
+		wrap:       true,
+		wordWrap:   true,
+		//		textColor:     tview.Styles.PrimaryTextColor,
 		textColor:     tcell.ColorSilver,
 		dynamicColors: false,
 	}
@@ -589,7 +589,14 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 		key := event.Key()
 		switch key {
 		case tcell.KeyRune:
-			add(event.Rune())
+			if event.Modifiers()&tcell.ModAlt > 0 {
+				switch event.Rune() {
+				case 'd':
+					delLine()
+				}
+			} else {
+				add(event.Rune())
+			}
 		case tcell.KeyHome:
 			t.cur.X = 0
 		case tcell.KeyEnd:
