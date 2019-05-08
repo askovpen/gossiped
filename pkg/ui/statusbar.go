@@ -40,15 +40,15 @@ func NewStatusBar(app *App) *StatusBar {
 	return sb
 }
 func (sb StatusBar) SetStatus(s string) {
-	sb.status.SetText(s)
+	sb.status.SetText(" [::b][white]"+s)
 }
 func (sb StatusBar) Run() {
-	sb.statusTime.SetText("[::b]" + time.Now().Format("15:04:05"))
+	sb.statusTime.SetText("[::b][white]" + time.Now().Format("15:04:05"))
 	clock := time.NewTicker(1 * time.Second)
 	go func() {
 		for t := range clock.C {
 			//fmt.Fprintf(ui.StatusTime,"%s",t.Format("15:04:05"))
-			sb.statusTime.SetText("[::b]" + t.Format("15:04:05"))
+			sb.statusTime.SetText("[::b][white]" + t.Format("15:04:05"))
 		}
 	}()
 }
