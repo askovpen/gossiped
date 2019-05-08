@@ -13,7 +13,7 @@ before_build:
   - set CGO_ENABLED=0
   - go version
   - go env
-  - go get github.com/gdamore/tcell
+  - IF "%APPVEYOR_REPO_TAG%" == "true" go get github.com/gdamore/tcell
   # - go get golang.org/x/text/transform
   # - go get gopkg.in/yaml.v2
   # - go get github.com/franela/goblin
