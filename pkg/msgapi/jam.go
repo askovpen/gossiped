@@ -348,6 +348,9 @@ func crc32r(str string) uint32 {
 
 // SetLast set last message
 func (j *JAM) SetLast(l uint32) {
+	if l==0 {
+		l=1
+	}
 	found := -1
 	for i, lr := range j.lastRead {
 		if lr.UserCRC == crc32r(config.Config.Username) {
