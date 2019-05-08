@@ -49,17 +49,17 @@ func NewEditHeader(msg *msgapi.Message) *EditHeader {
 func (e *EditHeader) Draw(screen tcell.Screen) {
 	e.Box.Draw(screen)
 	x, y, _, _ := e.GetInnerRect()
-	tview.Print(screen, "Msg  :", x+1, y, 6, 0, tcell.ColorWhite)
-	tview.Print(screen, "From :", x+1, y+1, 6, 0, tcell.ColorWhite)
-	tview.Print(screen, "To   :", x+1, y+2, 6, 0, tcell.ColorWhite)
-	tview.Print(screen, "Subj :", x+1, y+3, 6, 0, tcell.ColorWhite)
+	tview.Print(screen, "Msg  :", x+1, y, 6, 0, tcell.ColorSilver)
+	tview.Print(screen, "From :", x+1, y+1, 6, 0, tcell.ColorSilver)
+	tview.Print(screen, "To   :", x+1, y+2, 6, 0, tcell.ColorSilver)
+	tview.Print(screen, "Subj :", x+1, y+3, 6, 0, tcell.ColorSilver)
 	if e.HasFocus() {
 		for i := e.sCoords[e.sIndex].f; i < e.sCoords[e.sIndex].t; i++ {
-			screen.SetContent(x+i, y+e.sCoords[e.sIndex].y, ' ', nil, tcell.StyleDefault.Background(tcell.ColorBlue))
+			screen.SetContent(x+i, y+e.sCoords[e.sIndex].y, ' ', nil, tcell.StyleDefault.Background(tcell.ColorNavy))
 		}
 	}
 	for i := 0; i < 5; i++ {
-		tview.Print(screen, string(e.sInputs[i]), x+e.sCoords[i].f, y+e.sCoords[i].y, len(e.sInputs[i]), 0, tcell.ColorWhite)
+		tview.Print(screen, string(e.sInputs[i]), x+e.sCoords[i].f, y+e.sCoords[i].y, len(e.sInputs[i]), 0, tcell.ColorSilver)
 	}
 	if e.HasFocus() {
 		screen.ShowCursor(x+e.sCoords[e.sIndex].f+len(e.sInputs[e.sIndex][:e.sPosition[e.sIndex]]), y+e.sCoords[e.sIndex].y)

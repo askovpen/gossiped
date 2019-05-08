@@ -30,7 +30,7 @@ func NewModalAreaList() *ModalAreaList {
 	m.table = tview.NewTable().
 		SetFixed(1, 0).
 		SetSelectable(true, false).
-		SetSelectedStyle(tcell.ColorWhite, tcell.ColorBlue, tcell.AttrBold).
+		SetSelectedStyle(tcell.ColorWhite, tcell.ColorNavy, tcell.AttrBold).
 		SetSelectedFunc(func(row int, column int) {
 			m.done(row)
 		})
@@ -62,10 +62,10 @@ func NewModalAreaList() *ModalAreaList {
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
 	for i, ar := range msgapi.Areas {
-		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+" ").SetAlign(tview.AlignRight))
-		m.table.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()))
-		m.table.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).SetAlign(tview.AlignRight))
-		m.table.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).SetAlign(tview.AlignRight))
+		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+" ").SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
 	}
 	return m
 }
