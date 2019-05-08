@@ -19,7 +19,7 @@ func NewStatusBar(app *App) *StatusBar {
 	sb.app = app
 
 	sb.status = tview.NewTextView().SetWrap(false)
-	sb.status.SetBackgroundColor(tcell.ColorBlue)
+	sb.status.SetBackgroundColor(tcell.ColorNavy)
 	sb.status.SetTextColor(tcell.ColorYellow)
 	sb.status.SetDynamicColors(true)
 	sb.status.SetChangedFunc(func() {
@@ -27,7 +27,7 @@ func NewStatusBar(app *App) *StatusBar {
 	})
 
 	sb.statusTime = tview.NewTextView().SetWrap(false)
-	sb.statusTime.SetBackgroundColor(tcell.ColorBlue)
+	sb.statusTime.SetBackgroundColor(tcell.ColorNavy)
 	sb.statusTime.SetTextColor(tcell.ColorYellow)
 	sb.statusTime.SetDynamicColors(true)
 	sb.statusTime.SetChangedFunc(func() {

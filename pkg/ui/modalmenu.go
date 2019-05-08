@@ -31,7 +31,7 @@ func NewModalMenu() *ModalMenu {
 	}
 	m.table = tview.NewTable().
 		SetSelectable(true, false).
-		SetSelectedStyle(tcell.ColorWhite, tcell.ColorBlue, tcell.AttrBold).
+		SetSelectedStyle(tcell.ColorWhite, tcell.ColorNavy, tcell.AttrBold).
 		SetSelectedFunc(func(row int, column int) {
 			m.done(row)
 		})
@@ -77,7 +77,7 @@ func (m *ModalMenu) AddButtons(labels []string) *ModalMenu {
 	for index, label := range labels {
 		func(i int, l string) {
 			//m.list.AddItem(label,"",0,func() {m.done(i,l)})
-			m.table.SetCell(i, 0, tview.NewTableCell(label))
+			m.table.SetCell(i, 0, tview.NewTableCell(label).SetTextColor(tcell.ColorSilver))
 			if m.width < len(label) {
 				m.width = len(label)
 			}

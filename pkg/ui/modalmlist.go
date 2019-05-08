@@ -29,7 +29,7 @@ func NewModalMessageList(areaId int) *ModalMessageList {
 	m.table = tview.NewTable().
 		SetFixed(1, 0).
 		SetSelectable(true, false).
-		SetSelectedStyle(tcell.ColorWhite, tcell.ColorBlue, tcell.AttrBold).
+		SetSelectedStyle(tcell.ColorWhite, tcell.ColorNavy, tcell.AttrBold).
 		SetSelectedFunc(func(row int, column int) {
 			m.done(uint32(row))
 		})
@@ -72,11 +72,11 @@ func NewModalMessageList(areaId int) *ModalMessageList {
 			ch = "[::b],"
 		}
 		//mh.From, mh.To, mh.Subject, mh.DateWritten.Format("02 Jan 06"))
-		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(mh.MsgNum), 10)+ch).SetAlign(tview.AlignRight))
-		m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From))
-		m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To))
-		m.table.SetCell(i+1, 3, tview.NewTableCell(mh.Subject))
-		m.table.SetCell(i+1, 4, tview.NewTableCell(mh.DateWritten.Format("02 Jan 06")))
+		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(mh.MsgNum), 10)+ch).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 3, tview.NewTableCell(mh.Subject).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 4, tview.NewTableCell(mh.DateWritten.Format("02 Jan 06")).SetTextColor(tcell.ColorSilver))
 	}
 	m.table.Select(int(msgapi.Areas[areaId].GetLast()), 0)
 	return m

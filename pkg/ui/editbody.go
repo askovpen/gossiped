@@ -78,7 +78,8 @@ func NewEditBody() *EditBody {
 		align:         tview.AlignLeft,
 		wrap:          true,
 		wordWrap:      true,
-		textColor:     tview.Styles.PrimaryTextColor,
+//		textColor:     tview.Styles.PrimaryTextColor,
+		textColor:     tcell.ColorSilver,
 		dynamicColors: false,
 	}
 }

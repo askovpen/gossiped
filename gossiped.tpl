@@ -8,7 +8,7 @@
 ;   Insert these lines if the message is a moved reply.
 ;   ----------------------------------------------------------------------
 @Moved
-@Moved*** Answering a msg posted in area @OEcho (@ODesc).
+@Moved*** Answering a msg posted in area @OEcho.
 @Moved
 ;
 ;   ----------------------------------------------------------------------
