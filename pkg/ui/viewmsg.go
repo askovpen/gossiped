@@ -113,7 +113,7 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		} else if event.Key() == tcell.KeyCtrlF || (event.Rune() == 'f' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.Pages.AddPage(a.showAreaList(areaId, newMsgTypeForward))
 			a.Pages.ShowPage("AreaListModal")
-		} else if event.Key() == tcell.KeyCtrlL || (event.Rune() == 'l' && event.Modifiers()&tcell.ModAlt > 0) {
+		} else if event.Key() == tcell.KeyCtrlL || event.Rune() == 'l' {
 			a.Pages.AddPage(a.showMessageList(areaId))
 			a.Pages.ShowPage("MessageListModal")
 		} else if event.Key() == tcell.KeyInsert || event.Key() == tcell.KeyCtrlI {
