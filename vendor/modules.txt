@@ -1,0 +1,23 @@
+# github.com/franela/goblin v0.0.0-20180407132755-cd5d08fb4ede
+github.com/franela/goblin
+# github.com/gdamore/encoding v1.0.0
+github.com/gdamore/encoding
+# github.com/gdamore/tcell v1.1.2
+github.com/gdamore/tcell
+github.com/gdamore/tcell/terminfo
+# github.com/lucasb-eyer/go-colorful v1.0.2
+github.com/lucasb-eyer/go-colorful
+# github.com/mattn/go-runewidth v0.0.4
+github.com/mattn/go-runewidth
+# github.com/rivo/tview v0.0.0-20190513142825-f2bf2be1ba4a
+github.com/rivo/tview
+# github.com/rivo/uniseg v0.0.0-20190513083848-b9f5b9457d44
+github.com/rivo/uniseg
+# golang.org/x/text v0.3.2
+golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/transform
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/internal
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2
