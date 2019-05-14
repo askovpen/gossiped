@@ -3,4 +3,3 @@ gossiped
 gossiped.exe
 pkg/config/version.go
 config.yml
-*.sum
