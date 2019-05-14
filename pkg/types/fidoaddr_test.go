@@ -3,7 +3,7 @@ package types
 import (
 	"errors"
 	. "github.com/franela/goblin"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"testing"
 )
 

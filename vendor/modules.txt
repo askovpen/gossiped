@@ -19,5 +19,5 @@ golang.org/x/text/encoding/charmap
 golang.org/x/text/transform
 golang.org/x/text/encoding/internal/identifier
 golang.org/x/text/encoding/internal
-# gopkg.in/yaml.v2 v2.2.2
-gopkg.in/yaml.v2
+# gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
+gopkg.in/yaml.v3

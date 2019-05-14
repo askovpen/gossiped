@@ -3,7 +3,7 @@ package config
 import (
 	"errors"
 	"github.com/askovpen/gossiped/pkg/types"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
 	"runtime"
