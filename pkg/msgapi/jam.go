@@ -66,7 +66,7 @@ func (j *JAM) getAttrs(a uint32) (attrs []string) {
 		"", "", "", "",
 		"", "", "", "",
 		"", "", "", "",
-		"", "", "", "Del",
+		"", "", "", "[red]Del[silver]",
 	}
 	i := 0
 	for a > 0 {
@@ -531,4 +531,44 @@ func (j *JAM) GetMessages() *[]MessageListItem {
 		})
 	}
 	return &j.messages
+}
+func (j *JAM) DelMsg(l uint32) error {
+	if l == 0 {
+		l = 1
+	}
+	fJhr, err := os.OpenFile(j.AreaPath+".jhr", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	defer fJhr.Close()
+	_, err = fJhr.Seek(int64(j.indexStructure[l-1].jamsh.Offset), 0)
+	if err != nil {
+		return err
+	}
+	var header []byte
+	header = make([]byte, 76)
+	fJhr.Read(header)
+	headerb := bytes.NewBuffer(header)
+	var jamh jamH
+	if err = utils.ReadStructFromBuffer(headerb, &jamh); err != nil {
+		return err
+	}
+	if jamh.Signature != 0x4d414a {
+		return errors.New("wrong message signature")
+	}
+	jamh.Attribute = jamh.Attribute | 0x80000000
+	err = utils.WriteStructToBuffer(headerb, &jamh)
+	if err != nil {
+		return err
+	}
+	_, err = fJhr.Seek(int64(j.indexStructure[l-1].jamsh.Offset), 0)
+	if err != nil {
+		return err
+	}
+	_, err = fJhr.Write(headerb.Bytes())
+	if err != nil {
+		return err
+	}
+	fJhr.Close()
+	return nil
 }

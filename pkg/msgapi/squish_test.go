@@ -72,6 +72,10 @@ func TestSquish(t *testing.T) {
 			g.Assert(Area.GetLast()).Equal(uint32(1))
 			g.Assert(len(*Area.GetMessages())).Equal(2)
 		})
+		g.It("del msg", func() {
+			g.Assert(Area.DelMsg(1)).Equal(nil)
+			g.Assert(len(*Area.GetMessages())).Equal(1)
+		})
 	})
 	os.Remove("../../testdata/sqtest.sqd")
 	os.Remove("../../testdata/sqtest.sqi")

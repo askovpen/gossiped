@@ -51,6 +51,11 @@ func TestMSG(t *testing.T) {
 			g.Assert(Area.GetLast()).Equal(uint32(1))
 			g.Assert(len(*Area.GetMessages())).Equal(2)
 		})
+		g.It("del msg", func() {
+			err := Area.DelMsg(2)
+			g.Assert(err).Equal(nil)
+			g.Assert(Area.GetCount()).Equal(uint32(1))
+		})
 	})
 	os.RemoveAll("../../testdata/test")
 }

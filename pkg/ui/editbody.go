@@ -670,7 +670,7 @@ func (t *EditBody) InputHandler() func(event *tcell.EventKey, setFocus func(p tv
 			if t.cur.X >= stringWidth(t.buffer[line.Line][line.Pos:line.NextPos]) {
 				t.cur.X = stringWidth(t.buffer[line.Line][line.Pos:line.NextPos])
 			}
-		case tcell.KeyF2,tcell.KeyEscape:
+		case tcell.KeyF2, tcell.KeyEscape:
 			t.done()
 
 		}

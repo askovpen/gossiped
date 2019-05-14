@@ -301,3 +301,17 @@ func (m *MSG) GetMessages() *[]MessageListItem {
 	}
 	return &m.messages
 }
+func (m *MSG) DelMsg(l uint32) error {
+	if l == 0 {
+		l = 1
+	}
+	err := os.Remove(filepath.Join(m.AreaPath, strconv.FormatUint(uint64(m.messageNums[l-1]), 10)+".msg"))
+	if err != nil {
+		return err
+	}
+	if len(m.messages) == len(m.messageNums) {
+		m.messages = append(m.messages[:l-1], m.messages[l:]...)
+	}
+	m.messageNums = append(m.messageNums[:l-1], m.messageNums[l:]...)
+	return nil
+}

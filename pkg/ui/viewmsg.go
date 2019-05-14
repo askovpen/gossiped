@@ -35,7 +35,8 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 	))
 	header := tview.NewTextView().
 		SetWrap(false).
-		SetTextColor(tcell.ColorSilver)
+		SetTextColor(tcell.ColorSilver).
+		SetDynamicColors(true)
 	header.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).
@@ -113,6 +114,9 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		} else if event.Key() == tcell.KeyCtrlF || (event.Rune() == 'f' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.Pages.AddPage(a.showAreaList(areaId, newMsgTypeForward))
 			a.Pages.ShowPage("AreaListModal")
+		} else if event.Key() == tcell.KeyDelete {
+			a.Pages.AddPage(a.showDelMsg(areaId, msgNum))
+			a.Pages.ShowPage("DelMsgModal")
 		} else if event.Key() == tcell.KeyCtrlL || event.Rune() == 'l' {
 			a.Pages.AddPage(a.showMessageList(areaId))
 			a.Pages.ShowPage("MessageListModal")
@@ -174,4 +178,23 @@ func (a *App) showAreaList(areaId int, newMsgType int) (string, tview.Primitive,
 		modal.SetText("Forward To Area:")
 	}
 	return "AreaListModal", modal, true, true
+}
+func (a *App) showDelMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool, bool) {
+	modal := NewModalMenu().
+		SetY(6).
+		SetText("Delete?").
+		AddButtons([]string{"Yes", "No"}).
+		SetDoneFunc(func(buttonIndex int) {
+			a.Pages.HidePage("DelMsgModal")
+			a.Pages.RemovePage("DelMsgModal")
+			if buttonIndex == 0 {
+				msgapi.Areas[areaId].DelMsg(msgNum)
+				a.Pages.AddPage(a.ViewMsg(areaId, msgNum-1))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum-1))
+				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum))
+			} else {
+			}
+			a.App.SetFocus(a.Pages)
+		})
+	return "DelMsgModal", modal, true, true
 }

@@ -62,6 +62,9 @@ func TestJam(t *testing.T) {
 			g.Assert(Area.GetLast()).Equal(uint32(1))
 			g.Assert(len(*Area.GetMessages())).Equal(2)
 		})
+		g.It("del msg", func() {
+			g.Assert(Area.DelMsg(2)).Equal(nil)
+		})
 	})
 	os.Remove("../../testdata/jamtest.jdt")
 	os.Remove("../../testdata/jamtest.jdx")

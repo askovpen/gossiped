@@ -495,3 +495,96 @@ func (s *Squish) GetMessages() *[]MessageListItem {
 	}
 	return &s.messages
 }
+func (s *Squish) DelMsg(l uint32) error {
+	if len(s.indexStructure) == 0 {
+		return errors.New("Empty Area")
+	}
+	if l == 0 {
+		l = 1
+	}
+	f, err := os.OpenFile(s.AreaPath+".sqd", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.Seek(int64(s.indexStructure[l-1].Offset), 0)
+	var header []byte
+	header = make([]byte, 266)
+	f.Read(header)
+	headerb := bytes.NewBuffer(header)
+	sqdh, err := readSQDH(headerb)
+	if err != nil {
+		return err
+	}
+	prev := sqdh.PrevFrame
+	next := sqdh.NextFrame
+	if l > 1 {
+		f.Seek(int64(s.indexStructure[l-2].Offset), 0)
+		f.Read(header)
+		headerb := bytes.NewBuffer(header)
+		sqdh, err = readSQDH(headerb)
+		if err != nil {
+			return err
+		}
+		sqdh.NextFrame = next
+		err = utils.WriteStructToBuffer(headerb, &sqdh)
+		if err != nil {
+			return err
+		}
+		f.Seek(int64(s.indexStructure[l-2].Offset), 0)
+		f.Write(headerb.Bytes())
+	}
+	if prev > 0 && int(l) < len(s.indexStructure)-1 {
+		f.Seek(int64(s.indexStructure[l].Offset), 0)
+		f.Read(header)
+		headerb := bytes.NewBuffer(header)
+		sqdh, err = readSQDH(headerb)
+		if err != nil {
+			return err
+		}
+		sqdh.PrevFrame = prev
+		err = utils.WriteStructToBuffer(headerb, &sqdh)
+		if err != nil {
+			return err
+		}
+		f.Seek(int64(s.indexStructure[l].Offset), 0)
+		f.Write(headerb.Bytes())
+	}
+	f.Seek(0, 0)
+	var sqd sqdS
+	header = make([]byte, 256)
+	f.Read(header)
+	headerb = bytes.NewBuffer(header)
+	if err := utils.ReadStructFromBuffer(headerb, &sqd); err != nil {
+		return err
+	}
+	sqd.NumMsg--
+	sqd.HighMsg--
+	sqd.UID--
+	f.Seek(0, 0)
+	err = utils.WriteStructToBuffer(headerb, &sqd)
+	if err != nil {
+		return err
+	}
+	f.Write(headerb.Bytes())
+
+	f.Close()
+	if len(s.messages) > 0 {
+		s.messages = append(s.messages[:l-1], s.messages[l:]...)
+	}
+	s.indexStructure = append(s.indexStructure[:l-1], s.indexStructure[l:]...)
+	f, err = os.OpenFile(s.AreaPath+".sqi", os.O_RDWR, 0644)
+	if err != nil {
+		return err
+	}
+	f.Truncate(0)
+	f.Seek(0, 0)
+	for _, is := range s.indexStructure {
+		buf := new(bytes.Buffer)
+		utils.WriteStructToBuffer(buf, &is)
+		f.Write(buf.Bytes())
+	}
+	defer f.Close()
+
+	return nil
+}
