@@ -18,15 +18,15 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:937011a37a09b93be68052dfb3195fcfbff33b9472b37401b54027e9954906fb"
+  digest = "1:939e23f904cb50168a21dc38ca60b432a0e57482bed803fdae94223821dcad59"
   name = "github.com/gdamore/tcell"
   packages = [
     ".",
     "terminfo",
   ]
   pruneopts = "UT"
-  revision = "aaadc574a6ed8dc3abe56036ca130dcee1ee6b6e"
-  version = "v1.1.1"
+  revision = "b5d0c1ac570211e469f43ff88c0c6aa4b56cc99a"
+  version = "v1.1.2"
 
 [[projects]]
   digest = "1:39de67207027b7374272d5ec9b1bf85457714150ba1263e8d236316629dad570"
@@ -46,19 +46,19 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:65d59a5b6a44b52bc2449479cc40de6da03398ef9c6323ea868c9ac752b9d441"
+  digest = "1:18a54411a95d50b907fe52637360e51365f59bdecd80bfbeab97b307eaa12406"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "90b4da1bd64ceee13d2e7d782b315b819190f7bf"
+  revision = "f2bf2be1ba4a89bda4043642531723628fdd4c95"
 
 [[projects]]
   branch = "master"
-  digest = "1:ab2d8dae71aefc7057f8da6a765968d46cb4190aee8ba247c46afc129d45a3bf"
+  digest = "1:0f3d53c091b2688c1b1ba08ce4ae8076d63bc05fc1f6b3c0eb2df1f2e801fcdf"
   name = "github.com/rivo/uniseg"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f699dde9c340bcc39b69a4c67369832af73ec72e"
+  revision = "b9f5b9457d44da7006ab06c7e3915583b6bcb0ab"
 
 [[projects]]
   digest = "1:7093ab359f15c3663a7cfdc539e9eaf44635bc46376d8b888fe480b3ccfbad4d"
