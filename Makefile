@@ -6,11 +6,13 @@ SOURCES = $(wildcard *.go) \
 
 .DEFAULT_GOAL := all
 
+.EXPORT_ALL_VARIABLES:
+GO111MODULE = on
+
 all: build test
 
 get: format
 	@echo get depencies
-	@dep ensure
 
 generate: get
 	@echo Generating version.go
@@ -33,4 +35,4 @@ format:
 	@gofmt -s -w $(SOURCES)
 
 update: format
-	dep ensure -update
+	go mod tidy

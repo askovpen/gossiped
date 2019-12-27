@@ -5,6 +5,7 @@ import (
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/types"
+	"github.com/askovpen/gossiped/pkg/ui/editor"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	//"log"
@@ -17,12 +18,13 @@ const (
 )
 
 type IM struct {
-	eb         *EditBody
+	eb         *editor.View
 	eh         *EditHeader
 	newMsg     *msgapi.Message
 	curArea    int
 	postArea   int
 	newMsgType int
+	buffer     *editor.Buffer
 }
 
 func (a *App) InsertMsgMenu() (string, tview.Primitive, bool, bool) {
@@ -33,7 +35,8 @@ func (a *App) InsertMsgMenu() (string, tview.Primitive, bool, bool) {
 		SetDoneFunc(func(buttonIndex int) {
 			switch b := buttonIndex; b {
 			case 0:
-				a.im.newMsg.Body = a.im.eb.GetText(false)
+				//a.im.newMsg.Body = a.im.eb.GetText(false)
+				a.im.newMsg.Body = a.im.buffer.String()
 				msgapi.Areas[a.im.postArea].SaveMsg(a.im.newMsg.MakeBody())
 				a.Pages.HidePage("InsertMsgMenu")
 				a.Pages.RemovePage("InsertMsgMenu")
@@ -91,29 +94,36 @@ func (a *App) InsertMsg(areaId int, msgType int) (string, tview.Primitive, bool,
 		SetTitle(" " + msgapi.Areas[a.im.postArea].GetName() + " ").
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
-	a.im.eb = NewEditBody().
-		SetDoneFunc(func() {
-			a.Pages.ShowPage("InsertMsgMenu")
-			//log.Printf("%q",a.App.GetFocus())
-		})
+	a.im.eb = editor.NewView(editor.NewBufferFromString(""))
+	//	a.im.eb = NewEditBody().
+	a.im.eb.SetDoneFunc(func() {
+		a.Pages.ShowPage("InsertMsgMenu")
+		//			//log.Printf("%q",a.App.GetFocus())
+	})
 	a.im.eh.SetDoneFunc(func(r [5][]rune) {
 		a.im.newMsg.From = string(r[0])
 		a.im.newMsg.FromAddr = types.AddrFromString(string(r[1]))
 		a.im.newMsg.To = string(r[2])
 		a.im.newMsg.ToAddr = types.AddrFromString(string(r[3]))
 		a.im.newMsg.Subject = string(r[4])
-		if len(a.im.eb.GetText(false)) == 0 {
-			var mv string
-			var p int
-			if a.im.newMsgType == 0 {
-				mv, p = a.im.newMsg.ToEditNewView()
-			} else if a.im.newMsgType == newMsgTypeAnswer || a.im.newMsgType == newMsgTypeAnswerNewArea {
-				mv, p = a.im.newMsg.ToEditAnswerView(omsg)
-			} else if a.im.newMsgType == newMsgTypeForward {
-				mv, p = a.im.newMsg.ToEditForwardView(omsg)
-			}
-			a.im.eb.SetText(mv, p)
+		/*
+			if len(a.im.eb.GetText(false)) == 0 {
+		*/
+		var mv string
+		var p int
+		if a.im.newMsgType == 0 {
+			mv, p = a.im.newMsg.ToEditNewView()
+		} else if a.im.newMsgType == newMsgTypeAnswer || a.im.newMsgType == newMsgTypeAnswerNewArea {
+			mv, p = a.im.newMsg.ToEditAnswerView(omsg)
+		} else if a.im.newMsgType == newMsgTypeForward {
+			mv, p = a.im.newMsg.ToEditForwardView(omsg)
 		}
+		a.im.buffer = editor.NewBufferFromString(mv)
+		p = p
+		a.im.eb.OpenBuffer(a.im.buffer)
+		/*
+			a.im.eb.SetText(mv, p)
+		}*/
 		a.App.SetFocus(a.im.eb)
 	})
 	layout := tview.NewFlex().

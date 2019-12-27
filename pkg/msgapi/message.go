@@ -143,33 +143,16 @@ func (m *Message) Decode() {
 // ToView export view
 func (m *Message) ToView(showKludges bool) string {
 	var nm []string
-	re := regexp.MustCompile(">+")
+	//re := regexp.MustCompile(">+")
 	for _, l := range strings.Split(m.Body, "\x0d") {
 		l = m.parseTabs(l)
 		if len(l) > 1 && l[0] == 1 {
 			if showKludges {
-				nm = append(nm, "[::b][black]@"+l[1:])
+				nm = append(nm, "@"+l[1:])
 			}
-		} else if len(l) > 10 && l[0:11] == " * Origin: " {
-			nm = append(nm, "[::b]"+l)
-		} else if len(l) > 3 && l[0:4] == "--- " {
-			nm = append(nm, "[::b]"+l)
-		} else if len(l) > 3 && l[0:4] == "... " {
-			nm = append(nm, "[::b]"+l)
 		} else if len(l) > 8 && l[0:9] == "SEEN-BY: " {
 			if showKludges {
-				nm = append(nm, "[::b][black]"+l)
-			}
-		} else if ind := re.FindStringIndex(l); ind != nil {
-			ind2 := strings.Index(l, "<")
-			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
-				if (ind[1]-ind[0])%2 == 0 {
-					nm = append(nm, "[::b]"+l)
-				} else {
-					nm = append(nm, "[::b][yellow]"+l)
-				}
-			} else {
-				nm = append(nm, l)
+				nm = append(nm, ""+l)
 			}
 		} else {
 			nm = append(nm, l)
