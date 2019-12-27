@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/atotto/clipboard v0.1.2
+	github.com/franela/goblin v0.0.0-20181003173013-ead4ad1d2727
 	github.com/gdamore/tcell v1.3.0
 	github.com/mattn/go-runewidth v0.0.7
 	github.com/rivo/tview v0.0.0-20191129065140-82b05c9fb329
