@@ -27,11 +27,11 @@ func NewEditHeader(msg *msgapi.Message) *EditHeader {
 	eh := &EditHeader{
 		Box: tview.NewBox().SetBackgroundColor(tcell.ColorDefault),
 		sCoords: [5]coords{
-			coords{f: 8, t: 42, y: 1},
-			coords{f: 43, t: 58, y: 1},
-			coords{f: 8, t: 42, y: 2},
-			coords{f: 43, t: 58, y: 2},
-			coords{f: 8, t: 67, y: 3},
+			{f: 8, t: 42, y: 1},
+			{f: 43, t: 58, y: 1},
+			{f: 8, t: 42, y: 2},
+			{f: 43, t: 58, y: 2},
+			{f: 8, t: 67, y: 3},
 		},
 		sInputs: [5][]rune{
 			[]rune(msg.From),

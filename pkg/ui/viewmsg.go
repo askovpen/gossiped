@@ -3,6 +3,8 @@ package ui
 import (
 	"fmt"
 	"github.com/askovpen/gossiped/pkg/msgapi"
+	"github.com/askovpen/gossiped/pkg/ui/editor"
+	//"github.com/askovpen/gossiped/pkg/ui/editor/runtime"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"strconv"
@@ -63,14 +65,18 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 	htxt += fmt.Sprintf(" Subj : %-50s",
 		msg.Subject)
 	header.SetText(htxt)
-	body := tview.NewTextView().SetWrap(true).SetWordWrap(true).SetTextColor(tcell.ColorSilver)
-	body.SetDynamicColors(true)
-	body.SetText(msg.ToView(a.showKludges))
-	body.SetDoneFunc(func(key tcell.Key) {
-		if key == tcell.KeyEscape {
-			a.Pages.SwitchToPage("AreaList")
-			a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum))
-		}
+	//	body := tview.NewTextView().SetWrap(true).SetWordWrap(true).SetTextColor(tcell.ColorSilver)
+	//	body.SetDynamicColors(true)
+	//	body.SetText(msg.ToView(a.showKludges))
+
+	body := editor.NewView(editor.NewBufferFromString(msg.ToView(a.showKludges)))
+	//body.SetRuntimeFiles(runtime.Files)
+	body.Readonly = true
+	body.SetDoneFunc(func() {
+		//		if key == tcell.KeyEscape {
+		a.Pages.SwitchToPage("AreaList")
+		a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum))
+		//		}
 	})
 	body.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyRight {
@@ -103,7 +109,8 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 			}
 		} else if event.Key() == tcell.KeyCtrlK || (event.Rune() == 'k' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.showKludges = !a.showKludges
-			body.SetText(msg.ToView(a.showKludges))
+			//body.SetText(msg.ToView(a.showKludges))
+			body.OpenBuffer(editor.NewBufferFromString(msg.ToView(a.showKludges)))
 		} else if event.Key() == tcell.KeyCtrlQ || event.Key() == tcell.KeyF3 || (event.Rune() == 'q') {
 			a.Pages.AddPage(a.InsertMsg(areaId, newMsgTypeAnswer))
 			a.Pages.AddPage(a.InsertMsgMenu())
