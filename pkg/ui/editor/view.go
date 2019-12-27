@@ -64,7 +64,7 @@ type View struct {
 
 	// The runtime files
 	runtimeFiles *RuntimeFiles
-	done func()
+	done         func()
 }
 
 // NewView returns a new view with the specified buffer.
@@ -613,7 +613,7 @@ func (v *View) Draw(screen tcell.Screen) {
 
 }
 
-func (v *View) SetDoneFunc(handler func()) *View {                                                                                                                                                   
-	v.done = handler                                                                                                                                                                                           
-	return v                                                                                                                                                                                                   
+func (v *View) SetDoneFunc(handler func()) *View {
+	v.done = handler
+	return v
 }

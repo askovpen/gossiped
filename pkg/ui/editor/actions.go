@@ -966,7 +966,9 @@ func (v *View) Escape() bool {
 		//			return true
 		//		}
 		v.done()
-	} else {v.done()}
+	} else {
+		v.done()
+	}
 	return false
 }
 
