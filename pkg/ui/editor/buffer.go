@@ -112,7 +112,7 @@ func (b *Buffer) GetName() string {
 
 // updateRules updates the syntax rules and filetype for this buffer
 // This is called when the colorscheme changes
-func (b *Buffer) updateRules(runtimeFiles *RuntimeFiles) {
+func (b *Buffer) updateRules() {
 	ryaml := `
 filetype: msg
 detect:

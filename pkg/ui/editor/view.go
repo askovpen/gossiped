@@ -63,7 +63,6 @@ type View struct {
 	colorscheme Colorscheme
 
 	// The runtime files
-	runtimeFiles *RuntimeFiles
 	done         func()
 }
 
@@ -112,13 +111,7 @@ func (v *View) SetKeybindings(bindings KeyBindings) {
 // SetColorscheme sets the colorscheme for this view.
 func (v *View) SetColorscheme(colorscheme Colorscheme) {
 	v.colorscheme = colorscheme
-	v.Buf.updateRules(v.runtimeFiles)
-}
-
-// SetRuntimeFiles sets the runtime files for this view.
-func (v *View) SetRuntimeFiles(runtimeFiles *RuntimeFiles) {
-	v.runtimeFiles = runtimeFiles
-	v.Buf.updateRules(v.runtimeFiles)
+	v.Buf.updateRules()
 }
 
 func (v *View) paste(clip string) {
@@ -173,7 +166,7 @@ func (v *View) OpenBuffer(buf *Buffer) {
 	// Set isOverwriteMode to false, because we assume we are in the default mode when editor
 	// is opened
 	v.isOverwriteMode = false
-	v.Buf.updateRules(v.runtimeFiles)
+	v.Buf.updateRules()
 	v.SetColorscheme(ParseColorscheme(`
 	color-link comment "bold yellow"
 	color-link icomment "bold white"
