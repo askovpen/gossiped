@@ -26,7 +26,7 @@ func DefaultLocalSettings() map[string]interface{} {
 		"scrollbar":      false,
 		"scrollmargin":   float64(3),
 		"scrollspeed":    float64(2),
-		"softwrap":       false,
+		"softwrap":       true,
 		"smartpaste":     true,
 		"splitbottom":    true,
 		"splitright":     true,
