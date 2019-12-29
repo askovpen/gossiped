@@ -9,8 +9,14 @@ before:
 builds:
 - env:
   - CGO_ENABLED=0
+  goos:
+  - linux
+  - darwin
+  - windows
 archives:
-- replacements:
+-
+  name_template: "{{.Tag}}_{{.Os}}_{{.Arch}}"
+  replacements:
     darwin: Darwin
     linux: Linux
     windows: Windows
@@ -18,11 +24,21 @@ archives:
     amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ .Tag }}-next"
+#snapshot:
+#  name_template: "{{.Tag}}-snapshot"
 changelog:
   sort: asc
   filters:
     exclude:
     - '^docs:'
     - '^test:'
+nfpms:
+  -
+    id: gossiped
+    package_name: gossiped
+    formats:
+    - deb
+    - rpm
+    bindir: /usr/bin
+    vendor: Drum Roll Inc.
+  
