@@ -22,6 +22,11 @@ builds:
   - CGO_ENABLED=0
   goos:
   - darwin
+- id: fbsd
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - freebsd
 
 archives:
 -
@@ -29,6 +34,7 @@ archives:
   builds:
     - win
     - osx
+    - fbsd
   files:
     - config.example.yml
   format_overrides:
@@ -38,6 +44,7 @@ archives:
     darwin: osx
     linux: lnx
     windows: win
+    freebsd: fbsd
     386: 32
     amd64: 64
 checksum:
