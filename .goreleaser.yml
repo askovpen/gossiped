@@ -1,0 +1,70 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # you may remove this if you don't use vgo
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
+builds:
+- id: win
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - windows
+- id: lnx
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+- id: osx
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - darwin
+
+archives:
+-
+  name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}"
+  builds:
+    - win
+    - osx
+  files:
+    - config.example.yml
+  format_overrides:
+    - goos: windows
+      format: zip
+  replacements:
+    darwin: osx
+    linux: lnx
+    windows: win
+    386: 32
+    amd64: 64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{.Tag}}-snapshot"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+nfpms:
+  -
+    id: gossiped
+    package_name: gossiped
+    file_name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}"
+    replacements:
+      darwin: osx
+      linux: lnx
+      windows: win
+      386: 32
+      amd64: 64
+    formats:
+    - deb
+    - rpm
+    bindir: /usr/bin
+    vendor: askovpen
+    config_files:
+      "config.example.yml": "/etc/gossiped/config.example.yml"

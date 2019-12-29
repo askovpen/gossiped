@@ -21,7 +21,7 @@ func P(e error) {
 func main() {
 	out, err := exec.Command("git", "describe", "--tags").Output()
 	P(err)
-	ver := strings.Trim(strings.Split(string(out), "-")[1], "\n")
+	ver := strings.Trim(string(out), "\n")
 	out, err = exec.Command("git", "rev-list", "HEAD", "--count").Output()
 	P(err)
 	cc := strings.Trim(string(out), "\n")
