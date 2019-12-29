@@ -37,6 +37,7 @@ archives:
     - fbsd
   files:
     - config.example.yml
+    - gossiped.tpl
   format_overrides:
     - goos: windows
       format: zip
@@ -75,3 +76,4 @@ nfpms:
     vendor: askovpen
     config_files:
       "config.example.yml": "/etc/gossiped/config.example.yml"
+      "gossiped.tpl": "/etc/gossiped/gossiped.tpl"
