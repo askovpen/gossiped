@@ -7,25 +7,43 @@ before:
     # you may remove this if you don't need go generate
     - go generate ./...
 builds:
-- env:
+- id: win
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - windows
+- id: lnx
+  env:
   - CGO_ENABLED=0
   goos:
   - linux
+- id: osx
+  env:
+  - CGO_ENABLED=0
+  goos:
   - darwin
-  - windows
+
 archives:
 -
-  name_template: "{{.Tag}}_{{.Os}}_{{.Arch}}"
+  name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}"
+  builds:
+    - win
+    - osx
+  files:
+    - config.example.yml
+  format_overrides:
+    - goos: windows
+      format: zip
   replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    386: i386
-    amd64: x86_64
+    darwin: osx
+    linux: lnx
+    windows: win
+    386: 32
+    amd64: 64
 checksum:
   name_template: 'checksums.txt'
-#snapshot:
-#  name_template: "{{.Tag}}-snapshot"
+snapshot:
+  name_template: "{{.Tag}}-snapshot"
 changelog:
   sort: asc
   filters:
@@ -36,9 +54,17 @@ nfpms:
   -
     id: gossiped
     package_name: gossiped
+    file_name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}"
+    replacements:
+      darwin: osx
+      linux: lnx
+      windows: win
+      386: 32
+      amd64: 64
     formats:
     - deb
     - rpm
     bindir: /usr/bin
-    vendor: Drum Roll Inc.
-  
+    vendor: askovpen
+    config_files:
+      "config.example.yml": "/etc/gossiped/config.example.yml"
