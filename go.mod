@@ -12,5 +12,6 @@ require (
 	github.com/sergi/go-diff v1.1.0
 	github.com/zyedidia/micro v1.4.1
 	golang.org/x/text v0.3.2
+	gopkg.in/yaml.v2 v2.2.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
 )
