@@ -63,7 +63,7 @@ type View struct {
 	colorscheme Colorscheme
 
 	// The runtime files
-	done         func()
+	done func()
 }
 
 // NewView returns a new view with the specified buffer.
