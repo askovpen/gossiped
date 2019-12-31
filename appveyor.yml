@@ -47,6 +47,7 @@ test_script:
   - go test ./... -v -cover -coverprofile=coverage.txt --bench=. -benchmem
   - go get github.com/tebeka/go2xunit
   - go test -v ./... | c:\gopath\bin\go2xunit >xunit.xml
+  - ps: $wc = New-Object 'System.Net.WebClient'; $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\xunit.xml))
 
 artifacts:
   - path: "*.zip"
