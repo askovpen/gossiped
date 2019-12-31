@@ -1,17 +1,25 @@
 language: go
+
 go:
 - 1.13
+
 addons:
   apt:
     packages:
     - rpm
+
 env:
-  - GO111MODULE=on
+- GO111MODULE=on
+
 script:
-  - go generate ./...
-  - go build
-  - ./gossiped
-  - go test ./... -v -cover -coverprofile=coverage.txt --bench=. -benchmem
+- go generate ./...
+- go build
+- ./gossiped
+- go test ./... -v -cover -coverprofile=coverage.txt --bench=. -benchmem
+
+after_success:
+- codecov
+
 deploy:
 - provider: script
   skip_cleanup: true
