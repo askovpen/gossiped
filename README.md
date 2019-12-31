@@ -1,6 +1,6 @@
 # gossiped
 [![Build status](https://ci.appveyor.com/api/projects/status/b04rcghch4pskvmu/branch/master?svg=true)](https://ci.appveyor.com/project/askovpen/gossiped/branch/master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0003329106c47a684e76598853636cd)](https://www.codacy.com/app/askovpen/gossiped)
+[![Go Report Card](https://goreportcard.com/badge/github.com/askovpen/gossiped)](https://goreportcard.com/report/github.com/askovpen/gossiped)
 [![codecov](https://codecov.io/gh/askovpen/gossiped/branch/master/graph/badge.svg)](https://codecov.io/gh/askovpen/gossiped)
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/askovpen/goated/blob/master/LICENSE.txt)
 
