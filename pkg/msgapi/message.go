@@ -53,15 +53,15 @@ func (m *Message) ParseRaw() error {
 			m.Kludges["TOPT"] = l[6:]
 		} else if len(l) > 5 && l[0:6] == "\x01FMPT " {
 			m.Kludges["FMPT"] = l[6:]
-		} else if len(l) > 7 && l[0:8] == "\x01MSGID: " {
-			m.Kludges["MSGID:"] = l[8:]
+		} else if len(l) > 6 && l[0:7] == "\x01MSGID:" {
+			m.Kludges["MSGID:"] = strings.Trim(l[7:], " ")
 		} else if len(l) > 10 && l[0:11] == "\x20*\x20Origin: " {
 			re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
 			if len(re.FindStringSubmatch(l)) > 0 {
 				m.Kludges["ORIGIN"] = re.FindStringSubmatch(l)[0]
 			}
-		} else if len(l) > 6 && l[0:7] == "\x01CHRS: " {
-			m.Kludges["CHRS"] = strings.ToUpper(strings.Split(l, " ")[1])
+		} else if len(l) > 5 && l[0:6] == "\x01CHRS:" {
+			m.Kludges["CHRS"] = strings.ToUpper(strings.Split(strings.Trim(l[6:], " "), " ")[0])
 		}
 	}
 	//log.Printf("ParseRaw(): %#v", m.Kludges)
