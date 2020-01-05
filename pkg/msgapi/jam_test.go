@@ -38,7 +38,7 @@ func TestJam(t *testing.T) {
 			ToAddr:      types.AddrFromNum(2, 5020, 9696, 2),
 			DateWritten: time.Now(),
 			DateArrived: time.Now(),
-			Body:        "Test\nBody",
+			Body:        "Test\nBody\n * Origin: test",
 			Kludges:     make(map[string]string),
 		}
 		m.MakeBody()
