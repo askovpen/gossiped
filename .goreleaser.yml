@@ -75,5 +75,5 @@ nfpms:
     bindir: /usr/bin
     vendor: askovpen
     config_files:
-      "config.example.yml": "/etc/gossiped/config.example.yml"
-      "gossiped.tpl": "/etc/gossiped/gossiped.tpl"
+      "gossiped.example.yml": "/etc/ftn/gossiped.example.yml"
+      "gossiped.tpl": "/etc/ftn/gossiped.tpl"

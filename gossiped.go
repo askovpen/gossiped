@@ -5,20 +5,43 @@ import (
 	"github.com/askovpen/gossiped/pkg/areasconfig"
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/ui"
-	// "github.com/askovpen/gocui"
+	"github.com/askovpen/gossiped/pkg/utils"
 	"log"
 	"os"
-	// "time"
 )
+
+func tryFindConfig() string {
+	for _, fn := range []string{
+		"/usr/local/etc/ftn/gossiped.yml",
+		"/etc/ftn/gossiped.yml",
+		"gossiped.yml",
+	} {
+		if utils.FileExists(fn) {
+			return fn
+		}
+	}
+	return ""
+}
 
 func main() {
 	log.Printf("%s started", config.LongPID)
+	var fn string
 	if len(os.Args) == 1 {
-		log.Printf("Usage: %s <config.yml>", os.Args[0])
-		return
+		fn = tryFindConfig()
+		if fn == "" {
+			log.Printf("Usage: %s <config.yml>", os.Args[0])
+			return
+		}
+	} else {
+		if utils.FileExists(os.Args[1]) {
+			fn = os.Args[1]
+		} else {
+			log.Printf("Usage: %s <config.yml>", os.Args[0])
+			return
+		}
 	}
 
-	err := config.Read()
+	err := config.Read(fn)
 	if err != nil {
 		log.Print(err)
 		return
@@ -40,30 +63,4 @@ func main() {
 		log.Print(err)
 		return
 	}
-	//  app.Run()
-	/*
-		ui.App.InputEsc = true
-		ui.App.SetManagerFunc(ui.Layout)
-		ui.App.BgColor = gocui.ColorBlack
-		ui.App.FgColor = gocui.ColorWhite
-		ui.ActiveWindow = "AreaList"
-		if err := ui.App.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, ui.Quit); err != nil {
-			log.Panicln(err)
-		}
-		if err := ui.Keybindings(ui.App); err != nil {
-			log.Panicln(err)
-		}
-		ticker := time.NewTicker(1 * time.Second)
-		go func() {
-			for t := range ticker.C {
-				ui.StatusTime = fmt.Sprintf("│ %s ", t.Format("15:04:05"))
-				ui.App.Update(func(*gocui.Gui) error {
-					return nil
-				})
-			}
-		}()
-		if err := ui.App.MainLoop(); err != nil && err != gocui.ErrQuit {
-			log.Panicln(err)
-		}
-	*/
 }
