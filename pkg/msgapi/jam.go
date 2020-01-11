@@ -533,6 +533,8 @@ func (j *JAM) GetMessages() *[]MessageListItem {
 	}
 	return &j.messages
 }
+
+// DelMsg remove msg
 func (j *JAM) DelMsg(l uint32) error {
 	if l == 0 {
 		l = 1

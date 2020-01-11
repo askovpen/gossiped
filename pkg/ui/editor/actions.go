@@ -653,11 +653,9 @@ func (v *View) Cut() bool {
 		v.Cursor.DeleteSelection()
 		v.Cursor.ResetSelection()
 		v.freshClip = true
-
 		return true
-	} else {
-		return v.CutLine()
 	}
+	return v.CutLine()
 }
 
 // DuplicateLine duplicates the current line or selection
@@ -699,7 +697,7 @@ func (v *View) MoveLinesUp() bool {
 			start,
 			end,
 		)
-		v.Cursor.CurSelection[1].Y -= 1
+		v.Cursor.CurSelection[1].Y--
 	} else {
 		if v.Cursor.Loc.Y == 0 {
 			return true

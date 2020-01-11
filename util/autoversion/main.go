@@ -8,11 +8,13 @@ import (
 	"time"
 )
 
+// MTag struct
 type MTag struct {
 	Name string
 	dt   time.Time
 }
 
+// P func
 func P(e error) {
 	if e != nil {
 		panic(e)

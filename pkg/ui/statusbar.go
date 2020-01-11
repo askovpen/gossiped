@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// StatusBar struct
 type StatusBar struct {
 	SB         *tview.Flex
 	status     *tview.TextView
@@ -13,6 +14,7 @@ type StatusBar struct {
 	app        *App
 }
 
+// NewStatusBar func
 func NewStatusBar(app *App) *StatusBar {
 	sb := &StatusBar{}
 
@@ -39,9 +41,13 @@ func NewStatusBar(app *App) *StatusBar {
 		AddItem(sb.statusTime, 10, 1, false)
 	return sb
 }
+
+// SetStatus set status
 func (sb StatusBar) SetStatus(s string) {
 	sb.status.SetText(" [::b][white]" + s)
 }
+
+// Run update timers
 func (sb StatusBar) Run() {
 	sb.statusTime.SetText("[::b][white]" + time.Now().Format("15:04:05"))
 	clock := time.NewTicker(1 * time.Second)

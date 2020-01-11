@@ -496,6 +496,8 @@ func (s *Squish) GetMessages() *[]MessageListItem {
 	}
 	return &s.messages
 }
+
+// DelMsg remove msg
 func (s *Squish) DelMsg(l uint32) error {
 	if len(s.indexStructure) == 0 {
 		return errors.New("Empty Area")

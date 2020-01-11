@@ -10,6 +10,7 @@ import (
 	"github.com/zyedidia/micro/cmd/micro/highlight"
 )
 
+// LargeFileThreshold const
 const LargeFileThreshold = 50000
 
 var (

@@ -49,6 +49,7 @@ func visualToCharPos(visualIndex int, lineN int, str string, buf *Buffer, colors
 	return -1, -1, style
 }
 
+// Char struct
 type Char struct {
 	visualLoc Loc
 	realLoc   Loc
@@ -60,10 +61,12 @@ type Char struct {
 	width    int
 }
 
+// CellView struct
 type CellView struct {
 	lines [][]*Char
 }
 
+// Draw func
 func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left, width int) {
 	if width <= 0 {
 		return

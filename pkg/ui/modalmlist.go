@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// Modal is a centered message window used to inform the user or prompt them
+// ModalMessageList is a centered message window used to inform the user or prompt them
 // for an immediate decision. It needs to have at least one button (added via
 // AddButtons()) or it will never disappear.
 //
@@ -20,8 +20,8 @@ type ModalMessageList struct {
 	done      func(msgNum uint32)
 }
 
-// NewModal returns a new modal message window.
-func NewModalMessageList(areaId int) *ModalMessageList {
+// NewModalMessageList returns a new modal message window.
+func NewModalMessageList(areaID int) *ModalMessageList {
 	m := &ModalMessageList{
 		Box:       tview.NewBox(),
 		textColor: tview.Styles.PrimaryTextColor,
@@ -66,9 +66,9 @@ func NewModalMessageList(areaId int) *ModalMessageList {
 			SetAttributes(tcell.AttrBold).
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
-	for i, mh := range *msgapi.Areas[areaId].GetMessages() {
+	for i, mh := range *msgapi.Areas[areaID].GetMessages() {
 		ch := " "
-		if i == int(msgapi.Areas[areaId].GetLast()-1) {
+		if i == int(msgapi.Areas[areaID].GetLast()-1) {
 			ch = "[::b],"
 		}
 		//mh.From, mh.To, mh.Subject, mh.DateWritten.Format("02 Jan 06"))
@@ -78,7 +78,7 @@ func NewModalMessageList(areaId int) *ModalMessageList {
 		m.table.SetCell(i+1, 3, tview.NewTableCell(mh.Subject).SetTextColor(tcell.ColorSilver))
 		m.table.SetCell(i+1, 4, tview.NewTableCell(mh.DateWritten.Format("02 Jan 06")).SetTextColor(tcell.ColorSilver))
 	}
-	m.table.Select(int(msgapi.Areas[areaId].GetLast()), 0)
+	m.table.Select(int(msgapi.Areas[areaID].GetLast()), 0)
 	return m
 }
 

@@ -4,6 +4,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// App ui struct
 type App struct {
 	App         *tview.Application
 	Layout      *tview.Flex
@@ -14,6 +15,7 @@ type App struct {
 	showKludges bool
 }
 
+// NewApp return new App
 func NewApp() *App {
 	a := &App{}
 	a.App = tview.NewApplication()
@@ -30,6 +32,8 @@ func NewApp() *App {
 		AddItem(a.sb.SB, 1, 1, false)
 	return a
 }
+
+// Run run App
 func (a *App) Run() error {
 	return a.App.SetRoot(a.Layout, true).Run()
 }

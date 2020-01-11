@@ -13,6 +13,8 @@ type coords struct {
 	t int
 	y int
 }
+
+// EditHeader widget
 type EditHeader struct {
 	*tview.Box
 	sIndex    int
@@ -23,6 +25,7 @@ type EditHeader struct {
 	msg       *msgapi.Message
 }
 
+// NewEditHeader create new EditHeader
 func NewEditHeader(msg *msgapi.Message) *EditHeader {
 	eh := &EditHeader{
 		Box: tview.NewBox().SetBackgroundColor(tcell.ColorDefault),
@@ -46,6 +49,8 @@ func NewEditHeader(msg *msgapi.Message) *EditHeader {
 	}
 	return eh
 }
+
+// Draw header
 func (e *EditHeader) Draw(screen tcell.Screen) {
 	e.Box.Draw(screen)
 	x, y, _, _ := e.GetInnerRect()
@@ -67,6 +72,7 @@ func (e *EditHeader) Draw(screen tcell.Screen) {
 
 }
 
+// InputHandler event handler
 func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 	return e.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 		add := func(r rune) {
@@ -120,6 +126,7 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 	})
 }
 
+// SetDoneFunc callback
 func (e *EditHeader) SetDoneFunc(handler func([5][]rune)) *EditHeader {
 	e.done = handler
 	return e

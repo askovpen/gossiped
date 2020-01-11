@@ -35,6 +35,7 @@ func (f *FidoAddr) String() string {
 	return strconv.Itoa(int(f.zone)) + ":" + strconv.Itoa(int(f.net)) + "/" + strconv.Itoa(int(f.node)) + "." + strconv.Itoa(int(f.point))
 }
 
+// ShortString return ShortString
 func (f *FidoAddr) ShortString() string {
 	if f.zone == 0 {
 		return ""

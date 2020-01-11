@@ -302,6 +302,7 @@ func (m *MSG) GetMessages() *[]MessageListItem {
 	}
 	return &m.messages
 }
+// DelMsg remove msg
 func (m *MSG) DelMsg(l uint32) error {
 	if l == 0 {
 		l = 1

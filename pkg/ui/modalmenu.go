@@ -5,11 +5,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-// Modal is a centered message window used to inform the user or prompt them
-// for an immediate decision. It needs to have at least one button (added via
-// AddButtons()) or it will never disappear.
-//
-// See https://github.com/rivo/tview/wiki/Modal for an example.
+// ModalMenu is a centered message window used to inform the user or prompt them
 type ModalMenu struct {
 	*tview.Box
 	table     *tview.Table
@@ -21,7 +17,7 @@ type ModalMenu struct {
 	width     int
 }
 
-// NewModal returns a new modal message window.
+// NewModalMenu returns a new modal message window.
 func NewModalMenu() *ModalMenu {
 	m := &ModalMenu{
 		Box:       tview.NewBox(),
@@ -66,13 +62,14 @@ func (m *ModalMenu) SetText(text string) *ModalMenu {
 	return m
 }
 
-// AddButtons adds buttons to the window. There must be at least one button and
-// a "done" handler so the window can be closed again.
+// SetY set Y
 func (m *ModalMenu) SetY(y int) *ModalMenu {
 	m.y = y
 	return m
 }
 
+// AddButtons adds buttons to the window. There must be at least one button and
+// a "done" handler so the window can be closed again.
 func (m *ModalMenu) AddButtons(labels []string) *ModalMenu {
 	for index, label := range labels {
 		func(i int, l string) {
