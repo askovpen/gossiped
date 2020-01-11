@@ -5,7 +5,6 @@ import (
 	"github.com/askovpen/gossiped/pkg/types"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"os"
 	"runtime"
 	"strings"
 )
@@ -44,8 +43,8 @@ var (
 )
 
 // Read config
-func Read() error {
-	yamlFile, err := ioutil.ReadFile(os.Args[1])
+func Read(fn string) error {
+	yamlFile, err := ioutil.ReadFile(fn)
 	if err != nil {
 		return err
 	}
