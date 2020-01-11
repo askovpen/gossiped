@@ -1,10 +1,10 @@
 package ui
 
 import (
+	//"errors"
 	"fmt"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/ui/editor"
-	//"github.com/askovpen/gossiped/pkg/ui/editor/runtime"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"strconv"
@@ -22,7 +22,9 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 			})
 		return fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaId].GetName(), msgNum), modal, true, true
 	}
-	msgapi.Areas[areaId].SetLast(msgNum)
+	if msg != nil {
+		msgapi.Areas[areaId].SetLast(msgNum)
+	}
 	if msgapi.Areas[areaId].GetCount()-msgapi.Areas[areaId].GetLast() > 0 {
 		a.al.SetCell(areaId+1, 0, tview.NewTableCell(strconv.FormatInt(int64(areaId), 10)+"[::b]+").SetAlign(tview.AlignRight))
 	} else {
@@ -46,30 +48,35 @@ func (a *App) ViewMsg(areaId int, msgNum uint32) (string, tview.Primitive, bool,
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
 	repl := ""
-	if msg.ReplyTo > 0 {
-		repl = fmt.Sprintf("-%d ", msg.ReplyTo)
-	}
-	for _, rn := range msg.Replies {
-		repl += fmt.Sprintf("+%d ", rn)
-	}
-	htxt := fmt.Sprintf(" Msg  : %-34s %-36s\n",
-		fmt.Sprintf("%d of %d %s", msgNum, msgapi.Areas[areaId].GetCount(), repl), strings.Join(msg.Attrs, " "))
-	htxt += fmt.Sprintf(" From : %-34s %-15s %-18s\n",
-		msg.From,
-		msg.FromAddr.String(),
-		msg.DateWritten.Format("02 Jan 06 15:04:05"))
-	htxt += fmt.Sprintf(" To   : %-34s %-15s %-18s\n",
-		msg.To,
-		msg.ToAddr.String(),
-		msg.DateArrived.Format("02 Jan 06 15:04:05"))
-	htxt += fmt.Sprintf(" Subj : %-50s",
-		msg.Subject)
-	header.SetText(htxt)
-	//	body := tview.NewTextView().SetWrap(true).SetWordWrap(true).SetTextColor(tcell.ColorSilver)
-	//	body.SetDynamicColors(true)
-	//	body.SetText(msg.ToView(a.showKludges))
+	var body *editor.View
+	if msg != nil {
+		if msg.ReplyTo > 0 {
+			repl = fmt.Sprintf("-%d ", msg.ReplyTo)
+		}
+		for _, rn := range msg.Replies {
+			repl += fmt.Sprintf("+%d ", rn)
+		}
+		htxt := fmt.Sprintf(" Msg  : %-34s %-36s\n",
+			fmt.Sprintf("%d of %d %s", msgNum, msgapi.Areas[areaId].GetCount(), repl), strings.Join(msg.Attrs, " "))
+		htxt += fmt.Sprintf(" From : %-34s %-15s %-18s\n",
+			msg.From,
+			msg.FromAddr.String(),
+			msg.DateWritten.Format("02 Jan 06 15:04:05"))
+		htxt += fmt.Sprintf(" To   : %-34s %-15s %-18s\n",
+			msg.To,
+			msg.ToAddr.String(),
+			msg.DateArrived.Format("02 Jan 06 15:04:05"))
+		htxt += fmt.Sprintf(" Subj : %-50s",
+			msg.Subject)
+		header.SetText(htxt)
+		//	body := tview.NewTextView().SetWrap(true).SetWordWrap(true).SetTextColor(tcell.ColorSilver)
+		//	body.SetDynamicColors(true)
+		//	body.SetText(msg.ToView(a.showKludges))
 
-	body := editor.NewView(editor.NewBufferFromString(msg.ToView(a.showKludges)))
+		body = editor.NewView(editor.NewBufferFromString(msg.ToView(a.showKludges)))
+	} else {
+		body = editor.NewView(editor.NewBufferFromString(""))
+	}
 	//body.SetRuntimeFiles(runtime.Files)
 	body.Readonly = true
 	body.SetDoneFunc(func() {
