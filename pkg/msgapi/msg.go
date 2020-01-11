@@ -3,7 +3,7 @@ package msgapi
 import (
 	"bytes"
 	"encoding/binary"
-	"errors"
+	//"errors"
 	"github.com/askovpen/gossiped/pkg/utils"
 	"io/ioutil"
 	"log"
@@ -95,7 +95,8 @@ func (m *MSG) getAttrs(a uint16) (attrs []string) {
 // GetMsg getmsg
 func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	if len(m.messageNums) == 0 {
-		return nil, errors.New("Empty Area")
+		//		return nil, errors.New("Empty Area")
+		return nil, nil
 	}
 	if position == 0 {
 		position = 1

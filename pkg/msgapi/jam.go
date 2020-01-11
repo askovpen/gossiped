@@ -93,7 +93,8 @@ func (j *JAM) getOffsetByNum(num uint32) (offset uint32) {
 // GetMsg return msg
 func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	if len(j.indexStructure) == 0 {
-		return nil, errors.New("Empty Area")
+		//		return nil, errors.New("Empty Area")
+		return nil, nil
 	}
 	if position == 0 {
 		position = 1

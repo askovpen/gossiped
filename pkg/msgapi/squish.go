@@ -133,7 +133,8 @@ func readSQDH(headerb *bytes.Buffer) (sqdH, error) {
 // GetMsg return message
 func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	if len(s.indexStructure) == 0 {
-		return nil, errors.New("Empty Area")
+		//		return nil, errors.New("Empty Area")
+		return nil, nil
 	}
 	if position == 0 {
 		position = 1
