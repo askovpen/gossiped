@@ -36,11 +36,13 @@ type Def struct {
 	rules *rules
 }
 
+// Header struct
 type Header struct {
 	FileType string
 	FtDetect [2]*regexp.Regexp
 }
 
+//  File struct
 type File struct {
 	FileType string
 
@@ -82,6 +84,7 @@ func init() {
 	Groups = make(map[string]Group)
 }
 
+// ParseFtDetect func
 func ParseFtDetect(file *File) (r [2]*regexp.Regexp, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -130,6 +133,7 @@ func ParseFtDetect(file *File) (r [2]*regexp.Regexp, err error) {
 	return r, err
 }
 
+// ParseFile func
 func ParseFile(input []byte) (f *File, err error) {
 	// This is just so if we have an error, we can exit cleanly and return the parse error to the user
 	defer func() {
