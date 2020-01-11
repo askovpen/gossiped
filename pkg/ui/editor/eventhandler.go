@@ -3,7 +3,7 @@ package editor
 import (
 	"time"
 
-	dmp "github.com/sergi/go-diff/diffmatchpatch"
+//	dmp "github.com/sergi/go-diff/diffmatchpatch"
 )
 
 const (
@@ -84,21 +84,21 @@ func NewEventHandler(buf *Buffer) *EventHandler {
 // the buffer equal to that string
 // This means that we can transform the buffer into any string and still preserve undo/redo
 // through insert and delete events
-func (eh *EventHandler) ApplyDiff(new string) {
-	differ := dmp.New()
-	diff := differ.DiffMain(eh.buf.String(), new, false)
-	loc := eh.buf.Start()
-	for _, d := range diff {
-		if d.Type == dmp.DiffDelete {
-			eh.Remove(loc, loc.Move(Count(d.Text), eh.buf))
-		} else {
-			if d.Type == dmp.DiffInsert {
-				eh.Insert(loc, d.Text)
-			}
-			loc = loc.Move(Count(d.Text), eh.buf)
-		}
-	}
-}
+// func (eh *EventHandler) ApplyDiff(new string) {
+//	differ := dmp.New()
+//	diff := differ.DiffMain(eh.buf.String(), new, false)
+//	loc := eh.buf.Start()
+//	for _, d := range diff {
+//		if d.Type == dmp.DiffDelete {
+//			eh.Remove(loc, loc.Move(Count(d.Text), eh.buf))
+//		} else {
+//			if d.Type == dmp.DiffInsert {
+//				eh.Insert(loc, d.Text)
+//			}
+//			loc = loc.Move(Count(d.Text), eh.buf)
+//		}
+//	}
+//}
 
 // Insert creates an insert text event and executes it
 func (eh *EventHandler) Insert(start Loc, text string) {
