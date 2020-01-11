@@ -17,6 +17,14 @@ builds:
   - CGO_ENABLED=0
   goos:
   - linux
+  goarch:
+  - 386
+  - amd64
+  - arm
+  - arm64
+  goarm:
+  - 6
+  - 7
 - id: osx
   env:
   - CGO_ENABLED=0
@@ -36,7 +44,7 @@ archives:
     - osx
     - fbsd
   files:
-    - config.example.yml
+    - gossiped.example.yml
     - gossiped.tpl
   format_overrides:
     - goos: windows
@@ -62,7 +70,7 @@ nfpms:
   -
     id: gossiped
     package_name: gossiped
-    file_name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}"
+    file_name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     replacements:
       darwin: osx
       linux: lnx
