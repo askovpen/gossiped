@@ -396,6 +396,7 @@ func init() {
 		"Alt-a":    ActionStartOfLine,
 		"Alt-e":    ActionEndOfLine,
 		"Esc":      ActionEscape,
+		"F2":       ActionEscape,
 		"Alt-n":    ActionSpawnMultiCursor,
 		"Alt-m":    ActionSpawnMultiCursorSelect,
 		"Alt-p":    ActionRemoveMultiCursor,
