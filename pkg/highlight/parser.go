@@ -42,7 +42,7 @@ type Header struct {
 	FtDetect [2]*regexp.Regexp
 }
 
-//  File struct
+// File struct
 type File struct {
 	FileType string
 
