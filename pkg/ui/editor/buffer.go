@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/zyedidia/micro/cmd/micro/highlight"
+	"github.com/askovpen/gossiped/pkg/highlight"
 )
 
 // LargeFileThreshold const
