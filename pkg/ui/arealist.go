@@ -12,7 +12,10 @@ import (
 func (a *App) AreaListQuit() (string, tview.Primitive, bool, bool) {
 	modal := NewModalMenu().
 		SetText("Quit GOssipEd?").
-		AddButtons([]string{"Quit", "Cancel"}).
+		AddButtons([]string{
+			"    Quit   ",
+			"   Cancel  ",
+		}).
 		SetDoneFunc(func(buttonIndex int) {
 			if buttonIndex == 0 {
 				a.App.Stop()
