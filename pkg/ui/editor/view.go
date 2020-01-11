@@ -98,7 +98,7 @@ func (v *View) InputHandler() func(event *tcell.EventKey, _ func(p tview.Primiti
 	})
 }
 
-// GetKeyBindings gets the keybindings for this view.
+// GetKeybindings gets the keybindings for this view.
 func (v *View) GetKeybindings() KeyBindings {
 	return v.bindings
 }
@@ -253,7 +253,7 @@ func (v *View) Relocate() bool {
 	return ret
 }
 
-// Execute actions executes the supplied actions
+// ExecuteActions executes the supplied actions
 func (v *View) ExecuteActions(actions []func(*View) bool) bool {
 	relocate := false
 	readonlyBindingsList := []string{"Delete", "Insert", "Backspace", "Cut", "Play", "Paste", "Move", "Add", "DuplicateLine", "Macro"}
@@ -606,6 +606,7 @@ func (v *View) Draw(screen tcell.Screen) {
 
 }
 
+// SetDoneFunc callback
 func (v *View) SetDoneFunc(handler func()) *View {
 	v.done = handler
 	return v

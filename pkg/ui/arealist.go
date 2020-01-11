@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// AreaListQuit exit app
 func (a *App) AreaListQuit() (string, tview.Primitive, bool, bool) {
 	modal := NewModalMenu().
 		SetText("Quit GOssipEd?").
@@ -27,6 +28,8 @@ func (a *App) AreaListQuit() (string, tview.Primitive, bool, bool) {
 		})
 	return "AreaListQuit", modal, false, false
 }
+
+// AreaList - arealist widget
 func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 	a.al = tview.NewTable().
 		SetFixed(1, 0).

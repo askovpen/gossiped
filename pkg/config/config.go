@@ -84,6 +84,8 @@ func readCity() {
 		return
 	}
 }
+
+// GetCity return city
 func GetCity(sa string) string {
 	if val, ok := city[sa]; ok {
 		return val

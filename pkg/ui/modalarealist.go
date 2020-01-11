@@ -7,11 +7,7 @@ import (
 	"strconv"
 )
 
-// Modal is a centered message window used to inform the user or prompt them
-// for an immediate decision. It needs to have at least one button (added via
-// AddButtons()) or it will never disappear.
-//
-// See https://github.com/rivo/tview/wiki/Modal for an example.
+// ModalAreaList is a centered message window used to inform the user or prompt them
 type ModalAreaList struct {
 	*tview.Box
 	table     *tview.Table
@@ -21,7 +17,7 @@ type ModalAreaList struct {
 	done      func(buttonIndex int)
 }
 
-// NewModal returns a new modal message window.
+// NewModalAreaList returns a new modal message window.
 func NewModalAreaList() *ModalAreaList {
 	m := &ModalAreaList{
 		Box:       tview.NewBox(),

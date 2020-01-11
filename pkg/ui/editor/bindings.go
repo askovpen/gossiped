@@ -335,6 +335,7 @@ var bindingKeys = map[string]tcell.Key{
 	"PgDown": tcell.KeyPgDn,
 }
 
+// DefaultKeyBindings DefaultKeyBindings
 var DefaultKeyBindings KeyBindings
 
 // InitBindings initializes the keybindings for micro
