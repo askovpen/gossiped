@@ -227,13 +227,6 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 					}
 					groupNum := Groups[groupStr]
 					ru.patterns = append(ru.patterns, &pattern{groupNum, r})
-			case map[string]interface{}:
-				// region
-				region, err := parseRegion(group, object, curRegion)
-				if err != nil {
-					return nil, err
-				}
-				ru.regions = append(ru.regions, region)
 			default:
 				return nil, fmt.Errorf("Bad type %T", object)
 			}
@@ -243,69 +236,3 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 	return ru, nil
 }
 
-func parseRegion(group string, regionInfo map[string]interface{}, prevRegion *region) (r *region, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			var ok bool
-			err, ok = r.(error)
-			if !ok {
-				err = fmt.Errorf("pkg: %v", r)
-			}
-		}
-	}()
-
-	r = new(region)
-	if _, ok := Groups[group]; !ok {
-		numGroups++
-		Groups[group] = numGroups
-	}
-	groupNum := Groups[group]
-	r.group = groupNum
-	r.parent = prevRegion
-
-	r.start, err = regexp.Compile(regionInfo["start"].(string))
-
-	if err != nil {
-		return nil, err
-	}
-
-	r.end, err = regexp.Compile(regionInfo["end"].(string))
-
-	if err != nil {
-		return nil, err
-	}
-
-	// skip is optional
-	if _, ok := regionInfo["skip"]; ok {
-		r.skip, err = regexp.Compile(regionInfo["skip"].(string))
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// limit-color is optional
-	if _, ok := regionInfo["limit-group"]; ok {
-		groupStr := regionInfo["limit-group"].(string)
-		if _, ok := Groups[groupStr]; !ok {
-			numGroups++
-			Groups[groupStr] = numGroups
-		}
-		groupNum := Groups[groupStr]
-		r.limitGroup = groupNum
-
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		r.limitGroup = r.group
-	}
-
-	r.rules, err = parseRules(regionInfo["rules"].([]interface{}), r)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
-}
