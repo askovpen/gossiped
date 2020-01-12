@@ -214,19 +214,19 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 
 			switch object := val.(type) {
 			case string:
-					// Pattern
-					r, err := regexp.Compile(object)
-					if err != nil {
-						return nil, err
-					}
+				// Pattern
+				r, err := regexp.Compile(object)
+				if err != nil {
+					return nil, err
+				}
 
-					groupStr := group
-					if _, ok := Groups[groupStr]; !ok {
-						numGroups++
-						Groups[groupStr] = numGroups
-					}
-					groupNum := Groups[groupStr]
-					ru.patterns = append(ru.patterns, &pattern{groupNum, r})
+				groupStr := group
+				if _, ok := Groups[groupStr]; !ok {
+					numGroups++
+					Groups[groupStr] = numGroups
+				}
+				groupNum := Groups[groupStr]
+				ru.patterns = append(ru.patterns, &pattern{groupNum, r})
 			default:
 				return nil, fmt.Errorf("Bad type %T", object)
 			}
@@ -235,4 +235,3 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 
 	return ru, nil
 }
-
