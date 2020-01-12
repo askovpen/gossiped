@@ -50,10 +50,9 @@ func (v *View) CursorUp() bool {
 	if v.Readonly == true {
 		v.ScrollUp(1)
 		return false
-	} else {
-		v.deselect(0)
-		v.Cursor.Up()
 	}
+	v.deselect(0)
+	v.Cursor.Up()
 	return true
 }
 
@@ -62,10 +61,9 @@ func (v *View) CursorDown() bool {
 	if v.Readonly == true {
 		v.ScrollDown(1)
 		return false
-	} else {
-		v.deselect(1)
-		v.Cursor.Down()
 	}
+	v.deselect(1)
+	v.Cursor.Down()
 	return true
 }
 
