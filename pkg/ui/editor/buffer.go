@@ -119,13 +119,13 @@ filetype: msg
 detect:
   filename: "\\.msg$"
 rules:
-  - comment: ".*\\>+.*$"
-  - icomment: ".*[^>](>>)+[^>].*$"
-  - tagline: "^\\.\\.\\..*$"
-  - origin: "^ \\* Origin:.*$"
-  - tearline: "^--- .*$"
-  - kludge: "^@.*$"
-  - kludge: "^SEEN-BY: .*$"
+- comment: ".*\\>+.*$"
+- icomment: ".*[^>](>>)+[^>].*$"
+- tagline: "^\\.\\.\\..*$"
+- origin: "^ \\* Origin:.*$"
+- tearline: "^--- .*$"
+- kludge: "^@.*$"
+- kludge: "^SEEN-BY: .*$"
 `
 	rehighlight := false
 	file, err := highlight.ParseFile([]byte(ryaml))
@@ -144,7 +144,6 @@ rules:
 		return
 	}
 	rehighlight = true
-	//			files = append(files, file)
 	if b.highlighter == nil || rehighlight {
 		if b.syntaxDef != nil {
 			b.Settings["filetype"] = b.syntaxDef.FileType
@@ -155,71 +154,6 @@ rules:
 		}
 	}
 
-	/*
-	   log.Print("0")
-	   	if runtimeFiles == nil {
-	   		return
-	   	}
-	   log.Print("1")
-	   	rehighlight := false
-	   	var files []*highlight.File
-	   	for _, f := range runtimeFiles.ListRuntimeFiles(RTSyntax) {
-	   		data, err := f.Data()
-	   		if err == nil {
-	   			file, err := highlight.ParseFile(data)
-	   			if err != nil {
-	   				continue
-	   			}
-	   			ftdetect, err := highlight.ParseFtDetect(file)
-	   			if err != nil {
-	   				continue
-	   			}
-
-	   			ft := b.Settings["filetype"].(string)
-	   			if (ft == "Unknown" || ft == "") && !rehighlight {
-	   				if highlight.MatchFiletype(ftdetect, b.Path, b.lines[0].data) {
-	   					header := new(highlight.Header)
-	   					header.FileType = file.FileType
-	   					header.FtDetect = ftdetect
-	   					b.syntaxDef, err = highlight.ParseDef(file, header)
-	   					if err != nil {
-	   						continue
-	   					}
-	   					rehighlight = true
-	   				}
-	   			} else {
-	   				if file.FileType == ft && !rehighlight {
-	   					header := new(highlight.Header)
-	   					header.FileType = file.FileType
-	   					header.FtDetect = ftdetect
-	   					b.syntaxDef, err = highlight.ParseDef(file, header)
-	   					if err != nil {
-	   						continue
-	   					}
-	   					rehighlight = true
-	   				}
-	   			}
-	   			files = append(files, file)
-	   		}
-	   	}
-
-	   	if b.syntaxDef != nil {
-	   		highlight.ResolveIncludes(b.syntaxDef, files)
-	   	}
-
-	   	if b.highlighter == nil || rehighlight {
-	   		if b.syntaxDef != nil {
-	   			b.Settings["filetype"] = b.syntaxDef.FileType
-	   			b.highlighter = highlight.NewHighlighter(b.syntaxDef)
-	   			if b.Settings["syntax"].(bool) {
-	   				b.highlighter.HighlightStates(b)
-	   			}
-	   		}
-	   	}
-	   	if b.syntaxDef!=nil {
-	   	log.Print(b.syntaxDef.FileType)
-	   	}
-	*/
 }
 
 // FileType returns the buffer's filetype

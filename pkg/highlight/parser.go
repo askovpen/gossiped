@@ -62,7 +62,6 @@ type pattern struct {
 type rules struct {
 	regions  []*region
 	patterns []*pattern
-	includes []string
 }
 
 // A region is a highlighted region (such as a multiline comment, or a string)
@@ -196,44 +195,6 @@ func ParseDef(f *File, header *Header) (s *Def, err error) {
 	return s, err
 }
 
-// ResolveIncludes will sort out the rules for including other filetypes
-// You should call this after parsing all the Defs
-func ResolveIncludes(def *Def, files []*File) {
-	resolveIncludesInDef(files, def)
-}
-
-func resolveIncludesInDef(files []*File, d *Def) {
-	for _, lang := range d.rules.includes {
-		for _, searchFile := range files {
-			if lang == searchFile.FileType {
-				searchDef, _ := ParseDef(searchFile, nil)
-				d.rules.patterns = append(d.rules.patterns, searchDef.rules.patterns...)
-				d.rules.regions = append(d.rules.regions, searchDef.rules.regions...)
-			}
-		}
-	}
-	for _, r := range d.rules.regions {
-		resolveIncludesInRegion(files, r)
-		r.parent = nil
-	}
-}
-
-func resolveIncludesInRegion(files []*File, region *region) {
-	for _, lang := range region.rules.includes {
-		for _, searchFile := range files {
-			if lang == searchFile.FileType {
-				searchDef, _ := ParseDef(searchFile, nil)
-				region.rules.patterns = append(region.rules.patterns, searchDef.rules.patterns...)
-				region.rules.regions = append(region.rules.regions, searchDef.rules.regions...)
-			}
-		}
-	}
-	for _, r := range region.rules.regions {
-		resolveIncludesInRegion(files, r)
-		r.parent = region
-	}
-}
-
 func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -253,30 +214,19 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 
 			switch object := val.(type) {
 			case string:
-				if k == "include" {
-					ru.includes = append(ru.includes, object)
-				} else {
-					// Pattern
-					r, err := regexp.Compile(object)
-					if err != nil {
-						return nil, err
-					}
-
-					groupStr := group
-					if _, ok := Groups[groupStr]; !ok {
-						numGroups++
-						Groups[groupStr] = numGroups
-					}
-					groupNum := Groups[groupStr]
-					ru.patterns = append(ru.patterns, &pattern{groupNum, r})
-				}
-			case map[interface{}]interface{}:
-				// region
-				region, err := parseRegion(group, object, curRegion)
+				// Pattern
+				r, err := regexp.Compile(object)
 				if err != nil {
 					return nil, err
 				}
-				ru.regions = append(ru.regions, region)
+
+				groupStr := group
+				if _, ok := Groups[groupStr]; !ok {
+					numGroups++
+					Groups[groupStr] = numGroups
+				}
+				groupNum := Groups[groupStr]
+				ru.patterns = append(ru.patterns, &pattern{groupNum, r})
 			default:
 				return nil, fmt.Errorf("Bad type %T", object)
 			}
@@ -284,71 +234,4 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 	}
 
 	return ru, nil
-}
-
-func parseRegion(group string, regionInfo map[interface{}]interface{}, prevRegion *region) (r *region, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			var ok bool
-			err, ok = r.(error)
-			if !ok {
-				err = fmt.Errorf("pkg: %v", r)
-			}
-		}
-	}()
-
-	r = new(region)
-	if _, ok := Groups[group]; !ok {
-		numGroups++
-		Groups[group] = numGroups
-	}
-	groupNum := Groups[group]
-	r.group = groupNum
-	r.parent = prevRegion
-
-	r.start, err = regexp.Compile(regionInfo["start"].(string))
-
-	if err != nil {
-		return nil, err
-	}
-
-	r.end, err = regexp.Compile(regionInfo["end"].(string))
-
-	if err != nil {
-		return nil, err
-	}
-
-	// skip is optional
-	if _, ok := regionInfo["skip"]; ok {
-		r.skip, err = regexp.Compile(regionInfo["skip"].(string))
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// limit-color is optional
-	if _, ok := regionInfo["limit-group"]; ok {
-		groupStr := regionInfo["limit-group"].(string)
-		if _, ok := Groups[groupStr]; !ok {
-			numGroups++
-			Groups[groupStr] = numGroups
-		}
-		groupNum := Groups[groupStr]
-		r.limitGroup = groupNum
-
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		r.limitGroup = r.group
-	}
-
-	r.rules, err = parseRules(regionInfo["rules"].([]interface{}), r)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
 }
