@@ -62,7 +62,6 @@ type pattern struct {
 type rules struct {
 	regions  []*region
 	patterns []*pattern
-	includes []string
 }
 
 // A region is a highlighted region (such as a multiline comment, or a string)
@@ -196,44 +195,6 @@ func ParseDef(f *File, header *Header) (s *Def, err error) {
 	return s, err
 }
 
-// ResolveIncludes will sort out the rules for including other filetypes
-// You should call this after parsing all the Defs
-func ResolveIncludes(def *Def, files []*File) {
-	resolveIncludesInDef(files, def)
-}
-
-func resolveIncludesInDef(files []*File, d *Def) {
-	for _, lang := range d.rules.includes {
-		for _, searchFile := range files {
-			if lang == searchFile.FileType {
-				searchDef, _ := ParseDef(searchFile, nil)
-				d.rules.patterns = append(d.rules.patterns, searchDef.rules.patterns...)
-				d.rules.regions = append(d.rules.regions, searchDef.rules.regions...)
-			}
-		}
-	}
-	for _, r := range d.rules.regions {
-		resolveIncludesInRegion(files, r)
-		r.parent = nil
-	}
-}
-
-func resolveIncludesInRegion(files []*File, region *region) {
-	for _, lang := range region.rules.includes {
-		for _, searchFile := range files {
-			if lang == searchFile.FileType {
-				searchDef, _ := ParseDef(searchFile, nil)
-				region.rules.patterns = append(region.rules.patterns, searchDef.rules.patterns...)
-				region.rules.regions = append(region.rules.regions, searchDef.rules.regions...)
-			}
-		}
-	}
-	for _, r := range region.rules.regions {
-		resolveIncludesInRegion(files, r)
-		r.parent = region
-	}
-}
-
 func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -253,9 +214,6 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 
 			switch object := val.(type) {
 			case string:
-				if k == "include" {
-					ru.includes = append(ru.includes, object)
-				} else {
 					// Pattern
 					r, err := regexp.Compile(object)
 					if err != nil {
@@ -269,8 +227,7 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 					}
 					groupNum := Groups[groupStr]
 					ru.patterns = append(ru.patterns, &pattern{groupNum, r})
-				}
-			case map[interface{}]interface{}:
+			case map[string]interface{}:
 				// region
 				region, err := parseRegion(group, object, curRegion)
 				if err != nil {
@@ -286,7 +243,7 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 	return ru, nil
 }
 
-func parseRegion(group string, regionInfo map[interface{}]interface{}, prevRegion *region) (r *region, err error) {
+func parseRegion(group string, regionInfo map[string]interface{}, prevRegion *region) (r *region, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			var ok bool
