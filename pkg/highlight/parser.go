@@ -46,7 +46,7 @@ type Header struct {
 type File struct {
 	FileType string
 
-	yamlSrc map[interface{}]interface{}
+	yamlSrc map[string]interface{}
 }
 
 // A Pattern is one simple syntax rule
@@ -97,11 +97,10 @@ func ParseFtDetect(file *File) (r [2]*regexp.Regexp, err error) {
 	}()
 
 	rules := file.yamlSrc
-
 	loaded := 0
 	for k, v := range rules {
 		if k == "detect" {
-			ftdetect := v.(map[interface{}]interface{})
+			ftdetect := v.(map[string]interface{})
 			if len(ftdetect) >= 1 {
 				syntax, err := regexp.Compile(ftdetect["filename"].(string))
 				if err != nil {
@@ -146,14 +145,12 @@ func ParseFile(input []byte) (f *File, err error) {
 		}
 	}()
 
-	var rules map[interface{}]interface{}
+	var rules map[string]interface{}
 	if err = yaml.Unmarshal(input, &rules); err != nil {
 		return nil, err
 	}
-
 	f = new(File)
 	f.yamlSrc = rules
-
 	for k, v := range rules {
 		if k == "filetype" {
 			filetype := v.(string)
@@ -196,7 +193,6 @@ func ParseDef(f *File, header *Header) (s *Def, err error) {
 			s.rules = rules
 		}
 	}
-
 	return s, err
 }
 
@@ -251,7 +247,7 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 	ru = new(rules)
 
 	for _, v := range input {
-		rule := v.(map[interface{}]interface{})
+		rule := v.(map[string]interface{})
 		for k, val := range rule {
 			group := k
 
@@ -266,7 +262,7 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 						return nil, err
 					}
 
-					groupStr := group.(string)
+					groupStr := group
 					if _, ok := Groups[groupStr]; !ok {
 						numGroups++
 						Groups[groupStr] = numGroups
@@ -276,7 +272,7 @@ func parseRules(input []interface{}, curRegion *region) (ru *rules, err error) {
 				}
 			case map[interface{}]interface{}:
 				// region
-				region, err := parseRegion(group.(string), object, curRegion)
+				region, err := parseRegion(group, object, curRegion)
 				if err != nil {
 					return nil, err
 				}
