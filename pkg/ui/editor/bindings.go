@@ -40,11 +40,6 @@ const (
 	ActionDelete                 = "Delete"
 	ActionInsertTab              = "InsertTab"
 	ActionCenter                 = "Center"
-	ActionUndo                   = "Undo"
-	ActionRedo                   = "Redo"
-	ActionCopy                   = "Copy"
-	ActionCut                    = "Cut"
-	ActionCutLine                = "CutLine"
 	ActionDuplicateLine          = "DuplicateLine"
 	ActionDeleteLine             = "DeleteLine"
 	ActionMoveLinesUp            = "MoveLinesUp"
@@ -52,7 +47,6 @@ const (
 	ActionIndentSelection        = "IndentSelection"
 	ActionOutdentSelection       = "OutdentSelection"
 	ActionOutdentLine            = "OutdentLine"
-	ActionPaste                  = "Paste"
 	ActionSelectAll              = "SelectAll"
 	ActionStart                  = "Start"
 	ActionEnd                    = "End"
@@ -74,7 +68,6 @@ const (
 	ActionRemoveMultiCursor      = "RemoveMultiCursor"
 	ActionRemoveAllMultiCursors  = "RemoveAllMultiCursors"
 	ActionSkipMultiCursor        = "SkipMultiCursor"
-	ActionJumpToMatchingBrace    = "JumpToMatchingBrace"
 	ActionInsertEnter            = "InsertEnter"
 	ActionUnbindKey              = "UnbindKey"
 )
@@ -166,11 +159,6 @@ var bindingActions = map[string]func(*View) bool{
 	ActionDelete:                 (*View).Delete,
 	ActionInsertTab:              (*View).InsertTab,
 	ActionCenter:                 (*View).Center,
-	ActionUndo:                   (*View).Undo,
-	ActionRedo:                   (*View).Redo,
-	ActionCopy:                   (*View).Copy,
-	ActionCut:                    (*View).Cut,
-	ActionCutLine:                (*View).CutLine,
 	ActionDuplicateLine:          (*View).DuplicateLine,
 	ActionDeleteLine:             (*View).DeleteLine,
 	ActionMoveLinesUp:            (*View).MoveLinesUp,
@@ -178,7 +166,6 @@ var bindingActions = map[string]func(*View) bool{
 	ActionIndentSelection:        (*View).IndentSelection,
 	ActionOutdentSelection:       (*View).OutdentSelection,
 	ActionOutdentLine:            (*View).OutdentLine,
-	ActionPaste:                  (*View).Paste,
 	ActionSelectAll:              (*View).SelectAll,
 	ActionStart:                  (*View).Start,
 	ActionEnd:                    (*View).End,
@@ -200,7 +187,6 @@ var bindingActions = map[string]func(*View) bool{
 	ActionRemoveMultiCursor:      (*View).RemoveMultiCursor,
 	ActionRemoveAllMultiCursors:  (*View).RemoveAllMultiCursors,
 	ActionSkipMultiCursor:        (*View).SkipMultiCursor,
-	ActionJumpToMatchingBrace:    (*View).JumpToMatchingBrace,
 	ActionInsertEnter:            (*View).InsertNewline,
 }
 
@@ -374,35 +360,29 @@ func init() {
 		"Alt-Backspace":  ActionDeleteWordLeft,
 		"Tab":            ActionIndentSelection + "," + ActionInsertTab,
 		"Backtab":        ActionOutdentSelection + "," + ActionOutdentLine,
-		"CtrlU":          ActionUndo,
-		//		"CtrlY":          ActionRedo,
-		"CtrlC":    ActionCopy,
-		"CtrlX":    ActionCut,
-		"CtrlK":    ActionCutLine,
-		"CtrlD":    ActionDuplicateLine,
-		"CtrlV":    ActionPaste,
-		"CtrlA":    ActionSelectAll,
-		"CtrlY":    ActionDeleteLine,
-		"Home":     ActionStartOfLine,
-		"End":      ActionEndOfLine,
-		"CtrlHome": ActionCursorStart,
-		"CtrlEnd":  ActionCursorEnd,
-		"PageUp":   ActionCursorPageUp,
-		"PageDown": ActionCursorPageDown,
-		"CtrlR":    ActionToggleRuler,
-		"Delete":   ActionDelete,
-		"Insert":   ActionToggleOverwriteMode,
-		"Alt-f":    ActionWordRight,
-		"Alt-b":    ActionWordLeft,
-		"Alt-a":    ActionStartOfLine,
-		"Alt-e":    ActionEndOfLine,
-		"Esc":      ActionEscape,
-		"F2":       ActionEscape,
-		"Alt-n":    ActionSpawnMultiCursor,
-		"Alt-m":    ActionSpawnMultiCursorSelect,
-		"Alt-p":    ActionRemoveMultiCursor,
-		"Alt-c":    ActionRemoveAllMultiCursors,
-		"Alt-x":    ActionSkipMultiCursor,
+		"CtrlD":          ActionDuplicateLine,
+		"CtrlA":          ActionSelectAll,
+		"CtrlY":          ActionDeleteLine,
+		"Home":           ActionStartOfLine,
+		"End":            ActionEndOfLine,
+		"CtrlHome":       ActionCursorStart,
+		"CtrlEnd":        ActionCursorEnd,
+		"PageUp":         ActionCursorPageUp,
+		"PageDown":       ActionCursorPageDown,
+		"CtrlR":          ActionToggleRuler,
+		"Delete":         ActionDelete,
+		"Insert":         ActionToggleOverwriteMode,
+		"Alt-f":          ActionWordRight,
+		"Alt-b":          ActionWordLeft,
+		"Alt-a":          ActionStartOfLine,
+		"Alt-e":          ActionEndOfLine,
+		"Esc":            ActionEscape,
+		"F2":             ActionEscape,
+		"Alt-n":          ActionSpawnMultiCursor,
+		"Alt-m":          ActionSpawnMultiCursorSelect,
+		"Alt-p":          ActionRemoveMultiCursor,
+		"Alt-c":          ActionRemoveAllMultiCursors,
+		"Alt-x":          ActionSkipMultiCursor,
 	})
 }
 

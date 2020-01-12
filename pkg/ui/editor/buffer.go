@@ -1,8 +1,6 @@
 package editor
 
 import (
-	"crypto/md5"
-	//"log"
 	"io"
 	"strings"
 	"unicode/utf8"
@@ -48,9 +46,6 @@ type Buffer struct {
 	syntaxDef   *highlight.Def
 	highlighter *highlight.Highlighter
 
-	// Hash of the original buffer -- empty if fastdirty is on
-	origHash [md5.Size]byte
-
 	// Buffer local settings
 	Settings map[string]interface{}
 }
@@ -90,15 +85,6 @@ func NewBuffer(reader io.Reader, size int64, path string, cursorPosition []strin
 	}
 
 	//InitLocalSettings(b)
-
-	if !b.Settings["fastdirty"].(bool) {
-		if size > LargeFileThreshold {
-			// If the file is larger than a megabyte fastdirty needs to be on
-			b.Settings["fastdirty"] = true
-		} else {
-			calcHash(b, &b.origHash)
-		}
-	}
 
 	b.cursors = []*Cursor{&b.Cursor}
 
@@ -209,33 +195,10 @@ func (b *Buffer) UpdateCursors() {
 	}
 }
 
-// calcHash calculates md5 hash of all lines in the buffer
-func calcHash(b *Buffer, out *[md5.Size]byte) {
-	h := md5.New()
-
-	if len(b.lines) > 0 {
-		h.Write(b.lines[0].data)
-
-		for _, l := range b.lines[1:] {
-			h.Write([]byte{'\n'})
-			h.Write(l.data)
-		}
-	}
-
-	h.Sum((*out)[:0])
-}
-
 // Modified returns if this buffer has been modified since
 // being opened
 func (b *Buffer) Modified() bool {
-	if b.Settings["fastdirty"].(bool) {
-		return b.IsModified
-	}
-
-	var buff [md5.Size]byte
-
-	calcHash(b, &buff)
-	return buff != b.origHash
+	return b.IsModified
 }
 
 func (b *Buffer) insert(pos Loc, value []byte) {
@@ -386,59 +349,4 @@ func (b *Buffer) clearCursors() {
 	b.cursors = b.cursors[:1]
 	b.UpdateCursors()
 	b.Cursor.ResetSelection()
-}
-
-var bracePairs = [][2]rune{
-	{'(', ')'},
-	{'{', '}'},
-	{'[', ']'},
-}
-
-// FindMatchingBrace returns the location in the buffer of the matching bracket
-// It is given a brace type containing the open and closing character, (for example
-// '{' and '}') as well as the location to match from
-func (b *Buffer) FindMatchingBrace(braceType [2]rune, start Loc) Loc {
-	curLine := b.LineRunes(start.Y)
-	startChar := curLine[start.X]
-	var i int
-	if startChar == braceType[0] {
-		for y := start.Y; y < b.NumLines; y++ {
-			l := b.LineRunes(y)
-			xInit := 0
-			if y == start.Y {
-				xInit = start.X
-			}
-			for x := xInit; x < len(l); x++ {
-				r := l[x]
-				if r == braceType[0] {
-					i++
-				} else if r == braceType[1] {
-					i--
-					if i == 0 {
-						return Loc{x, y}
-					}
-				}
-			}
-		}
-	} else if startChar == braceType[1] {
-		for y := start.Y; y >= 0; y-- {
-			l := []rune(string(b.lines[y].data))
-			xInit := len(l) - 1
-			if y == start.Y {
-				xInit = start.X
-			}
-			for x := xInit; x >= 0; x-- {
-				r := l[x]
-				if r == braceType[0] {
-					i--
-					if i == 0 {
-						return Loc{x, y}
-					}
-				} else if r == braceType[1] {
-					i++
-				}
-			}
-		}
-	}
-	return start
 }

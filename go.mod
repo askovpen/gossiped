@@ -3,7 +3,6 @@ module github.com/askovpen/gossiped
 go 1.12
 
 require (
-	github.com/atotto/clipboard v0.1.2
 	github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db
 	github.com/gdamore/tcell v1.3.0
 	github.com/kr/pretty v0.2.0 // indirect

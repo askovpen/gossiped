@@ -1,9 +1,5 @@
 package editor
 
-import (
-	"github.com/atotto/clipboard"
-)
-
 // The Cursor struct stores the location of the cursor in the view
 // The complicated part about the cursor is storing its location.
 // The cursor must be displayed at an x, y location, but since the buffer
@@ -40,14 +36,6 @@ func (c *Cursor) Goto(b Cursor) {
 func (c *Cursor) GotoLoc(l Loc) {
 	c.X, c.Y = l.X, l.Y
 	c.LastVisualX = c.GetVisualX()
-}
-
-// CopySelection copies the user's selection to either "primary"
-// or "clipboard"
-func (c *Cursor) CopySelection(target string) {
-	if c.HasSelection() {
-		clipboard.WriteAll(c.GetSelection())
-	}
 }
 
 // ResetSelection resets the user's selection

@@ -373,12 +373,7 @@ func (v *View) displayView(screen tcell.Screen) {
 	// so we can pad appropriately when displaying line numbers
 	maxLineNumLength := len(strconv.Itoa(v.Buf.NumLines))
 
-	if v.Buf.Settings["ruler"] == true {
-		// + 1 for the little space after the line number
-		v.lineNumOffset = maxLineNumLength + 1
-	} else {
-		v.lineNumOffset = 0
-	}
+	v.lineNumOffset = 0
 
 	xOffset := v.x + v.lineNumOffset
 	yOffset := v.y

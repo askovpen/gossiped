@@ -2,10 +2,7 @@ package editor
 
 import (
 	"strings"
-	"time"
 	"unicode/utf8"
-
-	"github.com/atotto/clipboard"
 )
 
 func (v *View) deselect(index int) bool {
@@ -50,6 +47,10 @@ func (v *View) Center() bool {
 
 // CursorUp moves the cursor up
 func (v *View) CursorUp() bool {
+	if v.Readonly == true {
+		v.ScrollUp(1)
+		return false
+	}
 	v.deselect(0)
 	v.Cursor.Up()
 	return true
@@ -57,6 +58,10 @@ func (v *View) CursorUp() bool {
 
 // CursorDown moves the cursor down
 func (v *View) CursorDown() bool {
+	if v.Readonly == true {
+		v.ScrollDown(1)
+		return false
+	}
 	v.deselect(1)
 	v.Cursor.Down()
 	return true
@@ -590,74 +595,6 @@ func (v *View) InsertTab() bool {
 //	return true
 //}
 
-// Undo undoes the last action
-func (v *View) Undo() bool {
-	if v.Buf.curCursor == 0 {
-		v.Buf.clearCursors()
-	}
-
-	v.Buf.Undo()
-	return true
-}
-
-// Redo redoes the last action
-func (v *View) Redo() bool {
-	if v.Buf.curCursor == 0 {
-		v.Buf.clearCursors()
-	}
-
-	v.Buf.Redo()
-	return true
-}
-
-// Copy the selection to the system clipboard
-func (v *View) Copy() bool {
-	if v.mainCursor() {
-		if v.Cursor.HasSelection() {
-			v.Cursor.CopySelection("clipboard")
-			v.freshClip = true
-		}
-	}
-	return true
-}
-
-// CutLine cuts the current line to the clipboard
-func (v *View) CutLine() bool {
-	v.Cursor.SelectLine()
-	if !v.Cursor.HasSelection() {
-		return false
-	}
-	if v.freshClip == true {
-		if v.Cursor.HasSelection() {
-			if clip, err := clipboard.ReadAll(); err != nil {
-				// do nothing
-			} else {
-				clipboard.WriteAll(clip + v.Cursor.GetSelection())
-			}
-		}
-	} else if time.Since(v.lastCutTime)/time.Second > 10*time.Second || v.freshClip == false {
-		v.Copy()
-	}
-	v.freshClip = true
-	v.lastCutTime = time.Now()
-	v.Cursor.DeleteSelection()
-	v.Cursor.ResetSelection()
-
-	return true
-}
-
-// Cut the selection to the system clipboard
-func (v *View) Cut() bool {
-	if v.Cursor.HasSelection() {
-		v.Cursor.CopySelection("clipboard")
-		v.Cursor.DeleteSelection()
-		v.Cursor.ResetSelection()
-		v.freshClip = true
-		return true
-	}
-	return v.CutLine()
-}
-
 // DuplicateLine duplicates the current line or selection
 func (v *View) DuplicateLine() bool {
 	if v.Cursor.HasSelection() {
@@ -739,27 +676,6 @@ func (v *View) MoveLinesDown() bool {
 	}
 	v.Buf.IsModified = true
 
-	return true
-}
-
-// Paste whatever is in the system clipboard into the buffer
-// Delete and paste if the user has a selection
-func (v *View) Paste() bool {
-	clip, _ := clipboard.ReadAll()
-	v.paste(clip)
-	return true
-}
-
-// JumpToMatchingBrace moves the cursor to the matching brace if it is
-// currently on a brace
-func (v *View) JumpToMatchingBrace() bool {
-	for _, bp := range bracePairs {
-		r := v.Cursor.RuneUnder(v.Cursor.X)
-		if r == bp[0] || r == bp[1] {
-			matchingBrace := v.Buf.FindMatchingBrace(bp, v.Cursor.Loc)
-			v.Cursor.GotoLoc(matchingBrace)
-		}
-	}
 	return true
 }
 
