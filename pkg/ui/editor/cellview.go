@@ -72,26 +72,6 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 		return
 	}
 
-	matchingBrace := Loc{-1, -1}
-	// bracePairs is defined in buffer.go
-	if buf.Settings["matchbrace"].(bool) {
-		for _, bp := range bracePairs {
-			curX := buf.Cursor.X
-			curLoc := buf.Cursor.Loc
-			if buf.Settings["matchbraceleft"].(bool) {
-				if curX > 0 {
-					curX--
-					curLoc = curLoc.Move(-1, buf)
-				}
-			}
-
-			r := buf.Cursor.RuneUnder(curX)
-			if r == bp[0] || r == bp[1] {
-				matchingBrace = buf.FindMatchingBrace(bp, curLoc)
-			}
-		}
-	}
-
 	tabsize := int(buf.Settings["tabsize"].(float64))
 	softwrap := buf.Settings["softwrap"].(bool)
 	indentrunes := []rune(buf.Settings["indentchar"].(string))
@@ -102,7 +82,7 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 	indentchar := indentrunes[0]
 
 	start := buf.Cursor.Y
-	if buf.Settings["syntax"].(bool) && buf.syntaxDef != nil {
+	if buf.syntaxDef != nil {
 		if start > 0 && buf.lines[start-1].rehighlight {
 			buf.highlighter.ReHighlightLine(buf, start-1)
 			buf.lines[start-1].rehighlight = false
@@ -161,9 +141,6 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 
 			if viewCol >= 0 {
 				st := curStyle
-				if colN == matchingBrace.X && lineN == matchingBrace.Y && !buf.Cursor.HasSelection() {
-					st = curStyle.Reverse(true)
-				}
 				if viewCol < len(c.lines[viewLine]) {
 					c.lines[viewLine][viewCol] = &Char{Loc{viewCol, viewLine}, Loc{colN, lineN}, char, char, st, 1}
 				}

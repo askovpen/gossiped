@@ -6,16 +6,12 @@ import (
 )
 
 const (
-	// Opposite and undoing events must have opposite values
-
 	// TextEventInsert represents an insertion event
 	TextEventInsert = 1
 	// TextEventRemove represents a deletion event
 	TextEventRemove = -1
 	// TextEventReplace represents a replace event
 	TextEventReplace = 0
-
-	undoThreshold = 500 // If two events are less than n milliseconds apart, undo both of them
 )
 
 // TextEvent holds data for a manipulation on some text that can be undone
@@ -57,47 +53,17 @@ func ExecuteTextEvent(t *TextEvent, buf *Buffer) {
 	}
 }
 
-// UndoTextEvent undoes a text event
-func UndoTextEvent(t *TextEvent, buf *Buffer) {
-	t.EventType = -t.EventType
-	ExecuteTextEvent(t, buf)
-}
-
 // EventHandler executes text manipulations and allows undoing and redoing
 type EventHandler struct {
-	buf       *Buffer
-	UndoStack *Stack
-	RedoStack *Stack
+	buf *Buffer
 }
 
 // NewEventHandler returns a new EventHandler
 func NewEventHandler(buf *Buffer) *EventHandler {
 	eh := new(EventHandler)
-	eh.UndoStack = new(Stack)
-	eh.RedoStack = new(Stack)
 	eh.buf = buf
 	return eh
 }
-
-// ApplyDiff takes a string and runs the necessary insertion and deletion events to make
-// the buffer equal to that string
-// This means that we can transform the buffer into any string and still preserve undo/redo
-// through insert and delete events
-// func (eh *EventHandler) ApplyDiff(new string) {
-//	differ := dmp.New()
-//	diff := differ.DiffMain(eh.buf.String(), new, false)
-//	loc := eh.buf.Start()
-//	for _, d := range diff {
-//		if d.Type == dmp.DiffDelete {
-//			eh.Remove(loc, loc.Move(Count(d.Text), eh.buf))
-//		} else {
-//			if d.Type == dmp.DiffInsert {
-//				eh.Insert(loc, d.Text)
-//			}
-//			loc = loc.Move(Count(d.Text), eh.buf)
-//		}
-//	}
-//}
 
 // Insert creates an insert text event and executes it
 func (eh *EventHandler) Insert(start Loc, text string) {
@@ -177,108 +143,5 @@ func (eh *EventHandler) Replace(start, end Loc, replace string) {
 
 // Execute a textevent and add it to the undo stack
 func (eh *EventHandler) Execute(t *TextEvent) {
-	if eh.RedoStack.Len() > 0 {
-		eh.RedoStack = new(Stack)
-	}
-	eh.UndoStack.Push(t)
-
 	ExecuteTextEvent(t, eh.buf)
-}
-
-// Undo the first event in the undo stack
-func (eh *EventHandler) Undo() {
-	t := eh.UndoStack.Peek()
-	if t == nil {
-		return
-	}
-
-	startTime := t.Time.UnixNano() / int64(time.Millisecond)
-
-	eh.UndoOneEvent()
-
-	for {
-		t = eh.UndoStack.Peek()
-		if t == nil {
-			return
-		}
-
-		if startTime-(t.Time.UnixNano()/int64(time.Millisecond)) > undoThreshold {
-			return
-		}
-		startTime = t.Time.UnixNano() / int64(time.Millisecond)
-
-		eh.UndoOneEvent()
-	}
-}
-
-// UndoOneEvent undoes one event
-func (eh *EventHandler) UndoOneEvent() {
-	// This event should be undone
-	// Pop it off the stack
-	t := eh.UndoStack.Pop()
-	if t == nil {
-		return
-	}
-
-	// Undo it
-	// Modifies the text event
-	UndoTextEvent(t, eh.buf)
-
-	// Set the cursor in the right place
-	teCursor := t.C
-	if teCursor.Num >= 0 && teCursor.Num < len(eh.buf.cursors) {
-		t.C = *eh.buf.cursors[teCursor.Num]
-		eh.buf.cursors[teCursor.Num].Goto(teCursor)
-	} else {
-		teCursor.Num = -1
-	}
-
-	// Push it to the redo stack
-	eh.RedoStack.Push(t)
-}
-
-// Redo the first event in the redo stack
-func (eh *EventHandler) Redo() {
-	t := eh.RedoStack.Peek()
-	if t == nil {
-		return
-	}
-
-	startTime := t.Time.UnixNano() / int64(time.Millisecond)
-
-	eh.RedoOneEvent()
-
-	for {
-		t = eh.RedoStack.Peek()
-		if t == nil {
-			return
-		}
-
-		if (t.Time.UnixNano()/int64(time.Millisecond))-startTime > undoThreshold {
-			return
-		}
-
-		eh.RedoOneEvent()
-	}
-}
-
-// RedoOneEvent redoes one event
-func (eh *EventHandler) RedoOneEvent() {
-	t := eh.RedoStack.Pop()
-	if t == nil {
-		return
-	}
-
-	// Modifies the text event
-	UndoTextEvent(t, eh.buf)
-
-	teCursor := t.C
-	if teCursor.Num >= 0 && teCursor.Num < len(eh.buf.cursors) {
-		t.C = *eh.buf.cursors[teCursor.Num]
-		eh.buf.cursors[teCursor.Num].Goto(teCursor)
-	} else {
-		teCursor.Num = -1
-	}
-
-	eh.UndoStack.Push(t)
 }
