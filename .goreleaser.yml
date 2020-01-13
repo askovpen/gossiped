@@ -5,7 +5,7 @@ before:
     # you may remove this if you don't use vgo
     - go mod tidy
     # you may remove this if you don't need go generate
-    - go generate ./...
+    # - go generate ./...
 builds:
 - id: win
   env:
@@ -61,7 +61,6 @@ checksum:
 snapshot:
   name_template: "{{.Tag}}-snapshot"
 changelog:
-  sort: asc
   filters:
     exclude:
     - '^docs:'
