@@ -10,6 +10,12 @@ import (
 	"path/filepath"
 )
 
+var (
+	version = "2.0"
+	commit  = "dev"
+	date    = "unknown"
+)
+
 func tryFindConfig() string {
 	for _, fn := range []string{
 		filepath.Join(os.Getenv("HOME"), "gossiped.yml"),
@@ -26,6 +32,8 @@ func tryFindConfig() string {
 }
 
 func main() {
+	config.Version = version + "-" + commit
+	config.InitVars()
 	log.Printf("%s started", config.LongPID)
 	var fn string
 	if len(os.Args) == 1 {

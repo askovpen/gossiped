@@ -35,12 +35,16 @@ type configS struct {
 
 //go:generate go run ../../util/autoversion/main.go
 var (
-	Config   configS
-	PID      = "gossipEd+" + runtime.GOOS[0:3] + " " + Version
-	LongPID  = "gossipEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
-	Template []string
-	city     map[string]string
+	Version, PID, LongPID string
+	Config                configS
+	Template              []string
+	city                  map[string]string
 )
+
+func InitVars() {
+	PID = "gossipEd+" + runtime.GOOS[0:3] + " " + Version
+	LongPID = "gossipEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
+}
 
 // Read config
 func Read(fn string) error {
