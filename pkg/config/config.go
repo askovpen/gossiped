@@ -35,10 +35,12 @@ type configS struct {
 
 // vars
 var (
-	Version, PID, LongPID string
-	Config                configS
-	Template              []string
-	city                  map[string]string
+	Version  string
+	PID      string
+	LongPID  string
+	Config   configS
+	Template []string
+	city     map[string]string
 )
 
 // InitVars define version variables
