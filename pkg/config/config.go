@@ -33,7 +33,6 @@ type configS struct {
 	}
 }
 
-//go:generate go run ../../util/autoversion/main.go
 var (
 	Version, PID, LongPID string
 	Config                configS

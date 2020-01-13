@@ -5,7 +5,7 @@ before:
     # you may remove this if you don't use vgo
     - go mod tidy
     # you may remove this if you don't need go generate
-    - go generate ./...
+    # - go generate ./...
 builds:
 - id: win
   env:
