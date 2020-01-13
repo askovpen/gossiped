@@ -41,6 +41,7 @@ var (
 	city                  map[string]string
 )
 
+// InitVars define version variables
 func InitVars() {
 	PID = "gossipEd+" + runtime.GOOS[0:3] + " " + Version
 	LongPID = "gossipEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
