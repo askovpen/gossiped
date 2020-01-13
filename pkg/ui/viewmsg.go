@@ -119,8 +119,8 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 			a.Pages.AddPage(a.InsertMsg(areaID, 0))
 			a.Pages.AddPage(a.InsertMsgMenu())
 			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaID].GetName()))
-		} else if msg==nil {
-		  return event
+		} else if msg == nil {
+			return event
 		} else if event.Key() == tcell.KeyCtrlK || (event.Rune() == 'k' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.showKludges = !a.showKludges
 			//body.SetText(msg.ToView(a.showKludges))

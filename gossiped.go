@@ -1,17 +1,19 @@
 package main
 
 import (
-	//"fmt"
 	"github.com/askovpen/gossiped/pkg/areasconfig"
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/ui"
 	"github.com/askovpen/gossiped/pkg/utils"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 func tryFindConfig() string {
 	for _, fn := range []string{
+		filepath.Join(os.Getenv("HOME"), "gossiped.yml"),
+		filepath.Join(os.Getenv("HOME"), ".config", "gossiped.yml"),
 		"/usr/local/etc/ftn/gossiped.yml",
 		"/etc/ftn/gossiped.yml",
 		"gossiped.yml",
