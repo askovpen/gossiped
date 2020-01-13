@@ -115,6 +115,12 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
 				}
 			}
+		} else if event.Key() == tcell.KeyInsert || event.Key() == tcell.KeyCtrlI {
+			a.Pages.AddPage(a.InsertMsg(areaID, 0))
+			a.Pages.AddPage(a.InsertMsgMenu())
+			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaID].GetName()))
+		} else if msg==nil {
+		  return event
 		} else if event.Key() == tcell.KeyCtrlK || (event.Rune() == 'k' && event.Modifiers()&tcell.ModAlt > 0) {
 			a.showKludges = !a.showKludges
 			//body.SetText(msg.ToView(a.showKludges))
@@ -135,10 +141,6 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 		} else if event.Key() == tcell.KeyCtrlL || event.Rune() == 'l' {
 			a.Pages.AddPage(a.showMessageList(areaID))
 			a.Pages.ShowPage("MessageListModal")
-		} else if event.Key() == tcell.KeyInsert || event.Key() == tcell.KeyCtrlI {
-			a.Pages.AddPage(a.InsertMsg(areaID, 0))
-			a.Pages.AddPage(a.InsertMsgMenu())
-			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaID].GetName()))
 		} else if event.Rune() == '<' {
 			if msgNum != 1 {
 				a.Pages.AddPage(a.ViewMsg(areaID, 1))
