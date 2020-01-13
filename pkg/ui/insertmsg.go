@@ -74,7 +74,7 @@ func (a *App) InsertMsg(areaID int, msgType int) (string, tview.Primitive, bool,
 	a.im.newMsg.Kludges = make(map[string]string)
 	a.im.newMsg.Kludges["PID:"] = config.PID
 	a.im.newMsg.Kludges["CHRS:"] = config.Config.Chrs.Default
-	if msgapi.Areas[areaID].GetChrs() != "" {
+	if msgapi.Areas[a.im.postArea].GetChrs() != "" {
 		a.im.newMsg.Kludges["CHRS:"] = msgapi.Areas[a.im.postArea].GetChrs()
 	}
 	if msgapi.Areas[a.im.postArea].GetType() != msgapi.EchoAreaTypeNetmail && (a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeForward) {
