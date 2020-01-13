@@ -17,7 +17,6 @@ env:
 - GO111MODULE=on
 
 script:
-- go generate ./...
 - go build
 - ./gossiped
 - go test ./... -v -cover -coverprofile=coverage.txt --bench=. -benchmem
