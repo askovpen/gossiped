@@ -33,6 +33,7 @@ type configS struct {
 	}
 }
 
+// vars
 var (
 	Version, PID, LongPID string
 	Config                configS
