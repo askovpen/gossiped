@@ -28,6 +28,11 @@ func Read() error {
 		if err != nil {
 			return err
 		}
+	case "crashmail":
+		err := crashmailConfigRead(config.Config.AreaFile.Path)
+		if err != nil {
+			return err
+		}
 	default:
 		return errors.New("unknown AreasConfig.Type '" + config.Config.AreaFile.Type + "'")
 	}
