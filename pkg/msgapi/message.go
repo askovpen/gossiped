@@ -388,7 +388,7 @@ func (m *Message) MakeBody() *Message {
 
 // Highlight self
 func Highlight(name string) string {
-	if strings.Replace(strings.Trim(name, " "), ".", "", -1) == strings.Replace(strings.Trim(config.Config.Username, " "), ".", "", -1) {
+	if utils.NamesEqual(name, config.Config.Username) {
 		return "[::b]" + name
 	}
 	return name
