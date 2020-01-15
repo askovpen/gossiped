@@ -2,7 +2,7 @@ username: Alexander N. Skovpen
 address: 2:5020/9696.128
 areafile:
   path: /etc/ftn/hpt/config
-  type: fidoconfig # fidoconfig, areas.bbs, squish
+  type: fidoconfig # fidoconfig, areas.bbs, squish, crashmail
 log: ./app.log
 template: gossiped.tpl
 origin: Just Origin

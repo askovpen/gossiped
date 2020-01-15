@@ -1,0 +1,89 @@
+
+; Areas
+; =====
+;
+; AREA/NETMAIL/LOCALAREA <tagname> <aka> [<messagebase> <path>]
+; IMPORT/EXPORT <node1> <node2> ...
+; BANNED <node1> <node2> ...
+; DESCRIPTION <desc>
+; GROUP <group>
+; KEEPNUM <num>
+; KEEPDAYS <num>
+; UNCONFIRMED
+; MANDATORY
+; DEFREADONLY
+; IGNOREDUPES
+; IGNORESEENBY
+;
+; Here you configure all areas that CrashMail knows. Area definitions begin
+; with AREA for echomail areas and NETMAIL for netmail areas. Local areas 
+; defined with LOCALAREA are not used by CrashMail, but are included in
+; config files created by CrashExport and are maintained when running
+; CrashMaint.
+;
+; To see the supported messagebase formats in your version of CrashMail,
+; type "crashmail version". What path should be used depends on the used
+; messagebase formats.
+;
+; Netmail messages addressed to the Aka or to one of the nodes specified on
+; an IMPORT line are imported in netmail areas. Echomail areas cannot have
+; an IMPORT line but instead has one or more EXPORT lines where the nodes
+; that this area should be sent to are listed. Each node on an export line
+; has the format "[<modifier>]<node>" where modifier may be !, @ or %.
+; ! means that the node is read-only, @ means that the node is write-only
+; and % means that the node is the feed for this area.
+;
+; Note that nodes on the EXPORT line may be abbreviated. And example:
+;
+;    EXPORT 2:2/2 1 .5 3/2 .22 3 .33
+; 
+; will be expanded to
+;
+;    EXPORT 2:2/2 2:2/1 2:2/1.5 2:3/2 2:3/2.22 2:3/3 2:3/3.33
+;
+; Nodes in the BANNED line may not subscribe to this area with the AreaFix.
+; MANDATORY means that nodes may not unsubscribe from this area in the
+; AreaFix. DEFREADONLY means that nodes that subscribe to this area in the
+; AreaFix will be added as read-only.
+;
+; Areas with UNCONFIRMED are areas that have been auto-added by CrashMail
+; but not yet confirmed. Areas get this flag when the node didn't have the
+; flag AUTOADD set. CrashMail treats unconfirmed areas as if they didn't
+; exist at all.
+
+; KEEPNUM and KEEPDAYS are used by CrashMaint to decide how long messages
+; should be kept in the messagebase.
+;
+; An area with the tagname BAD is a special area that are used for messages
+; that for some reason are considered "bad" by CrashMail.
+;
+; Another special kind of areas are the default areas. When CrashMail adds
+; an area, it searches for a default area to use as a template. First it
+; looks for an area named DEFAULT_<groups> where <groups> contains the group
+; of the new area. If such an area doesn't exist, it looks for an area called
+; DEFAULT. If a default area was found, CrashMail copies this configuration
+; for this area to the new area. In the path of the default area, you can
+; use the following %-codes:
+;
+; %a  Name of the area
+; %l  Name of the area in lowercase letters
+; %8  Eight digit serial number
+;
+; You must use one of these %-codes or the new path will not be unique.
+
+NETMAIL "NETMAIL" 2:200/108.7 JAM "c:\\fido\\areas\\NETMAIL"
+
+AREA "BAD" 2:200/108.7 JAM "c:\\fido\\areas\\BAD"
+
+AREA "DEFAULT_A" 2:200/108.7 JAM "c:\\fido\\areas\\%8"
+
+AREA "R20_INTRESSE" 2:200/108.7 JAM "c:\\fido\\areas\\36124179"
+EXPORT %2:200/100.0
+DESCRIPTION "Intresseklubben"
+GROUP A
+
+AREA "R20_TRASHCAN" 2:200/108.7 JAM "c:\\fido\\areas\\3612417a"
+EXPORT %2:200/100.0
+DESCRIPTION "Soptunnan"
+GROUP A
+
