@@ -385,3 +385,11 @@ func (m *Message) MakeBody() *Message {
 	//time.Sleep(time.Second)
 	return m
 }
+
+// Highlight self
+func Highlight(name string) string {
+	if strings.Replace(strings.Trim(name, " "), ".", "", -1) == strings.Replace(strings.Trim(config.Config.Username, " "), ".", "", -1) {
+		return "[::b]" + name
+	}
+	return name
+}

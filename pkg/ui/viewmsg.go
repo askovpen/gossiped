@@ -60,16 +60,17 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 		htxt := fmt.Sprintf(" Msg  : %-34s %-36s\n",
 			fmt.Sprintf("%d of %d %s", msgNum, msgapi.Areas[areaID].GetCount(), repl), strings.Join(msg.Attrs, " "))
 		htxt += fmt.Sprintf(" From : %-34s %-15s %-18s\n",
-			msg.From,
+			msgapi.Highlight(msg.From),
 			msg.FromAddr.String(),
 			msg.DateWritten.Format("02 Jan 06 15:04:05"))
 		htxt += fmt.Sprintf(" To   : %-34s %-15s %-18s\n",
-			msg.To,
+			msgapi.Highlight(msg.To),
 			msg.ToAddr.String(),
 			msg.DateArrived.Format("02 Jan 06 15:04:05"))
 		htxt += fmt.Sprintf(" Subj : %-50s",
 			msg.Subject)
 		header.SetText(htxt)
+		header.SetDynamicColors(true)
 		//	body := tview.NewTextView().SetWrap(true).SetWordWrap(true).SetTextColor(tcell.ColorSilver)
 		//	body.SetDynamicColors(true)
 		//	body.SetText(msg.ToView(a.showKludges))
