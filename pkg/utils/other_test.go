@@ -12,7 +12,7 @@ func TestFileExists(t *testing.T) {
 			g.Assert(FileExists("../../testdata/areas.bbs")).Equal(true)
 		})
 		g.It("Check not exists", func() {
-			g.Assert(FileExists("../../testdata/areas.bbs")).Equal(true)
+			g.Assert(FileExists("../../testdata/areas.bbs1")).Equal(false)
 		})
 	})
 }
