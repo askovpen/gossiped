@@ -385,3 +385,11 @@ func (m *Message) MakeBody() *Message {
 	//time.Sleep(time.Second)
 	return m
 }
+
+// Highlight self
+func Highlight(name string) string {
+	if utils.NamesEqual(name, config.Config.Username) {
+		return "[::b]" + name
+	}
+	return name
+}

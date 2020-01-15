@@ -1,7 +1,9 @@
 package ui
 
 import (
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
+	"github.com/askovpen/gossiped/pkg/utils"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"strconv"
@@ -73,8 +75,16 @@ func NewModalMessageList(areaID int) *ModalMessageList {
 		}
 		//mh.From, mh.To, mh.Subject, mh.DateWritten.Format("02 Jan 06"))
 		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(mh.MsgNum), 10)+ch).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
-		m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).SetTextColor(tcell.ColorSilver))
-		m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).SetTextColor(tcell.ColorSilver))
+		if utils.NamesEqual(mh.From, config.Config.Username) {
+			m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).SetTextColor(tcell.ColorSilver).SetAttributes(tcell.AttrBold))
+		} else {
+			m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).SetTextColor(tcell.ColorSilver))
+		}
+		if utils.NamesEqual(mh.To, config.Config.Username) {
+			m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).SetTextColor(tcell.ColorSilver).SetAttributes(tcell.AttrBold))
+		} else {
+			m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).SetTextColor(tcell.ColorSilver))
+		}
 		m.table.SetCell(i+1, 3, tview.NewTableCell(mh.Subject).SetTextColor(tcell.ColorSilver))
 		m.table.SetCell(i+1, 4, tview.NewTableCell(mh.DateWritten.Format("02 Jan 06")).SetTextColor(tcell.ColorSilver))
 	}
