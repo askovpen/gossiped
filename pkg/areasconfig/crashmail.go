@@ -27,6 +27,7 @@ func crashmailConfigRead(fn string) error {
 		}
 		res[1] = strings.Replace(res[1], "\"", "", -1)
 		res[4] = strings.Replace(res[4], "\"", "", -1)
+		res[4] = strings.Replace(res[4], "\\\\", "\\", -1)
 		aType := msgapi.EchoAreaTypeNone
 		if strings.EqualFold(res[0], "area") {
 			aType = msgapi.EchoAreaTypeEcho
