@@ -21,3 +21,5 @@ LocalArea duke.mail.sent     /var/spool/ftn/mail/duke.mail.sent     -b jam
 EchoArea blog-mtw     /var/spool/ftn/mail/BLOG-MTW     -b jam
 EchoArea roo.test     /var/spool/ftn/mail/roo.test     -b jam
 Echoarea sdn.stat       /var/spool/ftn/mail/sdn.stat        -b squish -dupeCheck move -dupeHistory 11 -g Z -$m 1000 2:5020/9696.*
+#Echoarea sdn.stat1       /var/spool/ftn/mail/sdn.stat        -b squish -dupeCheck move -dupeHistory 11 -g Z -$m 1000 2:5020/9696.*
+# Echoarea sdn.stat2       /var/spool/ftn/mail/sdn.stat        -b squish -dupeCheck move -dupeHistory 11 -g Z -$m 1000 2:5020/9696.*

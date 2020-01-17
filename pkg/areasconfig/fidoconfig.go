@@ -34,6 +34,14 @@ func checkIncludePath(fn string) (string, error) {
 	return "", errors.New(fn + " not found")
 }
 
+func detectComment(line string) bool {
+	str := strings.Trim(line, " ")
+	if len(str) > 0 && str[0] == '#' {
+		return true
+	}
+	return false
+}
+
 func readFile(fn string) {
 	re := regexp.MustCompile("(\\w+?)\\s+(.*)")
 	reEnv := regexp.MustCompile("\\[(.+?)\\]")
@@ -54,6 +62,9 @@ func readFile(fn string) {
 	}
 	scanner := bufio.NewScanner(strings.NewReader(string(b[:])))
 	for scanner.Scan() {
+		if detectComment(scanner.Text()) {
+			continue
+		}
 		res := re.FindStringSubmatch(scanner.Text())
 		if len(res) > 2 {
 			if strings.EqualFold(res[1], "include") {
