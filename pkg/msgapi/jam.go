@@ -109,8 +109,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	var header []byte
-	header = make([]byte, 76)
+	header := make([]byte, 76)
 	fJhr.Read(header)
 	headerb := bytes.NewBuffer(header)
 	var jamh jamH
@@ -150,8 +149,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		deleted = true
 	}
 	rm.Body += ""
-	var kl []byte
-	kl = make([]byte, jamh.SubfieldLen)
+	kl := make([]byte, jamh.SubfieldLen)
 	fJhr.Read(kl)
 	klb := bytes.NewBuffer(kl)
 	afterBody := ""
@@ -167,8 +165,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		if datLen > 80 {
 			datLen = 80
 		}
-		var val []byte
-		val = make([]byte, datLen)
+		val := make([]byte, datLen)
 		binary.Read(klb, binary.LittleEndian, &val)
 		switch LoID {
 		case 0:
@@ -221,8 +218,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	}
 	defer fJdt.Close()
 	fJdt.Seek(int64(jamh.Offset), 0)
-	var txt []byte
-	txt = make([]byte, jamh.TxtLen)
+	txt := make([]byte, jamh.TxtLen)
 	fJdt.Read(txt)
 	rm.Body += string(txt[:])
 	rm.Body += afterBody
@@ -457,8 +453,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	jamh.DateProcessed = uint32(tm.DateArrived.Unix())
 	jamh.TxtLen = uint32(len(tm.Body))
 	jamh.MessageNumber = uint32(len(j.indexStructure)) + jhr.BaseMsgNum
-	var jam jamSH
-	jam.ToCRC = crc32r(tm.To)
+	jam := jamSH{ToCRC: crc32r(tm.To)}
 	f, err := os.OpenFile(j.AreaPath+".jdt", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
@@ -558,8 +553,7 @@ func (j *JAM) DelMsg(l uint32) error {
 	if err != nil {
 		return err
 	}
-	var header []byte
-	header = make([]byte, 76)
+	header := make([]byte, 76)
 	fJhr.Read(header)
 	headerb := bytes.NewBuffer(header)
 	var jamh jamH
