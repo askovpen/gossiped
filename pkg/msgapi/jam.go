@@ -457,7 +457,6 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	jamh.DateProcessed = uint32(tm.DateArrived.Unix())
 	jamh.TxtLen = uint32(len(tm.Body))
 	jamh.MessageNumber = uint32(len(j.indexStructure)) + jhr.BaseMsgNum
-	log.Printf("%d %d", jamh.MessageNumber, jhr.BaseMsgNum)
 	var jam jamSH
 	jam.ToCRC = crc32r(tm.To)
 	f, err := os.OpenFile(j.AreaPath+".jdt", os.O_RDWR|os.O_CREATE, 0644)
@@ -467,7 +466,6 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	defer f.Close()
 	offset, _ := f.Seek(0, 2)
 	jamh.Offset = uint32(offset)
-	// log.Printf("offset: %d", offset)
 	f.Write([]byte(tm.Body))
 	f.Close()
 	f, err = os.OpenFile(j.AreaPath+".jhr", os.O_RDWR|os.O_CREATE, 0644)
