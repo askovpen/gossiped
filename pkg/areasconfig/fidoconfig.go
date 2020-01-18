@@ -35,7 +35,7 @@ func checkIncludePath(fn string) (string, error) {
 }
 
 func detectComment(line string) bool {
-	str := strings.Trim(line, " ")
+	str := strings.TrimSpace(line)
 	if len(str) > 0 && str[0] == '#' {
 		return true
 	}
