@@ -25,6 +25,7 @@ type JAM struct {
 	indexStructure     []jamS
 	lastRead           []jamL
 	messages           []MessageListItem
+	headerStructure    jhrS
 }
 
 type jamS struct {
@@ -235,6 +236,18 @@ func (j *JAM) readJDX() {
 	if len(j.indexStructure) > 0 {
 		return
 	}
+	fJhr, err := os.Open(j.AreaPath + ".jhr")
+	if err != nil {
+		return
+	}
+	defer fJhr.Close()
+	header := make([]byte, 1024)
+	fJhr.Read(header)
+	headerb := bytes.NewBuffer(header)
+	if err = utils.ReadStructFromBuffer(headerb, &j.headerStructure); err != nil {
+		return
+	}
+
 	file, err := os.Open(j.AreaPath + ".jdx")
 	if err != nil {
 		return
@@ -255,7 +268,7 @@ func (j *JAM) readJDX() {
 				break
 			}
 			if jam.Offset != 0xffffffff {
-				j.indexStructure = append(j.indexStructure, jamS{i + 1, jam})
+				j.indexStructure = append(j.indexStructure, jamS{i + j.headerStructure.BaseMsgNum, jam})
 			}
 			i++
 		}
@@ -410,7 +423,6 @@ func packJamKludges(tm *Message) []byte {
 	packJamKludge(klb, 2, 0, []byte(tm.From))
 	packJamKludge(klb, 3, 0, []byte(tm.To))
 	packJamKludge(klb, 6, 0, []byte(tm.Subject))
-	// log.Printf("klb: %#v", klb.Bytes())
 	return klb.Bytes()
 }
 
@@ -419,6 +431,16 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	//	if len(j.indexStructure) == 0 {
 	//		return errors.New("creating JAM area not implemented")
 	//	}
+	var jhr jhrS
+	if len(j.indexStructure) == 0 {
+		jhr.Signature = 0x4d414a
+		jhr.PasswordCRC = 0xffffffff
+		jhr.BaseMsgNum = 1
+		jhr.DateCreated = uint32(time.Now().Unix())
+	} else {
+		jhr = j.headerStructure
+	}
+
 	jamh := jamH{Signature: 0x4d414a, Revision: 1, Attribute: 0x01000001}
 	tm.Encode()
 	kl := packJamKludges(tm)
@@ -434,7 +456,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	jamh.DateReceived = uint32(tm.DateArrived.Unix())
 	jamh.DateProcessed = uint32(tm.DateArrived.Unix())
 	jamh.TxtLen = uint32(len(tm.Body))
-	jamh.MessageNumber = uint32(len(j.indexStructure)) + 1
+	jamh.MessageNumber = uint32(len(j.indexStructure)) + jhr.BaseMsgNum
 	var jam jamSH
 	jam.ToCRC = crc32r(tm.To)
 	f, err := os.OpenFile(j.AreaPath+".jdt", os.O_RDWR|os.O_CREATE, 0644)
@@ -444,7 +466,6 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	defer f.Close()
 	offset, _ := f.Seek(0, 2)
 	jamh.Offset = uint32(offset)
-	// log.Printf("offset: %d", offset)
 	f.Write([]byte(tm.Body))
 	f.Close()
 	f, err = os.OpenFile(j.AreaPath+".jhr", os.O_RDWR|os.O_CREATE, 0644)
@@ -452,26 +473,13 @@ func (j *JAM) SaveMsg(tm *Message) error {
 		return err
 	}
 	defer f.Close()
-	var jhr jhrS
-	if len(j.indexStructure) == 0 {
-		jhr.Signature = 0x4d414a
-		jhr.PasswordCRC = 0xffffffff
-		jhr.BaseMsgNum = 1
-		jhr.DateCreated = uint32(time.Now().Unix())
-	} else {
-		header := make([]byte, 1024)
-		f.Read(header)
-		headerb := bytes.NewBuffer(header)
-		if err := utils.ReadStructFromBuffer(headerb, &jhr); err != nil {
-			return err
-		}
-	}
 	jhr.ActiveMsgs++
 	buf := new(bytes.Buffer)
 	err = utils.WriteStructToBuffer(buf, &jhr)
 	if err != nil {
 		return err
 	}
+	j.headerStructure=jhr
 	f.Seek(0, 0)
 	f.Write(buf.Bytes())
 	buf.Reset()
