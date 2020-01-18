@@ -145,8 +145,8 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	}
 	defer f.Close()
 	f.Seek(int64(s.indexStructure[position-1].Offset), 0)
-	var header []byte
-	header = make([]byte, 266)
+	//var header []byte
+	header := make([]byte, 266)
 	f.Read(header)
 	headerb := bytes.NewBuffer(header)
 	sqdh, err := readSQDH(headerb)
@@ -348,27 +348,33 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	if len(s.indexStructure) == 0 {
 		lastIdx = 0
 	}
-	var sqdh sqdH
-	var sqi sqiS
+	//var sqi sqiS
 	kludges := ""
 	tm.Encode()
 	for kl, v := range tm.Kludges {
 		kludges += "\x01" + kl + " " + v
 	}
 	kludges += "\x00"
-	sqdh.ID = 0xafae4453
-	sqdh.NextFrame = 0
+	body := kludges + tm.Body + "\x00"
+	sqdh := sqdH{ID: 0xafae4453,
+		NextFrame:   0,
+		Attr:        uint32(SquishLOCAL | SquishSEEN),
+		DateWritten: setTime(tm.DateWritten),
+		DateArrived: setTime(tm.DateArrived),
+		FromZone:    tm.FromAddr.GetZone(),
+		FromNet:     tm.FromAddr.GetNet(),
+		FromNode:    tm.FromAddr.GetNode(),
+		FromPoint:   tm.FromAddr.GetPoint(),
+		CLen:        uint32(len(kludges)),
+		MsgLength:   uint32(len(body)) + 266 - 28,
+		FrameLength: uint32(len(body)) + 266 - 28}
 	if len(s.indexStructure) > 0 {
 		sqdh.PrevFrame = s.indexStructure[lastIdx].Offset
 	}
-	sqdh.Attr = uint32(SquishLOCAL | SquishSEEN)
 	copy(sqdh.From[:], tm.From)
 	copy(sqdh.To[:], tm.To)
 	copy(sqdh.Subject[:], tm.Subject)
 	copy(sqdh.Date[:], tm.DateWritten.Format("02 Jan 06  15:04:05"))
-	sqdh.DateWritten = setTime(tm.DateWritten)
-	sqdh.DateArrived = setTime(tm.DateArrived)
-	sqdh.FromZone, sqdh.FromNet, sqdh.FromNode, sqdh.FromPoint = tm.FromAddr.GetZone(), tm.FromAddr.GetNet(), tm.FromAddr.GetNode(), tm.FromAddr.GetPoint()
 	if s.AreaType == EchoAreaTypeNetmail {
 		sqdh.ToZone, sqdh.ToNet, sqdh.ToNode, sqdh.ToPoint = tm.ToAddr.GetZone(), tm.ToAddr.GetNet(), tm.ToAddr.GetNode(), tm.ToAddr.GetPoint()
 	} else {
@@ -379,12 +385,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	} else {
 		sqdh.UMsgID = s.indexStructure[lastIdx].MessageNum + 1
 	}
-	sqdh.CLen = uint32(len(kludges))
-	body := kludges + tm.Body + "\x00"
-	sqdh.MsgLength = uint32(len(body)) + 266 - 28
-	sqdh.FrameLength = uint32(len(body)) + 266 - 28
-	sqi.CRC = bufHash32(tm.To)
-	sqi.MessageNum = sqdh.UMsgID
+	sqi := sqiS{CRC: bufHash32(tm.To), MessageNum: sqdh.UMsgID}
 	f, err := os.OpenFile(s.AreaPath+".sqd", os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
@@ -511,8 +512,8 @@ func (s *Squish) DelMsg(l uint32) error {
 	}
 	defer f.Close()
 	f.Seek(int64(s.indexStructure[l-1].Offset), 0)
-	var header []byte
-	header = make([]byte, 266)
+	//var header []byte
+	header := make([]byte, 266)
 	f.Read(header)
 	headerb := bytes.NewBuffer(header)
 	sqdh, err := readSQDH(headerb)
