@@ -12,7 +12,7 @@ func TestCrashmailConfig(t *testing.T) {
 	g.Describe("Check CrashmailConfig", func() {
 		g.It("check crashmailConfigRead()", func() {
 			crashmailConfigRead("../../testdata/crashmail.prefs")
-			g.Assert(len(msgapi.Areas)).Equal(5)
+			g.Assert(len(msgapi.Areas)).Equal(4)
 		})
 	})
 }
