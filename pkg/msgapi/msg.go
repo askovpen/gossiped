@@ -116,17 +116,18 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	rm := &Message{}
-	rm.Area = m.AreaName
-	rm.MsgNum = position
-	rm.MaxNum = uint32(len(m.messageNums))
-	rm.From = strings.Trim(string(msgm.From[:]), "\x00")
-	rm.To = strings.Trim(string(msgm.To[:]), "\x00")
-	rm.Subject = strings.Trim(string(msgm.Subj[:]), "\x00")
-	rm.Body = strings.Trim(string(msgm.Body[:]), "\x00")
+	rm := &Message{
+		Area:        m.AreaName,
+		MsgNum:      position,
+		MaxNum:      uint32(len(m.messageNums)),
+		From:        strings.Trim(string(msgm.From[:]), "\x00"),
+		To:          strings.Trim(string(msgm.To[:]), "\x00"),
+		Subject:     strings.Trim(string(msgm.Subj[:]), "\x00"),
+		Body:        strings.Trim(string(msgm.Body[:]), "\x00"),
+		DateArrived: getTime(msgm.DateArrived),
+		Attrs:       m.getAttrs(uint16(msgm.Attr)),
+	}
 	rm.DateWritten, _ = time.Parse("02 Jan 06  15:04:05", strings.Trim(string(msgm.Date[:]), "\x00"))
-	rm.DateArrived = getTime(msgm.DateArrived)
-	rm.Attrs = m.getAttrs(uint16(msgm.Attr))
 	err = rm.ParseRaw()
 	if err != nil {
 		return nil, err
