@@ -92,10 +92,14 @@ func (m *MSG) getAttrs(a uint16) (attrs []string) {
 	return
 }
 
+func parseDate(date string) (ret time.Time) {
+	ret, _ = time.Parse("02 Jan 06  15:04:05", date)
+	return ret
+}
+
 // GetMsg getmsg
 func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	if len(m.messageNums) == 0 {
-		//		return nil, errors.New("Empty Area")
 		return nil, nil
 	}
 	if position == 0 {
@@ -116,18 +120,16 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	rm := &Message{
-		Area:        m.AreaName,
+	rm := &Message{Area: m.AreaName,
 		MsgNum:      position,
 		MaxNum:      uint32(len(m.messageNums)),
 		From:        strings.Trim(string(msgm.From[:]), "\x00"),
 		To:          strings.Trim(string(msgm.To[:]), "\x00"),
 		Subject:     strings.Trim(string(msgm.Subj[:]), "\x00"),
 		Body:        strings.Trim(string(msgm.Body[:]), "\x00"),
+		DateWritten: parseDate(strings.Trim(string(msgm.Date[:]), "\x00")),
 		DateArrived: getTime(msgm.DateArrived),
-		Attrs:       m.getAttrs(uint16(msgm.Attr)),
-	}
-	rm.DateWritten, _ = time.Parse("02 Jan 06  15:04:05", strings.Trim(string(msgm.Date[:]), "\x00"))
+		Attrs:       m.getAttrs(uint16(msgm.Attr))}
 	err = rm.ParseRaw()
 	if err != nil {
 		return nil, err
@@ -225,23 +227,19 @@ func (m *MSG) SaveMsg(tm *Message) error {
 			return err
 		}
 	}
-	//if len(m.messageNums) == 0 {
-	//	return errors.New("creating MSG area not implemented")
-	//}
-	var msgm msgS
-	msgm.Attr = MSGLOCAL
 	tm.Encode()
+	msgm := msgS{Attr: MSGLOCAL,
+		DateWritten: setTime(tm.DateWritten),
+		DateArrived: setTime(tm.DateArrived),
+		DestNode:    tm.ToAddr.GetNode(),
+		DestNet:     tm.ToAddr.GetNet(),
+		OrigNode:    tm.FromAddr.GetNode(),
+		OrigNet:     tm.FromAddr.GetNet(),
+		Body:        tm.Body}
 	copy(msgm.From[:], tm.From)
 	copy(msgm.To[:], tm.To)
 	copy(msgm.Subj[:], tm.Subject)
 	copy(msgm.Date[:], tm.DateWritten.Format("02 Jan 06  15:04:05"))
-	msgm.DateWritten = setTime(tm.DateWritten)
-	msgm.DateArrived = setTime(tm.DateArrived)
-	msgm.DestNode = tm.ToAddr.GetNode()
-	msgm.DestNet = tm.ToAddr.GetNet()
-	msgm.OrigNode = tm.FromAddr.GetNode()
-	msgm.OrigNet = tm.FromAddr.GetNet()
-	msgm.Body = tm.Body
 	for kl, v := range tm.Kludges {
 		msgm.Body = "\x01" + kl + " " + v + "\x0d" + msgm.Body
 	}

@@ -28,7 +28,7 @@ func crashmailConfigRead(fn string) error {
 		res[1] = strings.Replace(res[1], "\"", "", -1)
 		res[4] = strings.Replace(res[4], "\"", "", -1)
 		res[4] = strings.Replace(res[4], "\\\\", "\\", -1)
-		if len(res[1])>8 && strings.EqualFold(res[1][0:8],"default_") {
+		if len(res[1]) > 8 && strings.EqualFold(res[1][0:8], "default_") {
 			continue
 		}
 		aType := msgapi.EchoAreaTypeNone
