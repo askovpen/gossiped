@@ -479,6 +479,7 @@ func (j *JAM) SaveMsg(tm *Message) error {
 	if err != nil {
 		return err
 	}
+	j.headerStructure=jhr
 	f.Seek(0, 0)
 	f.Write(buf.Bytes())
 	buf.Reset()
