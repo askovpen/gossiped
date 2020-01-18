@@ -310,7 +310,9 @@ func (j *JAM) GetLast() uint32 {
 	j.readJLR()
 	for _, l := range j.lastRead {
 		if l.UserCRC == crc32r(config.Config.Username) {
-			// log.Printf("GetLast()->%d",j.getPositionOfJamMsg(l.LastReadMsg) + 1)
+			if j.getPositionOfJamMsg(l.LastReadMsg)+1 > uint32(len(j.indexStructure)) {
+				return uint32(len(j.indexStructure))
+			}
 			return j.getPositionOfJamMsg(l.LastReadMsg) + 1
 		}
 	}
