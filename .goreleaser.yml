@@ -69,6 +69,9 @@ nfpms:
   -
     id: gossiped
     package_name: gossiped
+    homepage: https://github.com/askovpen/gossiped
+    maintainer: askovpen <spam-from-github@skovpen.org>
+    license: MIT
     file_name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     replacements:
       darwin: osx
