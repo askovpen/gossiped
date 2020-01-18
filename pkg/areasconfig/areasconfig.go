@@ -12,29 +12,21 @@ import (
 // Read area configs
 func Read() error {
 	// log.Printf(config.Config.AreaFile.Type)
+	var err error
 	switch config.Config.AreaFile.Type {
 	case "fidoconfig":
-		err := fidoConfigRead(config.Config.AreaFile.Path)
-		if err != nil {
-			return err
-		}
+		err = fidoConfigRead(config.Config.AreaFile.Path)
 	case "areas.bbs":
-		err := areasbbsConfigRead(config.Config.AreaFile.Path)
-		if err != nil {
-			return err
-		}
+		err = areasbbsConfigRead(config.Config.AreaFile.Path)
 	case "squish":
-		err := squishConfigRead(config.Config.AreaFile.Path)
-		if err != nil {
-			return err
-		}
+		err = squishConfigRead(config.Config.AreaFile.Path)
 	case "crashmail":
-		err := crashmailConfigRead(config.Config.AreaFile.Path)
-		if err != nil {
-			return err
-		}
+		err = crashmailConfigRead(config.Config.AreaFile.Path)
 	default:
 		return errors.New("unknown AreasConfig.Type '" + config.Config.AreaFile.Type + "'")
+	}
+	if err != nil {
+		return nil
 	}
 	for i := range config.Config.Areas {
 		found := false
