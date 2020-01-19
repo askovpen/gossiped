@@ -42,6 +42,7 @@ type AreaPrimitive interface {
 	GetMessages() *[]MessageListItem
 }
 
+// Lookup name->id
 func Lookup(name string) int {
 	for i, a := range Areas {
 		if a.GetName() == name {
