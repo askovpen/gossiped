@@ -41,3 +41,13 @@ type AreaPrimitive interface {
 	SaveMsg(*Message) error
 	GetMessages() *[]MessageListItem
 }
+
+// Lookup name->id
+func Lookup(name string) int {
+	for i, a := range Areas {
+		if a.GetName() == name {
+			return i
+		}
+	}
+	return 0
+}

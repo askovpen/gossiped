@@ -159,7 +159,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	if sqdh.Attr&uint32(SquishREAD) > 0 {
 		toHash = toHash | 0x80000000
 	}
-	rm := &Message{}
+	rm := &Message{Area: s.AreaName, MsgNum: position}
 	if s.indexStructure[position-1].CRC != toHash {
 		rm.Corrupted = true
 	}

@@ -119,11 +119,10 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	if jamh.Signature != 0x4d414a {
 		return nil, errors.New("wrong message signature")
 	}
-	rm := &Message{}
-	rm.Area = j.AreaName
-	rm.MsgNum = position
-	rm.MaxNum = uint32(len(j.indexStructure))
-	rm.DateWritten = time.Unix(int64(jamh.DateWritten), 0)
+	rm := &Message{Area: j.AreaName,
+		MsgNum:      position,
+		MaxNum:      uint32(len(j.indexStructure)),
+		DateWritten: time.Unix(int64(jamh.DateWritten), 0)}
 	_, tofs := rm.DateWritten.Zone()
 	if jamh.DateReceived > 0 {
 		rm.DateArrived = time.Unix(int64(jamh.DateReceived), 0)
