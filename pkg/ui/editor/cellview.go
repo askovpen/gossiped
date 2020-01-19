@@ -36,7 +36,7 @@ func visualToCharPos(visualIndex int, lineN int, str string, buf *Buffer, colors
 			lineIdx += rw
 		}
 		lastWidth = width
-		rw = 0
+		//rw = 0
 		if c == '\t' {
 			rw = tabsize - (lineIdx % tabsize)
 			width += rw

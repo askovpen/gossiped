@@ -212,11 +212,11 @@ func (b *Buffer) remove(start, end Loc) string {
 	b.update()
 	return sub
 }
-func (b *Buffer) deleteToEnd(start Loc) {
-	b.IsModified = true
-	b.LineArray.DeleteToEnd(start)
-	b.update()
-}
+//func (b *Buffer) deleteToEnd(start Loc) {
+//	b.IsModified = true
+//	b.LineArray.DeleteToEnd(start)
+//	b.update()
+//}
 
 // Start returns the location of the first character in the buffer
 func (b *Buffer) Start() Loc {

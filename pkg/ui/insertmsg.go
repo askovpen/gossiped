@@ -113,16 +113,16 @@ func (a *App) InsertMsg(areaID int, msgType int) (string, tview.Primitive, bool,
 			if len(a.im.eb.GetText(false)) == 0 {
 		*/
 		var mv string
-		var p int
+		//var p int
 		if a.im.newMsgType == 0 {
-			mv, p = a.im.newMsg.ToEditNewView()
+			mv = a.im.newMsg.ToEditNewView()
 		} else if a.im.newMsgType == newMsgTypeAnswer || a.im.newMsgType == newMsgTypeAnswerNewArea {
-			mv, p = a.im.newMsg.ToEditAnswerView(omsg)
+			mv = a.im.newMsg.ToEditAnswerView(omsg)
 		} else if a.im.newMsgType == newMsgTypeForward {
-			mv, p = a.im.newMsg.ToEditForwardView(omsg)
+			mv = a.im.newMsg.ToEditForwardView(omsg)
 		}
 		a.im.buffer = editor.NewBufferFromString(mv)
-		p = p
+		//p = p
 		a.im.eb.OpenBuffer(a.im.buffer)
 		/*
 			a.im.eb.SetText(mv, p)

@@ -31,7 +31,8 @@ func crashmailConfigRead(fn string) error {
 		if len(res[1]) > 8 && strings.EqualFold(res[1][0:8], "default_") {
 			continue
 		}
-		aType := msgapi.EchoAreaTypeNone
+		//aType := msgapi.EchoAreaTypeNone
+		var aType msgapi.EchoAreaType
 		if strings.EqualFold(res[0], "area") {
 			aType = msgapi.EchoAreaTypeEcho
 			if strings.EqualFold(res[1], "bad") {

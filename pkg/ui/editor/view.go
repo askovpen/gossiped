@@ -3,7 +3,7 @@ package editor
 import (
 	"strconv"
 	"strings"
-	"time"
+	//"time"
 
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
@@ -41,11 +41,11 @@ type View struct {
 
 	// We need to keep track of insert key press toggle
 	isOverwriteMode bool
-	lastLoc         Loc
+	// lastLoc         Loc
 
 	// lastCutTime stores when the last ctrl+k was issued.
 	// It is used for clearing the clipboard to replace it with fresh cut lines.
-	lastCutTime time.Time
+	// lastCutTime time.Time
 
 	// The cellview used for displaying and syntax highlighting
 	cellview *CellView
@@ -364,7 +364,8 @@ func (v *View) displayView(screen tcell.Screen) {
 
 	v.cellview.Draw(v.Buf, v.colorscheme, top, height, left, width-v.lineNumOffset)
 
-	screenX := v.x
+	var screenX int
+	//screenX := v.x
 	realLineN := top - 1
 	visualLineN := 0
 	var line []*Char
@@ -429,7 +430,7 @@ func (v *View) displayView(screen tcell.Screen) {
 
 			// Write the extra space
 			screen.SetContent(screenX, yOffset+visualLineN, ' ', nil, lineNumStyle)
-			screenX++
+			//screenX++
 		}
 
 		var lastChar *Char

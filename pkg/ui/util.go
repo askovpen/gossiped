@@ -23,11 +23,9 @@ const (
 // Common regular expressions.
 var (
 	colorPattern     = regexp.MustCompile(`\[([a-zA-Z]+|#[0-9a-zA-Z]{6}|\-)?(:([a-zA-Z]+|#[0-9a-zA-Z]{6}|\-)?(:([lbdru]+|\-)?)?)?\]`)
-	regionPattern    = regexp.MustCompile(`\["([a-zA-Z0-9_,;: \-\.]*)"\]`)
 	escapePattern    = regexp.MustCompile(`\[([a-zA-Z0-9_,;: \-\."#]+)\[(\[*)\]`)
 	nonEscapePattern = regexp.MustCompile(`(\[[a-zA-Z0-9_,;: \-\."#]+\[*)\]`)
 	boundaryPattern  = regexp.MustCompile(`(([[:punct:]]|\n)[ \t\f\r]*|(\s+))`)
-	spacePattern     = regexp.MustCompile(`\s+`)
 )
 
 // Positions of substrings in regular expressions.
@@ -407,24 +405,6 @@ func TaggedStringWidth(text string) int {
 // stringWidth returns the number of horizontal cells needed to print the given
 // text. It splits the text into its grapheme clusters, calculates each
 // cluster's width, and adds them up to a total.
-func charWidth(text string, pos int) (width int) {
-	g := uniseg.NewGraphemes(text)
-	i := 0
-	for g.Next() {
-		chWidth := 0
-		for _, r := range g.Runes() {
-			chWidth += len(string(r))
-		}
-		//		log.Printf("%q %d",g.Runes(), chWidth)
-		if chWidth > 0 {
-			if i == pos {
-				return chWidth
-			}
-			i++
-		}
-	}
-	return 0
-}
 func stringWidth(text string) (width int) {
 	g := uniseg.NewGraphemes(text)
 	for g.Next() {

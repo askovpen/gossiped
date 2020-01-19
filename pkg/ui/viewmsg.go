@@ -201,7 +201,6 @@ func (a *App) showDelMsg(areaID int, msgNum uint32) (string, tview.Primitive, bo
 				a.Pages.AddPage(a.ViewMsg(areaID, msgNum-1))
 				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum-1))
 				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
-			} else {
 			}
 			a.App.SetFocus(a.Pages)
 		})

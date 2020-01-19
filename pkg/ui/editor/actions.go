@@ -618,6 +618,13 @@ func (v *View) DeleteLine() bool {
 	return true
 }
 
+// DeleteToEnd deletes the current line
+func (v *View) DeleteToEnd() bool {
+	x, y := runeToByteIndex(v.Cursor.Loc.X, v.Buf.LineBytes(v.Cursor.Loc.Y)), v.Cursor.Loc.Y
+	v.Buf.DeleteToEnd(Loc{x,y})
+	return true
+}
+
 // MoveLinesUp moves up the current line or selected lines if any
 func (v *View) MoveLinesUp() bool {
 	if v.Cursor.HasSelection() {

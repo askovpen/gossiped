@@ -236,10 +236,10 @@ func (s *Squish) GetLast() uint32 {
 		return 0
 	}
 	file, err := os.Open(s.AreaPath + ".sql")
-	defer file.Close()
 	if err != nil {
 		return 0
 	}
+	defer file.Close()
 	var ret uint32
 	err = binary.Read(file, binary.LittleEndian, &ret)
 	if err != nil {
@@ -394,7 +394,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	defer f.Close()
 	var header []byte
 	var sqd sqdS
-	headerb := new(bytes.Buffer)
+	var headerb *bytes.Buffer
 	if len(s.indexStructure) == 0 {
 		sqd.Len = 256
 		sqd.EndFrame = 256

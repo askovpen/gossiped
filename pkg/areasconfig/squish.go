@@ -30,7 +30,8 @@ func squishConfigRead(fn string) error {
 		if amType == msgapi.EchoAreaMsgTypePasstrough {
 			continue
 		}
-		aType := msgapi.EchoAreaTypeNone
+		var aType msgapi.EchoAreaType
+		//aType := msgapi.EchoAreaTypeNone
 		if strings.EqualFold(res[0], "echoarea") {
 			aType = msgapi.EchoAreaTypeEcho
 		} else if strings.EqualFold(res[0], "netarea") {
