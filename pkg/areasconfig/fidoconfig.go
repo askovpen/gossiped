@@ -43,8 +43,8 @@ func detectComment(line string) bool {
 }
 
 func readFile(fn string) {
-	re := regexp.MustCompile("(\\w+?)\\s+(.*)")
-	reEnv := regexp.MustCompile("\\[(.+?)\\]")
+	re := regexp.MustCompile(`(\w+?)\s+(.*)`)
+	reEnv := regexp.MustCompile(`\[(.+?)\]`)
 	nfn, err := checkIncludePath(fn)
 	if err != nil {
 		log.Print(err)

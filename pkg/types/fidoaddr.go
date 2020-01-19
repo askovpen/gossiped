@@ -54,7 +54,7 @@ func (f *FidoAddr) FQDN() (string, error) {
 // AddrFromString return FidoAddr from string
 func AddrFromString(s string) *FidoAddr {
 	f := &FidoAddr{}
-	res := regexp.MustCompile("(\\d+):(\\d+)/(\\d+)\\.?(\\d+)?(@.*)?").FindStringSubmatch(s)
+	res := regexp.MustCompile(`(\d+):(\d+)/(\d+)\.?(\d+)?(@.*)?`).FindStringSubmatch(s)
 	if len(res) == 0 {
 		return nil
 	}

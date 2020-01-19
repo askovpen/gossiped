@@ -190,7 +190,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 		kla[i] = strings.Trim(kla[i], "\x00")
 	}
 	rm.Body = "\x01" + strings.Join(kla, "\x0d\x01") + "\x0d" + rm.Body[sqdh.CLen:]
-	if strings.Index(rm.Body, "\x00") != -1 {
+	if strings.Contains(rm.Body, "\x00") {
 		rm.Body = rm.Body[0:strings.Index(rm.Body, "\x00")]
 	}
 	err = rm.ParseRaw()

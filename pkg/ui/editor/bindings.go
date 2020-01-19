@@ -457,6 +457,6 @@ modSearch:
 
 // findAction will find 'action' using string 'v'
 func findAction(v string) (action func(*View) bool) {
-	action, _ = bindingActions[v]
+	action = bindingActions[v]
 	return action
 }

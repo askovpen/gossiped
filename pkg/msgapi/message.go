@@ -56,7 +56,7 @@ func (m *Message) ParseRaw() error {
 		} else if len(l) > 6 && l[0:7] == "\x01MSGID:" {
 			m.Kludges["MSGID:"] = strings.Trim(l[7:], " ")
 		} else if len(l) > 10 && l[0:11] == "\x20*\x20Origin: " {
-			re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
+			re := regexp.MustCompile(`\d+:\d+/\d+\.*\d*`)
 			if len(re.FindStringSubmatch(l)) > 0 {
 				m.Kludges["ORIGIN"] = re.FindStringSubmatch(l)[0]
 			}
@@ -203,7 +203,7 @@ func (m *Message) ToEditNewView() (string, int) {
 
 // GetForward get forward
 func (m *Message) GetForward() []string {
-	reO := regexp.MustCompile("^ \\* Origin: ")
+	reO := regexp.MustCompile(`^ \* Origin: `)
 	reT := regexp.MustCompile("^--- ")
 	re := regexp.MustCompile(">+")
 	var nm []string

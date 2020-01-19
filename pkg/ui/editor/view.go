@@ -47,9 +47,6 @@ type View struct {
 	// It is used for clearing the clipboard to replace it with fresh cut lines.
 	lastCutTime time.Time
 
-	// freshClip returns true if the clipboard has never been pasted.
-	freshClip bool
-
 	// The cellview used for displaying and syntax highlighting
 	cellview *CellView
 
@@ -112,24 +109,6 @@ func (v *View) SetKeybindings(bindings KeyBindings) {
 func (v *View) SetColorscheme(colorscheme Colorscheme) {
 	v.colorscheme = colorscheme
 	v.Buf.updateRules()
-}
-
-func (v *View) paste(clip string) {
-	if v.Buf.Settings["smartpaste"].(bool) {
-		if v.Cursor.X > 0 && GetLeadingWhitespace(strings.TrimLeft(clip, "\r\n")) == "" {
-			leadingWS := GetLeadingWhitespace(v.Buf.Line(v.Cursor.Y))
-			clip = strings.Replace(clip, "\n", "\n"+leadingWS, -1)
-		}
-	}
-
-	if v.Cursor.HasSelection() {
-		v.Cursor.DeleteSelection()
-		v.Cursor.ResetSelection()
-	}
-
-	v.Buf.Insert(v.Cursor.Loc, clip)
-	// v.Cursor.Loc = v.Cursor.Loc.Move(Count(clip), v.Buf)
-	v.freshClip = false
 }
 
 // ScrollUp scrolls the view up n lines (if possible)
@@ -260,7 +239,7 @@ func (v *View) ExecuteActions(actions []func(*View) bool) bool {
 	for _, action := range actions {
 		readonlyBindingsResult := false
 		funcName := ShortFuncName(action)
-		if v.Readonly == true {
+		if v.Readonly {
 			// check for readonly and if true only let key bindings get called if they do not change the contents.
 			for _, readonlyBindings := range readonlyBindingsList {
 				if strings.Contains(funcName, readonlyBindings) {
@@ -325,7 +304,7 @@ func (v *View) HandleEvent(event tcell.Event) {
 
 		if !isBinding && e.Key() == tcell.KeyRune {
 			// Check viewtype if readonly don't insert a rune (readonly help and log view etc.)
-			if v.Readonly == false {
+			if !v.Readonly {
 				for _, c := range v.Buf.cursors {
 					v.SetCursor(c)
 
