@@ -8,7 +8,7 @@ import (
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"strconv"
-	"strings"
+	//"strings"
 )
 
 // ViewMsg widget
@@ -38,48 +38,35 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 		msgapi.Areas[areaID].GetCount(),
 		msgapi.Areas[areaID].GetCount()-msgNum,
 	))
-	header := tview.NewTextView().
-		SetWrap(false).
-		SetTextColor(tcell.ColorSilver).
-		SetDynamicColors(true)
+	header := NewViewHeader(msg)
 	header.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).
 		SetTitle(" " + msgapi.Areas[areaID].GetName() + " ").
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
-	repl := ""
 	var body *editor.View
 	if msg != nil {
-		if msg.ReplyTo > 0 {
-			repl = fmt.Sprintf("-%d ", msg.ReplyTo)
-		}
-		for _, rn := range msg.Replies {
-			repl += fmt.Sprintf("+%d ", rn)
-		}
-		htxt := fmt.Sprintf(" Msg  : %-34s %-36s\n",
-			fmt.Sprintf("%d of %d %s", msgNum, msgapi.Areas[areaID].GetCount(), repl), strings.Join(msg.Attrs, " "))
-		htxt += fmt.Sprintf(" From : %-34s %-15s %-18s\n",
-			msg.From,
-			msg.FromAddr.String(),
-			msg.DateWritten.Format("02 Jan 06 15:04:05"))
-		htxt += fmt.Sprintf(" To   : %-34s %-15s %-18s\n",
-			msg.To,
-			msg.ToAddr.String(),
-			msg.DateArrived.Format("02 Jan 06 15:04:05"))
-		htxt += fmt.Sprintf(" Subj : %-50s",
-			msg.Subject)
-		header.SetText(htxt)
-		header.SetDynamicColors(true)
-		//	body := tview.NewTextView().SetWrap(true).SetWordWrap(true).SetTextColor(tcell.ColorSilver)
-		//	body.SetDynamicColors(true)
-		//	body.SetText(msg.ToView(a.showKludges))
-
 		body = editor.NewView(editor.NewBufferFromString(msg.ToView(a.showKludges)))
 	} else {
 		body = editor.NewView(editor.NewBufferFromString(""))
 	}
-	//body.SetRuntimeFiles(runtime.Files)
+	header.SetDoneFunc(func(s string) {
+		num, _ := strconv.ParseUint(s, 10, 32)
+		if uint32(num) >= msgapi.Areas[areaID].GetCount() {
+			a.App.SetFocus(body)
+		} else {
+			if a.Pages.HasPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), num)) {
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), num))
+				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+			} else {
+				a.Pages.AddPage(a.ViewMsg(areaID, uint32(num)))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), num))
+				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+			}
+		}
+	})
+
 	body.Readonly = true
 	body.SetDoneFunc(func() {
 		//		if key == tcell.KeyEscape {
@@ -142,6 +129,10 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 		} else if event.Key() == tcell.KeyCtrlL || event.Rune() == 'l' {
 			a.Pages.AddPage(a.showMessageList(areaID))
 			a.Pages.ShowPage("MessageListModal")
+		} else if event.Key() == tcell.KeyCtrlG || event.Rune() == 'g' {
+			a.App.SetFocus(header)
+			//a.Pages.AddPage(a.showMessageList(areaID))
+			//a.Pages.ShowPage("MessageListModal")
 		} else if event.Rune() == '<' {
 			if msgNum != 1 {
 				a.Pages.AddPage(a.ViewMsg(areaID, 1))
