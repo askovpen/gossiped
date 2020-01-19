@@ -28,20 +28,17 @@ func ReadStructFromBuffer(buffer *bytes.Buffer, data interface{}) error {
 			if err != nil {
 				return err
 			}
-			break
 		case reflect.String:
 			str, err := buffer.ReadString(0x00)
 			if err != nil && err != io.EOF {
 				return err
 			}
 			v.Field(i).SetString(str)
-			break
 		case reflect.Array:
 			err := binary.Read(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			if err != nil {
 				return err
 			}
-			break
 		default:
 			log.Printf("%#v", v.Field(i).Type().Kind())
 			return errors.New("invail type Unspport reflect type")
@@ -70,19 +67,16 @@ func WriteStructToBuffer(buffer *bytes.Buffer, data interface{}) error {
 			if err != nil {
 				return err
 			}
-			break
 		case reflect.String:
 			_, err := buffer.WriteString(v.Field(i).Interface().(string))
 			if err != nil {
 				return err
 			}
-			break
 		case reflect.Array:
 			err := binary.Write(buffer, binary.LittleEndian, v.Field(i).Addr().Interface())
 			if err != nil {
 				return err
 			}
-			break
 		default:
 			log.Printf("%#v", v.Field(i).Type().Kind())
 			return errors.New("invail type Unspport reflect type")

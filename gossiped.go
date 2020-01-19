@@ -13,7 +13,6 @@ import (
 var (
 	version = "2.0"
 	commit  = "dev"
-	date    = "unknown"
 )
 
 func tryFindConfig() string {

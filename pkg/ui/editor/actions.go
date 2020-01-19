@@ -47,7 +47,7 @@ func (v *View) Center() bool {
 
 // CursorUp moves the cursor up
 func (v *View) CursorUp() bool {
-	if v.Readonly == true {
+	if v.Readonly {
 		v.ScrollUp(1)
 		return false
 	}
@@ -58,7 +58,7 @@ func (v *View) CursorUp() bool {
 
 // CursorDown moves the cursor down
 func (v *View) CursorDown() bool {
-	if v.Readonly == true {
+	if v.Readonly {
 		v.ScrollDown(1)
 		return false
 	}
@@ -615,6 +615,13 @@ func (v *View) DeleteLine() bool {
 	}
 	v.Cursor.DeleteSelection()
 	v.Cursor.ResetSelection()
+	return true
+}
+
+// DeleteToEnd deletes the current line
+func (v *View) DeleteToEnd() bool {
+	x, y := runeToByteIndex(v.Cursor.Loc.X, v.Buf.LineBytes(v.Cursor.Loc.Y)), v.Cursor.Loc.Y
+	v.Buf.DeleteToEnd(Loc{x,y})
 	return true
 }
 

@@ -42,6 +42,7 @@ func TestFidoAddr(t *testing.T) {
 			_, err := (&FidoAddr{2, 5020, 9696, 5}).FQDN()
 			g.Assert(err.Error()).Equal("point")
 			f, err := (&FidoAddr{2, 5020, 9696, 0}).FQDN()
+			g.Assert(err).Equal(nil)
 			g.Assert(f).Equal("f9696.n5020.z2.binkp.net")
 		})
 		g.It("check yaml", func() {

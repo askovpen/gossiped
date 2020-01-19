@@ -190,7 +190,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 		kla[i] = strings.Trim(kla[i], "\x00")
 	}
 	rm.Body = "\x01" + strings.Join(kla, "\x0d\x01") + "\x0d" + rm.Body[sqdh.CLen:]
-	if strings.Index(rm.Body, "\x00") != -1 {
+	if strings.Contains(rm.Body, "\x00") {
 		rm.Body = rm.Body[0:strings.Index(rm.Body, "\x00")]
 	}
 	err = rm.ParseRaw()
@@ -236,10 +236,10 @@ func (s *Squish) GetLast() uint32 {
 		return 0
 	}
 	file, err := os.Open(s.AreaPath + ".sql")
-	defer file.Close()
 	if err != nil {
 		return 0
 	}
+	defer file.Close()
 	var ret uint32
 	err = binary.Read(file, binary.LittleEndian, &ret)
 	if err != nil {
@@ -394,7 +394,7 @@ func (s *Squish) SaveMsg(tm *Message) error {
 	defer f.Close()
 	var header []byte
 	var sqd sqdS
-	headerb := new(bytes.Buffer)
+	var headerb *bytes.Buffer
 	if len(s.indexStructure) == 0 {
 		sqd.Len = 256
 		sqd.EndFrame = 256

@@ -56,7 +56,7 @@ func (m *Message) ParseRaw() error {
 		} else if len(l) > 6 && l[0:7] == "\x01MSGID:" {
 			m.Kludges["MSGID:"] = strings.Trim(l[7:], " ")
 		} else if len(l) > 10 && l[0:11] == "\x20*\x20Origin: " {
-			re := regexp.MustCompile("\\d+:\\d+/\\d+\\.*\\d*")
+			re := regexp.MustCompile(`\d+:\d+/\d+\.*\d*`)
 			if len(re.FindStringSubmatch(l)) > 0 {
 				m.Kludges["ORIGIN"] = re.FindStringSubmatch(l)[0]
 			}
@@ -162,9 +162,9 @@ func (m *Message) ToView(showKludges bool) string {
 }
 
 // ToEditNewView export view
-func (m *Message) ToEditNewView() (string, int) {
+func (m *Message) ToEditNewView() (string) {
 	var nm []string
-	p := 0
+//	p := 0
 	r := strings.NewReplacer(
 		"@pseudo", m.To,
 		"@CFName", strings.Split(m.From, " ")[0])
@@ -178,7 +178,7 @@ func (m *Message) ToEditNewView() (string, int) {
 						nm = append(nm, r.Replace(l[4:]))
 					}
 				} else if len(l) > 8 && l[0:9] == "@Position" {
-					p = len(nm)
+//					p = len(nm)
 					if len(l) == 9 {
 						nm = append(nm, "")
 					} else {
@@ -197,13 +197,13 @@ func (m *Message) ToEditNewView() (string, int) {
 	nm = append(nm, "--- "+config.Config.Tearline)
 	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
 	//log.Printf("pp: %d", p)
-	return strings.Join(nm, "\n"), p
+	return strings.Join(nm, "\n")
 
 }
 
 // GetForward get forward
 func (m *Message) GetForward() []string {
-	reO := regexp.MustCompile("^ \\* Origin: ")
+	reO := regexp.MustCompile(`^ \* Origin: `)
 	reT := regexp.MustCompile("^--- ")
 	re := regexp.MustCompile(">+")
 	var nm []string
@@ -265,9 +265,9 @@ func (m *Message) GetQuote() []string {
 }
 
 // ToEditAnswerView export view
-func (m *Message) ToEditAnswerView(om *Message) (string, int) {
+func (m *Message) ToEditAnswerView(om *Message) (string) {
 	var nm []string
-	p := 0
+	//p := 0
 	r := strings.NewReplacer(
 		"@pseudo", m.To,
 		"@CFName", strings.Split(m.From, " ")[0],
@@ -279,7 +279,7 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 		if len(l) > 0 {
 			if l[0] == '@' {
 				if len(l) > 15 && l[0:16] == "@Quoted@Position" {
-					p = len(nm)
+					//p = len(nm)
 					nm = append(nm, "")
 				} else if len(l) > 6 && l[0:7] == "@Quoted" {
 					if len(l) == 7 {
@@ -288,7 +288,7 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 						nm = append(nm, r.Replace(l[7:]))
 					}
 				} else if len(l) > 8 && l[0:9] == "@Position" {
-					p = len(nm)
+					//p = len(nm)
 					if len(l) == 9 {
 						nm = append(nm, "")
 					} else {
@@ -308,13 +308,13 @@ func (m *Message) ToEditAnswerView(om *Message) (string, int) {
 	}
 	nm = append(nm, "--- "+config.Config.Tearline)
 	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
-	return strings.Join(nm, "\n"), p
+	return strings.Join(nm, "\n")
 }
 
 // ToEditForwardView export view
-func (m *Message) ToEditForwardView(om *Message) (string, int) {
+func (m *Message) ToEditForwardView(om *Message) (string) {
 	var nm []string
-	p := 0
+	//p := 0
 	r := strings.NewReplacer(
 		"@pseudo", m.To,
 		"@CFName", strings.Split(m.From, " ")[0],
@@ -337,7 +337,7 @@ func (m *Message) ToEditForwardView(om *Message) (string, int) {
 						nm = append(nm, r.Replace(l[8:]))
 					}
 				} else if len(l) > 8 && l[0:9] == "@Position" {
-					p = len(nm)
+					//p = len(nm)
 					if len(l) == 9 {
 						nm = append(nm, "")
 					} else {
@@ -357,7 +357,7 @@ func (m *Message) ToEditForwardView(om *Message) (string, int) {
 	}
 	nm = append(nm, "--- "+config.Config.Tearline)
 	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
-	return strings.Join(nm, "\n"), p
+	return strings.Join(nm, "\n")
 }
 
 // MakeBody make body

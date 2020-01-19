@@ -36,7 +36,7 @@ func visualToCharPos(visualIndex int, lineN int, str string, buf *Buffer, colors
 			lineIdx += rw
 		}
 		lastWidth = width
-		rw = 0
+		//rw = 0
 		if c == '\t' {
 			rw = tabsize - (lineIdx % tabsize)
 			width += rw
@@ -76,7 +76,7 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 	softwrap := buf.Settings["softwrap"].(bool)
 	indentrunes := []rune(buf.Settings["indentchar"].(string))
 	// if empty indentchar settings, use space
-	if indentrunes == nil || len(indentrunes) == 0 {
+	if len(indentrunes) == 0 {
 		indentrunes = []rune{' '}
 	}
 	indentchar := indentrunes[0]

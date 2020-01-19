@@ -38,22 +38,22 @@ func toRunes(b []byte) []rune {
 	return runes
 }
 
-func sliceStart(slc []byte, index int) []byte {
-	len := len(slc)
-	i := 0
-	totalSize := 0
-	for totalSize < len {
-		if i >= index {
-			return slc[totalSize:]
-		}
-
-		_, size := utf8.DecodeRune(slc[totalSize:])
-		totalSize += size
-		i++
-	}
-
-	return slc[totalSize:]
-}
+//func sliceStart(slc []byte, index int) []byte {
+//	len := len(slc)
+//	i := 0
+//	totalSize := 0
+//	for totalSize < len {
+//		if i >= index {
+//			return slc[totalSize:]
+//		}
+//
+//		_, size := utf8.DecodeRune(slc[totalSize:])
+//		totalSize += size
+//		i++
+//	}
+//
+//	return slc[totalSize:]
+//}
 
 func sliceEnd(slc []byte, index int) []byte {
 	len := len(slc)
@@ -273,9 +273,9 @@ func WidthOfLargeRunes(str string, tabsize int) int {
 
 // RunePos returns the rune index of a given byte index
 // This could cause problems if the byte index is between code points
-func runePos(p int, str string) int {
-	return utf8.RuneCountInString(str[:p])
-}
+//func runePos(p int, str string) int {
+//	return utf8.RuneCountInString(str[:p])
+//}
 
 func lcs(a, b string) string {
 	arunes := []rune(a)
