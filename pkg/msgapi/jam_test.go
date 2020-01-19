@@ -71,6 +71,7 @@ func TestJam(t *testing.T) {
 	os.Remove("../../testdata/jamtest.jhr")
 	os.Remove("../../testdata/jamtest.jlr")
 }
+
 func BenchmarkJamCrc32r(b *testing.B) {
 	b.SetBytes(20)
 	for n := 0; n < b.N; n++ {
