@@ -42,7 +42,7 @@ const (
 	ActionCenter                 = "Center"
 	ActionDuplicateLine          = "DuplicateLine"
 	ActionDeleteLine             = "DeleteLine"
-	ActionDeleteToEnd             = "DeleteToEnd"
+	ActionDeleteToEnd            = "DeleteToEnd"
 	ActionMoveLinesUp            = "MoveLinesUp"
 	ActionMoveLinesDown          = "MoveLinesDown"
 	ActionIndentSelection        = "IndentSelection"
@@ -162,7 +162,7 @@ var bindingActions = map[string]func(*View) bool{
 	ActionCenter:                 (*View).Center,
 	ActionDuplicateLine:          (*View).DuplicateLine,
 	ActionDeleteLine:             (*View).DeleteLine,
-	ActionDeleteToEnd:             (*View).DeleteToEnd,
+	ActionDeleteToEnd:            (*View).DeleteToEnd,
 	ActionMoveLinesUp:            (*View).MoveLinesUp,
 	ActionMoveLinesDown:          (*View).MoveLinesDown,
 	ActionIndentSelection:        (*View).IndentSelection,

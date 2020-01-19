@@ -162,9 +162,9 @@ func (m *Message) ToView(showKludges bool) string {
 }
 
 // ToEditNewView export view
-func (m *Message) ToEditNewView() (string) {
+func (m *Message) ToEditNewView() string {
 	var nm []string
-//	p := 0
+	//	p := 0
 	r := strings.NewReplacer(
 		"@pseudo", m.To,
 		"@CFName", strings.Split(m.From, " ")[0])
@@ -178,7 +178,7 @@ func (m *Message) ToEditNewView() (string) {
 						nm = append(nm, r.Replace(l[4:]))
 					}
 				} else if len(l) > 8 && l[0:9] == "@Position" {
-//					p = len(nm)
+					//					p = len(nm)
 					if len(l) == 9 {
 						nm = append(nm, "")
 					} else {
@@ -265,7 +265,7 @@ func (m *Message) GetQuote() []string {
 }
 
 // ToEditAnswerView export view
-func (m *Message) ToEditAnswerView(om *Message) (string) {
+func (m *Message) ToEditAnswerView(om *Message) string {
 	var nm []string
 	//p := 0
 	r := strings.NewReplacer(
@@ -312,7 +312,7 @@ func (m *Message) ToEditAnswerView(om *Message) (string) {
 }
 
 // ToEditForwardView export view
-func (m *Message) ToEditForwardView(om *Message) (string) {
+func (m *Message) ToEditForwardView(om *Message) string {
 	var nm []string
 	//p := 0
 	r := strings.NewReplacer(

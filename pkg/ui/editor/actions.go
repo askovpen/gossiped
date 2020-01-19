@@ -621,7 +621,7 @@ func (v *View) DeleteLine() bool {
 // DeleteToEnd deletes the current line
 func (v *View) DeleteToEnd() bool {
 	x, y := runeToByteIndex(v.Cursor.Loc.X, v.Buf.LineBytes(v.Cursor.Loc.Y)), v.Cursor.Loc.Y
-	v.Buf.DeleteToEnd(Loc{x,y})
+	v.Buf.DeleteToEnd(Loc{x, y})
 	return true
 }
 

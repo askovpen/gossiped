@@ -17,11 +17,11 @@ import (
 
 // MSG struct
 type MSG struct {
-	AreaPath    string
-	AreaName    string
-	AreaType    EchoAreaType
-	Chrs        string
-//	lastreads   string
+	AreaPath string
+	AreaName string
+	AreaType EchoAreaType
+	Chrs     string
+	//	lastreads   string
 	messageNums []uint32
 	messages    []MessageListItem
 }
