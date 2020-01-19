@@ -25,7 +25,7 @@ type ViewHeader struct {
 func NewViewHeader(msg *msgapi.Message) *ViewHeader {
 	var si [8][]rune
 	if msg == nil {
-		si = [8][]rune{[]rune("0"),[]rune("0"),[]rune(""),[]rune(""),[]rune(""),[]rune(""),[]rune(""),[]rune("")}
+		si = [8][]rune{[]rune("0"), []rune("0"), []rune(""), []rune(""), []rune(""), []rune(""), []rune(""), []rune("")}
 	} else {
 		repl := ""
 		if msg.ReplyTo > 0 {
