@@ -396,11 +396,11 @@ func tolower(b byte) byte {
 }
 
 func crc32rieee(data []byte) uint32 {
-	crc_I := uint32(0xffffffff)
+	crcI := uint32(0xffffffff)
 	for i := 0; i < len(data); i++ {
-		crc_I = (crc_I >> 8) ^ crc32tab[byte(crc_I)^tolower(data[i])]
+		crcI = (crcI >> 8) ^ crc32tab[byte(crcI)^tolower(data[i])]
 	}
-	return crc_I
+	return crcI
 }
 
 func crc32r(str string) uint32 {
