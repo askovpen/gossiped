@@ -9,6 +9,7 @@ import (
 	"github.com/rivo/tview"
 	//"github.com/mattn/go-runewidth"
 	//"log"
+	"strings"
 )
 
 // ViewHeader widget
@@ -33,6 +34,9 @@ func NewViewHeader(msg *msgapi.Message) *ViewHeader {
 		}
 		for _, rn := range msg.Replies {
 			repl += fmt.Sprintf("+%d ", rn)
+		}
+		if len(msg.Attrs) > 0 {
+			repl += "[" + strings.Join(msg.Attrs, " ") + "]"
 		}
 		si = [8][]rune{
 			[]rune(fmt.Sprintf("%d", msg.MsgNum)),
