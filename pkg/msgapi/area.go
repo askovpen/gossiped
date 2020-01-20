@@ -56,6 +56,7 @@ func Lookup(name string) int {
 	return 0
 }
 
+// Search part name->id
 func Search(name string) int {
 	for i, a := range Areas {
 		if strings.Contains(strings.ToLower(a.GetName()), strings.ToLower(name)) {
