@@ -31,6 +31,7 @@ func (a *App) AreaListQuit() (string, tview.Primitive, bool, bool) {
 
 // AreaList - arealist widget
 func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
+	searchString := NewSearchString()
 	a.al = tview.NewTable().
 		SetFixed(1, 0).
 		SetSelectable(true, false).
@@ -75,11 +76,21 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
 	a.al.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyEsc {
-			//log.Print("esc")
+		switch key := event.Key(); key {
+		case tcell.KeyEsc:
+			searchString.Clear()
 			a.Pages.ShowPage("AreaListQuit")
-		} else if event.Key() == tcell.KeyRight {
+		case tcell.KeyRight:
+			searchString.Clear()
 			a.onSelected(a.al.GetSelection())
+		case tcell.KeyDown, tcell.KeyUp, tcell.KeyEnter:
+			searchString.Clear()
+		case tcell.KeyRune:
+			searchString.AddChar(event.Rune())
+			row := msgapi.Search(searchString.GetText())
+			if row > 0 {
+				a.al.Select(row, 0)
+			}
 		}
 		return event
 	})
@@ -93,7 +104,11 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 		a.al.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
 		a.al.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
 	}
-	return "AreaList", a.al, true, true
+	layout := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(searchString, 1, 1, false).
+		AddItem(a.al, 0, 1, true)
+	return "AreaList", layout, true, true
 }
 func (a *App) onSelected(row int, column int) {
 	if row < 1 {

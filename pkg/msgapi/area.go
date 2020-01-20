@@ -1,5 +1,9 @@
 package msgapi
 
+import (
+	"strings"
+)
+
 // EchoAreaMsgType Area msg base type
 type EchoAreaMsgType string
 
@@ -47,6 +51,15 @@ func Lookup(name string) int {
 	for i, a := range Areas {
 		if a.GetName() == name {
 			return i
+		}
+	}
+	return 0
+}
+
+func Search(name string) int {
+	for i, a := range Areas {
+		if strings.Contains(strings.ToLower(a.GetName()), strings.ToLower(name)) {
+			return i + 1
 		}
 	}
 	return 0
