@@ -11,6 +11,7 @@ type SearchString struct {
 	txt string
 }
 
+// NewSearchString create SearchString
 func NewSearchString() *SearchString {
 	return &SearchString{
 		Box: tview.NewBox().SetBackgroundColor(tcell.ColorDefault),
