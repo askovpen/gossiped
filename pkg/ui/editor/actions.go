@@ -456,10 +456,9 @@ func (v *View) HalfPageDown() bool {
 	if v.mainCursor() {
 		if v.Buf.NumLines-(v.Topline+v.height) > v.height/2 {
 			v.ScrollDown(v.height / 2)
-		} else {
-			if v.Buf.NumLines >= v.height {
-				v.Topline = v.Buf.NumLines - v.height
-			}
+		} else if v.Buf.NumLines >= v.height {
+			v.Topline = v.Buf.NumLines - v.height
+
 		}
 	}
 	return false
@@ -475,15 +474,6 @@ func (v *View) ToggleOverwriteMode() bool {
 
 // Escape leaves current mode
 func (v *View) Escape() bool {
-	if v.mainCursor() {
-		//		// check if user is searching, or the last search is still active
-		//		if searching || lastSearch != "" {
-		//			ExitSearch(v)
-		//			return true
-		//		}
-		v.done()
-	} else {
-		v.done()
-	}
+	v.done()
 	return false
 }

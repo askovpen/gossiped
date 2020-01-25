@@ -78,7 +78,7 @@ func (j *JAM) getAttrs(a uint32) (attrs []string) {
 			}
 		}
 		i++
-		a = a >> 1
+		a >>= 1
 	}
 	return
 }
@@ -169,47 +169,47 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 		binary.Read(klb, binary.LittleEndian, &val)
 		switch LoID {
 		case 0:
-			fr := types.AddrFromString(string(val[:]))
+			fr := types.AddrFromString(string(val))
 			if fr != nil {
 				rm.FromAddr = fr
 			}
 		case 1:
 			if j.AreaType != EchoAreaTypeLocal && j.AreaType != EchoAreaTypeEcho {
-				rm.ToAddr = types.AddrFromString(string(val[:]))
+				rm.ToAddr = types.AddrFromString(string(val))
 			}
 		case 2:
-			rm.From = string(val[:])
+			rm.From = string(val)
 		case 3:
 			if !deleted {
-				if crc32r(string(val[:])) != j.indexStructure[position-1].jamsh.ToCRC {
+				if crc32r(string(val)) != j.indexStructure[position-1].jamsh.ToCRC {
 					rm.Corrupted = true
 				}
 			}
-			rm.To = string(val[:])
+			rm.To = string(val)
 		case 4:
-			if crc32r(string(val[:])) != jamh.MSGIDcrc {
+			if crc32r(string(val)) != jamh.MSGIDcrc {
 				rm.Corrupted = true
 			}
-			rm.Body += "\x01MSGID: " + string(val[:]) + "\x0d"
+			rm.Body += "\x01MSGID: " + string(val) + "\x0d"
 		case 5:
-			if crc32r(string(val[:])) != jamh.REPLYcrc {
+			if crc32r(string(val)) != jamh.REPLYcrc {
 				rm.Corrupted = true
 			}
-			rm.Body += "\x01REPLYID: " + string(val[:]) + "\x0d"
+			rm.Body += "\x01REPLYID: " + string(val) + "\x0d"
 		case 6:
-			rm.Subject = string(val[:])
+			rm.Subject = string(val)
 		case 7:
-			rm.Body += "\x01PID: " + string(val[:]) + "\x0d"
+			rm.Body += "\x01PID: " + string(val) + "\x0d"
 		case 8:
-			afterBody += "\x01Via " + string(val[:]) + "\x0d"
+			afterBody += "\x01Via " + string(val) + "\x0d"
 		case 2004:
-			rm.Body += "\x01TZUTC: " + string(val[:]) + "\x0d"
+			rm.Body += "\x01TZUTC: " + string(val) + "\x0d"
 		case 2000:
-			rm.Body += "\x01" + string(val[:]) + "\x0d"
+			rm.Body += "\x01" + string(val) + "\x0d"
 		case 2001:
-			afterBody += "SEEN-BY: " + string(val[:]) + "\x0d"
+			afterBody += "SEEN-BY: " + string(val) + "\x0d"
 		case 2002:
-			afterBody += "\x01PATH: " + string(val[:]) + "\x0d"
+			afterBody += "\x01PATH: " + string(val) + "\x0d"
 		}
 	}
 	fJdt, err := os.Open(j.AreaPath + ".jdt")
@@ -220,7 +220,7 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	fJdt.Seek(int64(jamh.Offset), 0)
 	txt := make([]byte, jamh.TxtLen)
 	fJdt.Read(txt)
-	rm.Body += string(txt[:])
+	rm.Body += string(txt)
 	rm.Body += afterBody
 	err = rm.ParseRaw()
 	if err != nil {
@@ -441,10 +441,10 @@ func (j *JAM) SetLast(l uint32) {
 		return
 	}
 }
-func packJamKludge(b io.Writer, LoID uint16, HiID uint16, data []byte) {
+func packJamKludge(b io.Writer, loID uint16, hiID uint16, data []byte) {
 	datLen := uint32(len(data))
-	binary.Write(b, binary.LittleEndian, LoID)
-	binary.Write(b, binary.LittleEndian, HiID)
+	binary.Write(b, binary.LittleEndian, loID)
+	binary.Write(b, binary.LittleEndian, hiID)
 	binary.Write(b, binary.LittleEndian, datLen)
 	binary.Write(b, binary.LittleEndian, data)
 }
@@ -613,7 +613,7 @@ func (j *JAM) DelMsg(l uint32) error {
 	if jamh.Signature != 0x4d414a {
 		return errors.New("wrong message signature")
 	}
-	jamh.Attribute = jamh.Attribute | 0x80000000
+	jamh.Attribute |= 0x80000000
 	err = utils.WriteStructToBuffer(headerb, &jamh)
 	if err != nil {
 		return err

@@ -60,7 +60,7 @@ func readFile(fn string) {
 		log.Print(err)
 		return
 	}
-	scanner := bufio.NewScanner(strings.NewReader(string(b[:])))
+	scanner := bufio.NewScanner(strings.NewReader(string(b)))
 	for scanner.Scan() {
 		if detectComment(scanner.Text()) {
 			continue

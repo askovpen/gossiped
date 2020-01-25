@@ -87,7 +87,7 @@ func (m *MSG) getAttrs(a uint16) (attrs []string) {
 			}
 		}
 		i++
-		a = a >> 1
+		a >>= 1
 	}
 	return
 }
@@ -126,7 +126,7 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 		From:        strings.Trim(string(msgm.From[:]), "\x00"),
 		To:          strings.Trim(string(msgm.To[:]), "\x00"),
 		Subject:     strings.Trim(string(msgm.Subj[:]), "\x00"),
-		Body:        strings.Trim(msgm.Body[:], "\x00"),
+		Body:        strings.Trim(msgm.Body, "\x00"),
 		DateWritten: parseDate(strings.Trim(string(msgm.Date[:]), "\x00")),
 		DateArrived: getTime(msgm.DateArrived),
 		Attrs:       m.getAttrs(uint16(msgm.Attr))}

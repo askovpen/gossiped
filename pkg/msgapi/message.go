@@ -213,16 +213,16 @@ func (m *Message) GetForward() []string {
 		} else if len(l) > 8 && l[0:9] == "SEEN-BY: " {
 			continue
 		} else if ind := re.FindStringIndex(l); ind != nil {
-			ind2 := strings.Index(l, "<")
-			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
-				if (ind[1]-ind[0])%2 == 0 {
-					nm = append(nm, l)
-				} else {
-					nm = append(nm, l)
-				}
-			} else {
-				nm = append(nm, l)
-			}
+			//			ind2 := strings.Index(l, "<")
+			//			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
+			//				if (ind[1]-ind[0])%2 == 0 {
+			//					nm = append(nm, l)
+			//				} else {
+			//					nm = append(nm, l)
+			//				}
+			//			} else {
+			nm = append(nm, l)
+			//			}
 		} else {
 			l = reO.ReplaceAllString(l, " + Origin: ")
 			l = reT.ReplaceAllString(l, "-+- ")
@@ -248,11 +248,11 @@ func (m *Message) GetQuote() []string {
 		} else if ind := re.FindStringIndex(l); ind != nil {
 			ind2 := strings.Index(l, "<")
 			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
-				if (ind[1]-ind[0])%2 == 0 {
-					nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
-				} else {
-					nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
-				}
+				//				if (ind[1]-ind[0])%2 == 0 {
+				//					nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
+				//				} else {
+				nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
+				//				}
 			} else {
 				nm = append(nm, " "+from+"> "+l)
 			}

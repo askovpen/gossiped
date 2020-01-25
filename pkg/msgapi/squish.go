@@ -105,7 +105,7 @@ func (s *Squish) getAttrs(a uint32) (attrs []string) {
 			}
 		}
 		i++
-		a = a >> 1
+		a >>= 1
 	}
 	return
 }
@@ -157,7 +157,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	f.Read(body)
 	toHash := bufHash32(string(sqdh.To[:]))
 	if sqdh.Attr&uint32(SquishREAD) > 0 {
-		toHash = toHash | 0x80000000
+		toHash |= 0x80000000
 	}
 	rm := &Message{Area: s.AreaName, MsgNum: position}
 	if s.indexStructure[position-1].CRC != toHash {
@@ -171,7 +171,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	}
 	rm.Subject = strings.Trim(string(sqdh.Subject[:]), "\x00")
 	rm.Attrs = s.getAttrs(sqdh.Attr)
-	rm.Body = string(body[:])
+	rm.Body = string(body)
 	rm.DateWritten = getTime(sqdh.DateWritten)
 	rm.DateArrived = getTime(sqdh.DateArrived)
 	if sqdh.ReplyTo > 0 {
@@ -322,7 +322,7 @@ func bufHash32(str string) (h uint32) {
 			h |= g
 		}
 	}
-	h = h & 0x7fffffff
+	h &= 0x7fffffff
 	return
 }
 
