@@ -9,68 +9,37 @@ import (
 
 // Actions
 const (
-	ActionCursorUp               = "CursorUp"
-	ActionCursorDown             = "CursorDown"
-	ActionCursorPageUp           = "CursorPageUp"
-	ActionCursorPageDown         = "CursorPageDown"
-	ActionCursorLeft             = "CursorLeft"
-	ActionCursorRight            = "CursorRight"
-	ActionCursorStart            = "CursorStart"
-	ActionCursorEnd              = "CursorEnd"
-	ActionSelectToStart          = "SelectToStart"
-	ActionSelectToEnd            = "SelectToEnd"
-	ActionSelectUp               = "SelectUp"
-	ActionSelectDown             = "SelectDown"
-	ActionSelectLeft             = "SelectLeft"
-	ActionSelectRight            = "SelectRight"
-	ActionWordRight              = "WordRight"
-	ActionWordLeft               = "WordLeft"
-	ActionSelectWordRight        = "SelectWordRight"
-	ActionSelectWordLeft         = "SelectWordLeft"
-	ActionDeleteWordRight        = "DeleteWordRight"
-	ActionDeleteWordLeft         = "DeleteWordLeft"
-	ActionSelectLine             = "SelectLine"
-	ActionSelectToStartOfLine    = "SelectToStartOfLine"
-	ActionSelectToEndOfLine      = "SelectToEndOfLine"
-	ActionParagraphPrevious      = "ParagraphPrevious"
-	ActionParagraphNext          = "ParagraphNext"
-	ActionInsertNewline          = "InsertNewline"
-	ActionInsertSpace            = "InsertSpace"
-	ActionBackspace              = "Backspace"
-	ActionDelete                 = "Delete"
-	ActionInsertTab              = "InsertTab"
-	ActionCenter                 = "Center"
-	ActionDuplicateLine          = "DuplicateLine"
-	ActionDeleteLine             = "DeleteLine"
-	ActionDeleteToEnd            = "DeleteToEnd"
-	ActionMoveLinesUp            = "MoveLinesUp"
-	ActionMoveLinesDown          = "MoveLinesDown"
-	ActionIndentSelection        = "IndentSelection"
-	ActionOutdentSelection       = "OutdentSelection"
-	ActionOutdentLine            = "OutdentLine"
-	ActionSelectAll              = "SelectAll"
-	ActionStart                  = "Start"
-	ActionEnd                    = "End"
-	ActionPageUp                 = "PageUp"
-	ActionPageDown               = "PageDown"
-	ActionSelectPageUp           = "SelectPageUp"
-	ActionSelectPageDown         = "SelectPageDown"
-	ActionHalfPageUp             = "HalfPageUp"
-	ActionHalfPageDown           = "HalfPageDown"
-	ActionStartOfLine            = "StartOfLine"
-	ActionEndOfLine              = "EndOfLine"
-	ActionToggleRuler            = "ToggleRuler"
-	ActionToggleOverwriteMode    = "ToggleOverwriteMode"
-	ActionEscape                 = "Escape"
-	ActionScrollUp               = "ScrollUp"
-	ActionScrollDown             = "ScrollDown"
-	ActionSpawnMultiCursor       = "SpawnMultiCursor"
-	ActionSpawnMultiCursorSelect = "SpawnMultiCursorSelect"
-	ActionRemoveMultiCursor      = "RemoveMultiCursor"
-	ActionRemoveAllMultiCursors  = "RemoveAllMultiCursors"
-	ActionSkipMultiCursor        = "SkipMultiCursor"
-	ActionInsertEnter            = "InsertEnter"
-	ActionUnbindKey              = "UnbindKey"
+	ActionCursorUp            = "CursorUp"
+	ActionCursorDown          = "CursorDown"
+	ActionCursorPageUp        = "CursorPageUp"
+	ActionCursorPageDown      = "CursorPageDown"
+	ActionCursorLeft          = "CursorLeft"
+	ActionCursorRight         = "CursorRight"
+	ActionCursorStart         = "CursorStart"
+	ActionCursorEnd           = "CursorEnd"
+	ActionInsertNewline       = "InsertNewline"
+	ActionInsertSpace         = "InsertSpace"
+	ActionBackspace           = "Backspace"
+	ActionDelete              = "Delete"
+	ActionInsertTab           = "InsertTab"
+	ActionCenter              = "Center"
+	ActionDeleteLine          = "DeleteLine"
+	ActionDeleteToEnd         = "DeleteToEnd"
+	ActionIndentSelection     = "IndentSelection"
+	ActionOutdentSelection    = "OutdentSelection"
+	ActionOutdentLine         = "OutdentLine"
+	ActionStart               = "Start"
+	ActionEnd                 = "End"
+	ActionPageUp              = "PageUp"
+	ActionPageDown            = "PageDown"
+	ActionHalfPageUp          = "HalfPageUp"
+	ActionHalfPageDown        = "HalfPageDown"
+	ActionStartOfLine         = "StartOfLine"
+	ActionEndOfLine           = "EndOfLine"
+	ActionToggleOverwriteMode = "ToggleOverwriteMode"
+	ActionEscape              = "Escape"
+	ActionInsertEnter         = "InsertEnter"
+	ActionUnbindKey           = "UnbindKey"
 )
 
 // keyDesc holds the data for a keypress (keycode + modifiers)
@@ -129,67 +98,36 @@ func (bindings KeyBindings) BindKeys(keys map[string]string) KeyBindings {
 }
 
 var bindingActions = map[string]func(*View) bool{
-	ActionCursorUp:               (*View).CursorUp,
-	ActionCursorDown:             (*View).CursorDown,
-	ActionCursorPageUp:           (*View).CursorPageUp,
-	ActionCursorPageDown:         (*View).CursorPageDown,
-	ActionCursorLeft:             (*View).CursorLeft,
-	ActionCursorRight:            (*View).CursorRight,
-	ActionCursorStart:            (*View).CursorStart,
-	ActionCursorEnd:              (*View).CursorEnd,
-	ActionSelectToStart:          (*View).SelectToStart,
-	ActionSelectToEnd:            (*View).SelectToEnd,
-	ActionSelectUp:               (*View).SelectUp,
-	ActionSelectDown:             (*View).SelectDown,
-	ActionSelectLeft:             (*View).SelectLeft,
-	ActionSelectRight:            (*View).SelectRight,
-	ActionWordRight:              (*View).WordRight,
-	ActionWordLeft:               (*View).WordLeft,
-	ActionSelectWordRight:        (*View).SelectWordRight,
-	ActionSelectWordLeft:         (*View).SelectWordLeft,
-	ActionDeleteWordRight:        (*View).DeleteWordRight,
-	ActionDeleteWordLeft:         (*View).DeleteWordLeft,
-	ActionSelectLine:             (*View).SelectLine,
-	ActionSelectToStartOfLine:    (*View).SelectToStartOfLine,
-	ActionSelectToEndOfLine:      (*View).SelectToEndOfLine,
-	ActionParagraphPrevious:      (*View).ParagraphPrevious,
-	ActionParagraphNext:          (*View).ParagraphNext,
-	ActionInsertNewline:          (*View).InsertNewline,
-	ActionInsertSpace:            (*View).InsertSpace,
-	ActionBackspace:              (*View).Backspace,
-	ActionDelete:                 (*View).Delete,
-	ActionInsertTab:              (*View).InsertTab,
-	ActionCenter:                 (*View).Center,
-	ActionDuplicateLine:          (*View).DuplicateLine,
-	ActionDeleteLine:             (*View).DeleteLine,
-	ActionDeleteToEnd:            (*View).DeleteToEnd,
-	ActionMoveLinesUp:            (*View).MoveLinesUp,
-	ActionMoveLinesDown:          (*View).MoveLinesDown,
-	ActionIndentSelection:        (*View).IndentSelection,
-	ActionOutdentSelection:       (*View).OutdentSelection,
-	ActionOutdentLine:            (*View).OutdentLine,
-	ActionSelectAll:              (*View).SelectAll,
-	ActionStart:                  (*View).Start,
-	ActionEnd:                    (*View).End,
-	ActionPageUp:                 (*View).PageUp,
-	ActionPageDown:               (*View).PageDown,
-	ActionSelectPageUp:           (*View).SelectPageUp,
-	ActionSelectPageDown:         (*View).SelectPageDown,
-	ActionHalfPageUp:             (*View).HalfPageUp,
-	ActionHalfPageDown:           (*View).HalfPageDown,
-	ActionStartOfLine:            (*View).StartOfLine,
-	ActionEndOfLine:              (*View).EndOfLine,
-	ActionToggleRuler:            (*View).ToggleRuler,
-	ActionToggleOverwriteMode:    (*View).ToggleOverwriteMode,
-	ActionEscape:                 (*View).Escape,
-	ActionScrollUp:               (*View).ScrollUpAction,
-	ActionScrollDown:             (*View).ScrollDownAction,
-	ActionSpawnMultiCursor:       (*View).SpawnMultiCursor,
-	ActionSpawnMultiCursorSelect: (*View).SpawnMultiCursorSelect,
-	ActionRemoveMultiCursor:      (*View).RemoveMultiCursor,
-	ActionRemoveAllMultiCursors:  (*View).RemoveAllMultiCursors,
-	ActionSkipMultiCursor:        (*View).SkipMultiCursor,
-	ActionInsertEnter:            (*View).InsertNewline,
+	ActionCursorUp:            (*View).CursorUp,
+	ActionCursorDown:          (*View).CursorDown,
+	ActionCursorPageUp:        (*View).CursorPageUp,
+	ActionCursorPageDown:      (*View).CursorPageDown,
+	ActionCursorLeft:          (*View).CursorLeft,
+	ActionCursorRight:         (*View).CursorRight,
+	ActionCursorStart:         (*View).CursorStart,
+	ActionCursorEnd:           (*View).CursorEnd,
+	ActionInsertNewline:       (*View).InsertNewline,
+	ActionInsertSpace:         (*View).InsertSpace,
+	ActionBackspace:           (*View).Backspace,
+	ActionDelete:              (*View).Delete,
+	ActionInsertTab:           (*View).InsertTab,
+	ActionCenter:              (*View).Center,
+	ActionDeleteLine:          (*View).DeleteLine,
+	ActionDeleteToEnd:         (*View).DeleteToEnd,
+	ActionIndentSelection:     (*View).IndentSelection,
+	ActionOutdentSelection:    (*View).OutdentSelection,
+	ActionOutdentLine:         (*View).OutdentLine,
+	ActionStart:               (*View).Start,
+	ActionEnd:                 (*View).End,
+	ActionPageUp:              (*View).PageUp,
+	ActionPageDown:            (*View).PageDown,
+	ActionHalfPageUp:          (*View).HalfPageUp,
+	ActionHalfPageDown:        (*View).HalfPageDown,
+	ActionStartOfLine:         (*View).StartOfLine,
+	ActionEndOfLine:           (*View).EndOfLine,
+	ActionToggleOverwriteMode: (*View).ToggleOverwriteMode,
+	ActionEscape:              (*View).Escape,
+	ActionInsertEnter:         (*View).InsertNewline,
 }
 
 var bindingKeys = map[string]tcell.Key{
@@ -329,63 +267,27 @@ var DefaultKeyBindings KeyBindings
 // InitBindings initializes the keybindings for micro
 func init() {
 	DefaultKeyBindings = NewKeyBindings(map[string]string{
-		"Up":             ActionCursorUp,
-		"Down":           ActionCursorDown,
-		"Right":          ActionCursorRight,
-		"Left":           ActionCursorLeft,
-		"ShiftUp":        ActionSelectUp,
-		"ShiftDown":      ActionSelectDown,
-		"ShiftLeft":      ActionSelectLeft,
-		"ShiftRight":     ActionSelectRight,
-		"AltLeft":        ActionWordLeft,
-		"AltRight":       ActionWordRight,
-		"AltUp":          ActionMoveLinesUp,
-		"AltDown":        ActionMoveLinesDown,
-		"AltShiftRight":  ActionSelectWordRight,
-		"AltShiftLeft":   ActionSelectWordLeft,
-		"CtrlLeft":       ActionStartOfLine,
-		"CtrlRight":      ActionEndOfLine,
-		"CtrlShiftLeft":  ActionSelectToStartOfLine,
-		"ShiftHome":      ActionSelectToStartOfLine,
-		"CtrlShiftRight": ActionSelectToEndOfLine,
-		"ShiftEnd":       ActionSelectToEndOfLine,
-		"CtrlUp":         ActionCursorStart,
-		"CtrlDown":       ActionCursorEnd,
-		"CtrlShiftUp":    ActionSelectToStart,
-		"CtrlShiftDown":  ActionSelectToEnd,
-		"Alt-{":          ActionParagraphPrevious,
-		"Alt-}":          ActionParagraphNext,
-		"Enter":          ActionInsertNewline,
-		"CtrlH":          ActionBackspace,
-		"Backspace":      ActionBackspace,
-		"Alt-CtrlH":      ActionDeleteWordLeft,
-		"Alt-Backspace":  ActionDeleteWordLeft,
-		"Tab":            ActionIndentSelection + "," + ActionInsertTab,
-		"Backtab":        ActionOutdentSelection + "," + ActionOutdentLine,
-		"CtrlD":          ActionDuplicateLine,
-		"CtrlA":          ActionSelectAll,
-		"CtrlY":          ActionDeleteLine,
-		"CtrlK":          ActionDeleteToEnd,
-		"Home":           ActionStartOfLine,
-		"End":            ActionEndOfLine,
-		"CtrlHome":       ActionCursorStart,
-		"CtrlEnd":        ActionCursorEnd,
-		"PageUp":         ActionCursorPageUp,
-		"PageDown":       ActionCursorPageDown,
-		"CtrlR":          ActionToggleRuler,
-		"Delete":         ActionDelete,
-		"Insert":         ActionToggleOverwriteMode,
-		"Alt-f":          ActionWordRight,
-		"Alt-b":          ActionWordLeft,
-		"Alt-a":          ActionStartOfLine,
-		"Alt-e":          ActionEndOfLine,
-		"Esc":            ActionEscape,
-		"F2":             ActionEscape,
-		"Alt-n":          ActionSpawnMultiCursor,
-		"Alt-m":          ActionSpawnMultiCursorSelect,
-		"Alt-p":          ActionRemoveMultiCursor,
-		"Alt-c":          ActionRemoveAllMultiCursors,
-		"Alt-x":          ActionSkipMultiCursor,
+		"Up":        ActionCursorUp,
+		"Down":      ActionCursorDown,
+		"Right":     ActionCursorRight,
+		"Left":      ActionCursorLeft,
+		"Enter":     ActionInsertNewline,
+		"CtrlH":     ActionBackspace,
+		"Backspace": ActionBackspace,
+		"Tab":       ActionIndentSelection + "," + ActionInsertTab,
+		"Backtab":   ActionOutdentSelection + "," + ActionOutdentLine,
+		"CtrlY":     ActionDeleteLine,
+		"CtrlK":     ActionDeleteToEnd,
+		"Home":      ActionStartOfLine,
+		"End":       ActionEndOfLine,
+		"CtrlHome":  ActionCursorStart,
+		"CtrlEnd":   ActionCursorEnd,
+		"PageUp":    ActionCursorPageUp,
+		"PageDown":  ActionCursorPageDown,
+		"Delete":    ActionDelete,
+		"Insert":    ActionToggleOverwriteMode,
+		"Esc":       ActionEscape,
+		"F2":        ActionEscape,
 	})
 }
 

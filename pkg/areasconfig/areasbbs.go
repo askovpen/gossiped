@@ -19,7 +19,7 @@ func areasbbsConfigRead(fn string) error {
 	if err != nil {
 		return err
 	}
-	scanner := bufio.NewScanner(strings.NewReader(string(b[:])))
+	scanner := bufio.NewScanner(strings.NewReader(string(b)))
 	for scanner.Scan() {
 		res := re.FindAllString(scanner.Text(), -1)
 		if len(res) < 2 {

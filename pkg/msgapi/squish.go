@@ -105,7 +105,7 @@ func (s *Squish) getAttrs(a uint32) (attrs []string) {
 			}
 		}
 		i++
-		a = a >> 1
+		a >>= 1
 	}
 	return
 }
@@ -125,7 +125,7 @@ func readSQDH(headerb *bytes.Buffer) (sqdH, error) {
 		return sqdh, err
 	}
 	if sqdh.ID != 0xafae4453 {
-		return sqdh, fmt.Errorf("Wrong Squish header %08x", sqdh.ID)
+		return sqdh, fmt.Errorf("wrong Squish header %08x", sqdh.ID)
 	}
 	return sqdh, nil
 }
@@ -157,7 +157,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	f.Read(body)
 	toHash := bufHash32(string(sqdh.To[:]))
 	if sqdh.Attr&uint32(SquishREAD) > 0 {
-		toHash = toHash | 0x80000000
+		toHash |= 0x80000000
 	}
 	rm := &Message{Area: s.AreaName, MsgNum: position}
 	if s.indexStructure[position-1].CRC != toHash {
@@ -171,7 +171,7 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 	}
 	rm.Subject = strings.Trim(string(sqdh.Subject[:]), "\x00")
 	rm.Attrs = s.getAttrs(sqdh.Attr)
-	rm.Body = string(body[:])
+	rm.Body = string(body)
 	rm.DateWritten = getTime(sqdh.DateWritten)
 	rm.DateArrived = getTime(sqdh.DateArrived)
 	if sqdh.ReplyTo > 0 {
@@ -322,7 +322,7 @@ func bufHash32(str string) (h uint32) {
 			h |= g
 		}
 	}
-	h = h & 0x7fffffff
+	h &= 0x7fffffff
 	return
 }
 
@@ -489,7 +489,7 @@ func (s *Squish) GetMessages() *[]MessageListItem {
 			continue
 		}
 		s.messages = append(s.messages, MessageListItem{
-			MsgNum:      uint32(i + 1),
+			MsgNum:      i + 1,
 			From:        m.From,
 			To:          m.To,
 			Subject:     m.Subject,
@@ -502,7 +502,7 @@ func (s *Squish) GetMessages() *[]MessageListItem {
 // DelMsg remove msg
 func (s *Squish) DelMsg(l uint32) error {
 	if len(s.indexStructure) == 0 {
-		return errors.New("Empty Area")
+		return errors.New("empty Area")
 	}
 	if l == 0 {
 		l = 1

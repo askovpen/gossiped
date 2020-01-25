@@ -69,7 +69,7 @@ func Read(fn string) error {
 	if err != nil {
 		return err
 	}
-	for _, l := range strings.Split(string(tpl[:]), "\n") {
+	for _, l := range strings.Split(string(tpl), "\n") {
 		if len(l) > 0 && l[0] == ';' {
 			continue
 		}

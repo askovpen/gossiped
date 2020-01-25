@@ -117,7 +117,7 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				} else {
 					e.sInputs[e.sIndex] = e.sInputs[e.sIndex][:(e.sPosition[e.sIndex] - 1)]
 				}
-				e.sPosition[e.sIndex] = e.sPosition[e.sIndex] - 1
+				e.sPosition[e.sIndex]--
 
 			}
 		case tcell.KeyRune:
