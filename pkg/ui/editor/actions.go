@@ -15,24 +15,6 @@ func (v *View) deselect(index int) bool {
 	return false
 }
 
-// ScrollUpAction scrolls the view up
-func (v *View) ScrollUpAction() bool {
-	if v.mainCursor() {
-		scrollspeed := int(v.Buf.Settings["scrollspeed"].(float64))
-		v.ScrollUp(scrollspeed)
-	}
-	return false
-}
-
-// ScrollDownAction scrolls the view up
-func (v *View) ScrollDownAction() bool {
-	if v.mainCursor() {
-		scrollspeed := int(v.Buf.Settings["scrollspeed"].(float64))
-		v.ScrollDown(scrollspeed)
-	}
-	return false
-}
-
 // Center centers the view on the cursor
 func (v *View) Center() bool {
 	v.Topline = v.Cursor.Y - v.height/2
@@ -119,92 +101,6 @@ func (v *View) CursorRight() bool {
 	return true
 }
 
-// WordRight moves the cursor one word to the right
-func (v *View) WordRight() bool {
-
-	v.Cursor.WordRight()
-
-	return true
-}
-
-// WordLeft moves the cursor one word to the left
-func (v *View) WordLeft() bool {
-
-	v.Cursor.WordLeft()
-
-	return true
-}
-
-// SelectUp selects up one line
-func (v *View) SelectUp() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.Up()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// SelectDown selects down one line
-func (v *View) SelectDown() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.Down()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// SelectLeft selects the character to the left of the cursor
-func (v *View) SelectLeft() bool {
-	loc := v.Cursor.Loc
-	count := v.Buf.End()
-	if loc.GreaterThan(count) {
-		loc = count
-	}
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = loc
-	}
-	v.Cursor.Left()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// SelectRight selects the character to the right of the cursor
-func (v *View) SelectRight() bool {
-	loc := v.Cursor.Loc
-	count := v.Buf.End()
-	if loc.GreaterThan(count) {
-		loc = count
-	}
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = loc
-	}
-	v.Cursor.Right()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// SelectWordRight selects the word to the right of the cursor
-func (v *View) SelectWordRight() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.WordRight()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// SelectWordLeft selects the word to the left of the cursor
-func (v *View) SelectWordLeft() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.WordLeft()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
 // StartOfLine moves the cursor to the start of the line
 func (v *View) StartOfLine() bool {
 	v.deselect(0)
@@ -221,66 +117,6 @@ func (v *View) StartOfLine() bool {
 func (v *View) EndOfLine() bool {
 	v.deselect(0)
 	v.Cursor.End()
-	return true
-}
-
-// SelectLine selects the entire current line
-func (v *View) SelectLine() bool {
-	v.Cursor.SelectLine()
-	return true
-}
-
-// SelectToStartOfLine selects to the start of the current line
-func (v *View) SelectToStartOfLine() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.Start()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// SelectToEndOfLine selects to the end of the current line
-func (v *View) SelectToEndOfLine() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.End()
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// ParagraphPrevious moves the cursor to the previous empty line, or beginning of the buffer if there's none
-func (v *View) ParagraphPrevious() bool {
-	var line int
-	for line = v.Cursor.Y; line > 0; line-- {
-		if len(v.Buf.lines[line].data) == 0 && line != v.Cursor.Y {
-			v.Cursor.X = 0
-			v.Cursor.Y = line
-			break
-		}
-	}
-	// If no empty line found. move cursor to end of buffer
-	if line == 0 {
-		v.Cursor.Loc = v.Buf.Start()
-	}
-	return true
-}
-
-// ParagraphNext moves the cursor to the next empty line, or end of the buffer if there's none
-func (v *View) ParagraphNext() bool {
-	var line int
-	for line = v.Cursor.Y; line < len(v.Buf.lines); line++ {
-		if len(v.Buf.lines[line].data) == 0 && line != v.Cursor.Y {
-			v.Cursor.X = 0
-			v.Cursor.Y = line
-			break
-		}
-	}
-	// If no empty line found. move cursor to end of buffer
-	if line == len(v.Buf.lines) {
-		v.Cursor.Loc = v.Buf.End()
-	}
 	return true
 }
 
@@ -329,26 +165,6 @@ func (v *View) CursorEnd() bool {
 	v.Cursor.Loc = v.Buf.End()
 	v.Cursor.StoreVisualX()
 
-	return true
-}
-
-// SelectToStart selects the text from the cursor to the start of the buffer
-func (v *View) SelectToStart() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.CursorStart()
-	v.Cursor.SelectTo(v.Buf.Start())
-	return true
-}
-
-// SelectToEnd selects the text from the cursor to the end of the buffer
-func (v *View) SelectToEnd() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.CursorEnd()
-	v.Cursor.SelectTo(v.Buf.End())
 	return true
 }
 
@@ -424,26 +240,6 @@ func (v *View) Backspace() bool {
 	}
 	v.Cursor.LastVisualX = v.Cursor.GetVisualX()
 
-	return true
-}
-
-// DeleteWordRight deletes the word to the right of the cursor
-func (v *View) DeleteWordRight() bool {
-	v.SelectWordRight()
-	if v.Cursor.HasSelection() {
-		v.Cursor.DeleteSelection()
-		v.Cursor.ResetSelection()
-	}
-	return true
-}
-
-// DeleteWordLeft deletes the word to the left of the cursor
-func (v *View) DeleteWordLeft() bool {
-	v.SelectWordLeft()
-	if v.Cursor.HasSelection() {
-		v.Cursor.DeleteSelection()
-		v.Cursor.ResetSelection()
-	}
 	return true
 }
 
@@ -552,61 +348,6 @@ func (v *View) InsertTab() bool {
 	return true
 }
 
-//// Find opens a prompt and searches forward for the input
-//func (v *View) Find() bool {
-//	if v.mainCursor() {
-//		searchStr := ""
-//		if v.Cursor.HasSelection() {
-//			searchStart = v.Cursor.CurSelection[1]
-//			searchStart = v.Cursor.CurSelection[1]
-//			searchStr = v.Cursor.GetSelection()
-//		} else {
-//			searchStart = v.Cursor.Loc
-//		}
-//		BeginSearch(searchStr)
-//
-//	}
-//	return true
-//}
-//
-//// FindNext searches forwards for the last used search term
-//func (v *View) FindNext() bool {
-//	if v.Cursor.HasSelection() {
-//		searchStart = v.Cursor.CurSelection[1]
-//		// lastSearch = v.Cursor.GetSelection()
-//	} else {
-//		searchStart = v.Cursor.Loc
-//	}
-//	if lastSearch == "" {
-//		return true
-//	}
-//	Search(lastSearch, v, true)
-//	return true
-//}
-//
-//// FindPrevious searches backwards for the last used search term
-//func (v *View) FindPrevious() bool {
-//	if v.Cursor.HasSelection() {
-//		searchStart = v.Cursor.CurSelection[0]
-//	} else {
-//		searchStart = v.Cursor.Loc
-//	}
-//	Search(lastSearch, v, false)
-//	return true
-//}
-
-// DuplicateLine duplicates the current line or selection
-func (v *View) DuplicateLine() bool {
-	if v.Cursor.HasSelection() {
-		v.Buf.Insert(v.Cursor.CurSelection[1], v.Cursor.GetSelection())
-	} else {
-		v.Cursor.End()
-		v.Buf.Insert(v.Cursor.Loc, "\n"+v.Buf.Line(v.Cursor.Y))
-		// v.Cursor.Right()
-	}
-	return true
-}
-
 // DeleteLine deletes the current line
 func (v *View) DeleteLine() bool {
 	v.Cursor.SelectLine()
@@ -622,77 +363,6 @@ func (v *View) DeleteLine() bool {
 func (v *View) DeleteToEnd() bool {
 	x, y := runeToByteIndex(v.Cursor.Loc.X, v.Buf.LineBytes(v.Cursor.Loc.Y)), v.Cursor.Loc.Y
 	v.Buf.DeleteToEnd(Loc{x, y})
-	return true
-}
-
-// MoveLinesUp moves up the current line or selected lines if any
-func (v *View) MoveLinesUp() bool {
-	if v.Cursor.HasSelection() {
-		if v.Cursor.CurSelection[0].Y == 0 {
-			return true
-		}
-		start := v.Cursor.CurSelection[0].Y
-		end := v.Cursor.CurSelection[1].Y
-		if start > end {
-			end, start = start, end
-		}
-
-		v.Buf.MoveLinesUp(
-			start,
-			end,
-		)
-		v.Cursor.CurSelection[1].Y--
-	} else {
-		if v.Cursor.Loc.Y == 0 {
-			return true
-		}
-		v.Buf.MoveLinesUp(
-			v.Cursor.Loc.Y,
-			v.Cursor.Loc.Y+1,
-		)
-	}
-	v.Buf.IsModified = true
-
-	return true
-}
-
-// MoveLinesDown moves down the current line or selected lines if any
-func (v *View) MoveLinesDown() bool {
-	if v.Cursor.HasSelection() {
-		if v.Cursor.CurSelection[1].Y >= len(v.Buf.lines) {
-			return true
-		}
-		start := v.Cursor.CurSelection[0].Y
-		end := v.Cursor.CurSelection[1].Y
-		if start > end {
-			end, start = start, end
-		}
-
-		v.Buf.MoveLinesDown(
-			start,
-			end,
-		)
-	} else {
-		if v.Cursor.Loc.Y >= len(v.Buf.lines)-1 {
-			return true
-		}
-		v.Buf.MoveLinesDown(
-			v.Cursor.Loc.Y,
-			v.Cursor.Loc.Y+1,
-		)
-	}
-	v.Buf.IsModified = true
-
-	return true
-}
-
-// SelectAll selects the entire buffer
-func (v *View) SelectAll() bool {
-	v.Cursor.SetSelectionStart(v.Buf.Start())
-	v.Cursor.SetSelectionEnd(v.Buf.End())
-	// Put the cursor at the beginning
-	v.Cursor.X = 0
-	v.Cursor.Y = 0
 	return true
 }
 
@@ -739,26 +409,6 @@ func (v *View) PageDown() bool {
 		}
 	}
 	return false
-}
-
-// SelectPageUp selects up one page
-func (v *View) SelectPageUp() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.UpN(v.height)
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
-}
-
-// SelectPageDown selects down one page
-func (v *View) SelectPageDown() bool {
-	if !v.Cursor.HasSelection() {
-		v.Cursor.OrigSelection[0] = v.Cursor.Loc
-	}
-	v.Cursor.DownN(v.height)
-	v.Cursor.SelectTo(v.Cursor.Loc)
-	return true
 }
 
 // CursorPageUp places the cursor a page up
@@ -815,61 +465,6 @@ func (v *View) HalfPageDown() bool {
 	return false
 }
 
-// ToggleRuler turns line numbers off and on
-func (v *View) ToggleRuler() bool {
-	if v.mainCursor() {
-		if v.Buf.Settings["ruler"] == false {
-			v.Buf.Settings["ruler"] = true
-		} else {
-			v.Buf.Settings["ruler"] = false
-		}
-	}
-	return false
-}
-
-//// JumpLine jumps to a line and moves the view accordingly.
-//func (v *View) JumpLine() bool {
-//
-//	// Prompt for line number
-//	message := fmt.Sprintf("Jump to line:col (1 - %v) # ", v.Buf.NumLines)
-//	input, canceled := messenger.Prompt(message, "", "LineNumber", NoCompletion)
-//	if canceled {
-//		return false
-//	}
-//	var lineInt int
-//	var colInt int
-//	var err error
-//	if strings.Contains(input, ":") {
-//		split := strings.Split(input, ":")
-//		lineInt, err = strconv.Atoi(split[0])
-//		if err != nil {
-//			messenger.Message("Invalid line number")
-//			return false
-//		}
-//		colInt, err = strconv.Atoi(split[1])
-//		if err != nil {
-//			messenger.Message("Invalid column number")
-//			return false
-//		}
-//	} else {
-//		lineInt, err = strconv.Atoi(input)
-//		if err != nil {
-//			messenger.Message("Invalid line number")
-//			return false
-//		}
-//	}
-//	lineInt--
-//	// Move cursor and view if possible.
-//	if lineInt < v.Buf.NumLines && lineInt >= 0 {
-//		v.Cursor.X = colInt
-//		v.Cursor.Y = lineInt
-//
-//		return true
-//	}
-//	messenger.Error("Only ", v.Buf.NumLines, " lines to jump")
-//	return false
-//}
-
 // ToggleOverwriteMode lets the user toggle the text overwrite mode
 func (v *View) ToggleOverwriteMode() bool {
 	if v.mainCursor() {
@@ -889,120 +484,6 @@ func (v *View) Escape() bool {
 		v.done()
 	} else {
 		v.done()
-	}
-	return false
-}
-
-// SpawnMultiCursor creates a new multiple cursor at the next occurrence of the current selection or current word
-func (v *View) SpawnMultiCursor() bool {
-	spawner := v.Buf.cursors[len(v.Buf.cursors)-1]
-	// You can only spawn a cursor from the main cursor
-	if v.Cursor == spawner {
-		if !spawner.HasSelection() {
-			spawner.SelectWord()
-		} else {
-			c := &Cursor{
-				buf: v.Buf,
-			}
-
-			//sel := spawner.GetSelection()
-
-			//searchStart = spawner.CurSelection[1]
-			v.Cursor = c
-			//Search(regexp.QuoteMeta(sel), v, true)
-
-			for _, cur := range v.Buf.cursors {
-				if c.Loc == cur.Loc {
-					return false
-				}
-			}
-			v.Buf.cursors = append(v.Buf.cursors, c)
-			v.Buf.UpdateCursors()
-			v.Relocate()
-			v.Cursor = spawner
-		}
-	}
-	return false
-}
-
-// SpawnMultiCursorSelect adds a cursor at the beginning of each line of a selection
-func (v *View) SpawnMultiCursorSelect() bool {
-	if v.Cursor == &v.Buf.Cursor {
-		// Avoid cases where multiple cursors already exist, that would create problems
-		if len(v.Buf.cursors) > 1 {
-			return false
-		}
-
-		var startLine int
-		var endLine int
-
-		a, b := v.Cursor.CurSelection[0].Y, v.Cursor.CurSelection[1].Y
-		if a > b {
-			startLine, endLine = b, a
-		} else {
-			startLine, endLine = a, b
-		}
-
-		if v.Cursor.HasSelection() {
-			v.Cursor.ResetSelection()
-			v.Cursor.GotoLoc(Loc{0, startLine})
-
-			for i := startLine; i <= endLine; i++ {
-				c := &Cursor{
-					buf: v.Buf,
-				}
-				c.GotoLoc(Loc{0, i})
-				v.Buf.cursors = append(v.Buf.cursors, c)
-			}
-			v.Buf.MergeCursors()
-			v.Buf.UpdateCursors()
-		} else {
-			return false
-		}
-	}
-	return false
-}
-
-// SkipMultiCursor moves the current multiple cursor to the next available position
-func (v *View) SkipMultiCursor() bool {
-	cursor := v.Buf.cursors[len(v.Buf.cursors)-1]
-	if v.mainCursor() {
-		//sel := cursor.GetSelection()
-
-		//searchStart = cursor.CurSelection[1]
-		v.Cursor = cursor
-		//Search(regexp.QuoteMeta(sel), v, true)
-		v.Relocate()
-		v.Cursor = cursor
-
-	}
-	return false
-}
-
-// RemoveMultiCursor removes the latest multiple cursor
-func (v *View) RemoveMultiCursor() bool {
-	end := len(v.Buf.cursors)
-	if end > 1 {
-		if v.mainCursor() {
-			v.Buf.cursors[end-1] = nil
-			v.Buf.cursors = v.Buf.cursors[:end-1]
-			v.Buf.UpdateCursors()
-			v.Relocate()
-
-			return true
-		}
-	} else {
-		v.RemoveAllMultiCursors()
-	}
-	return false
-}
-
-// RemoveAllMultiCursors removes all cursors except the base cursor
-func (v *View) RemoveAllMultiCursors() bool {
-	if v.mainCursor() {
-		v.Buf.clearCursors()
-		v.Relocate()
-		return true
 	}
 	return false
 }

@@ -342,12 +342,3 @@ func (b *Buffer) ClearMatches() {
 		b.SetState(i, nil)
 	}
 }
-
-func (b *Buffer) clearCursors() {
-	for i := 1; i < len(b.cursors); i++ {
-		b.cursors[i] = nil
-	}
-	b.cursors = b.cursors[:1]
-	b.UpdateCursors()
-	b.Cursor.ResetSelection()
-}
