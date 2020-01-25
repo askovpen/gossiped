@@ -15,18 +15,18 @@ import (
 // ViewHeader widget
 type ViewHeader struct {
 	*tview.Box
-	sInputs   [8][]rune
+	sInputs   [10][]rune
 	sPosition int
-	sCoords   [8]coords
+	sCoords   [10]coords
 	done      func(string)
 	msg       *msgapi.Message
 }
 
 // NewViewHeader create new ViewHeader
 func NewViewHeader(msg *msgapi.Message) *ViewHeader {
-	var si [8][]rune
+	var si [10][]rune
 	if msg == nil {
-		si = [8][]rune{[]rune("0"), []rune("0"), []rune(""), []rune(""), []rune(""), []rune(""), []rune(""), []rune("")}
+		si = [10][]rune{[]rune("0"), []rune("0"), []rune(""), []rune(""), []rune(""), []rune(""), []rune(""), []rune(""), []rune(""), []rune("")}
 	} else {
 		repl := ""
 		if msg.ReplyTo > 0 {
@@ -38,27 +38,31 @@ func NewViewHeader(msg *msgapi.Message) *ViewHeader {
 		if len(msg.Attrs) > 0 {
 			repl += "[" + strings.Join(msg.Attrs, " ") + "]"
 		}
-		si = [8][]rune{
+		si = [10][]rune{
 			[]rune(fmt.Sprintf("%d", msg.MsgNum)),
 			[]rune(fmt.Sprintf("%d", msgapi.Areas[msgapi.Lookup(msg.Area)].GetCount())),
 			[]rune(repl),
 			[]rune(msg.From),
 			[]rune(msg.FromAddr.String()),
+			[]rune(msg.DateWritten.Format("02 Jan 06 15:04:05")),
 			[]rune(msg.To),
 			[]rune(msg.ToAddr.String()),
+			[]rune(msg.DateArrived.Format("02 Jan 06 15:04:05")),
 			[]rune(msg.Subject),
 		}
 	}
 	eh := &ViewHeader{
 		Box: tview.NewBox().SetBackgroundColor(tcell.ColorDefault),
-		sCoords: [8]coords{
+		sCoords: [10]coords{
 			{f: 8, t: 13, y: 0},
 			{f: 17, t: 22, y: 0},
 			{f: 23, t: 67, y: 0},
 			{f: 8, t: 42, y: 1},
 			{f: 43, t: 58, y: 1},
+			{f: 60, t: 78, y: 1},
 			{f: 8, t: 42, y: 2},
 			{f: 43, t: 58, y: 2},
+			{f: 60, t: 78, y: 2},
 			{f: 8, t: 67, y: 3},
 		},
 		sInputs:   si,
@@ -82,7 +86,7 @@ func (e *ViewHeader) Draw(screen tcell.Screen) {
 			screen.SetContent(x+i, y+e.sCoords[0].y, ' ', nil, tcell.StyleDefault.Background(tcell.ColorNavy))
 		}
 	}
-	for i := 0; i < 8; i++ {
+	for i := 0; i < len(e.sCoords); i++ {
 		str := string(e.sInputs[i])
 		if utils.NamesEqual(config.Config.Username, str) {
 			str = "[::b]" + str
