@@ -39,7 +39,7 @@ func DecodeCharmap(s string, c string) string {
 	case "LATIN-9":
 		tr = transform.NewReader(sr, charmap.ISO8859_9.NewDecoder())
 	case "UTF-8":
-		return string(s)
+		return s
 	default:
 		tr = transform.NewReader(sr, charmap.ISO8859_1.NewDecoder())
 	}

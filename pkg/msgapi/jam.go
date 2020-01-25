@@ -579,7 +579,7 @@ func (j *JAM) GetMessages() *[]MessageListItem {
 			continue
 		}
 		j.messages = append(j.messages, MessageListItem{
-			MsgNum:      uint32(i + 1),
+			MsgNum:      i + 1,
 			From:        m.From,
 			To:          m.To,
 			Subject:     m.Subject,

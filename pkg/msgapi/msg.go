@@ -126,7 +126,7 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 		From:        strings.Trim(string(msgm.From[:]), "\x00"),
 		To:          strings.Trim(string(msgm.To[:]), "\x00"),
 		Subject:     strings.Trim(string(msgm.Subj[:]), "\x00"),
-		Body:        strings.Trim(string(msgm.Body[:]), "\x00"),
+		Body:        strings.Trim(msgm.Body[:], "\x00"),
 		DateWritten: parseDate(strings.Trim(string(msgm.Date[:]), "\x00")),
 		DateArrived: getTime(msgm.DateArrived),
 		Attrs:       m.getAttrs(uint16(msgm.Attr))}
@@ -292,7 +292,7 @@ func (m *MSG) GetMessages() *[]MessageListItem {
 			continue
 		}
 		m.messages = append(m.messages, MessageListItem{
-			MsgNum:      uint32(i + 1),
+			MsgNum:      i + 1,
 			From:        mm.From,
 			To:          mm.To,
 			Subject:     mm.Subject,

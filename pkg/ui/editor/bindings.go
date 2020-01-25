@@ -9,37 +9,37 @@ import (
 
 // Actions
 const (
-	ActionCursorUp               = "CursorUp"
-	ActionCursorDown             = "CursorDown"
-	ActionCursorPageUp           = "CursorPageUp"
-	ActionCursorPageDown         = "CursorPageDown"
-	ActionCursorLeft             = "CursorLeft"
-	ActionCursorRight            = "CursorRight"
-	ActionCursorStart            = "CursorStart"
-	ActionCursorEnd              = "CursorEnd"
-	ActionInsertNewline          = "InsertNewline"
-	ActionInsertSpace            = "InsertSpace"
-	ActionBackspace              = "Backspace"
-	ActionDelete                 = "Delete"
-	ActionInsertTab              = "InsertTab"
-	ActionCenter                 = "Center"
-	ActionDeleteLine             = "DeleteLine"
-	ActionDeleteToEnd            = "DeleteToEnd"
-	ActionIndentSelection        = "IndentSelection"
-	ActionOutdentSelection       = "OutdentSelection"
-	ActionOutdentLine            = "OutdentLine"
-	ActionStart                  = "Start"
-	ActionEnd                    = "End"
-	ActionPageUp                 = "PageUp"
-	ActionPageDown               = "PageDown"
-	ActionHalfPageUp             = "HalfPageUp"
-	ActionHalfPageDown           = "HalfPageDown"
-	ActionStartOfLine            = "StartOfLine"
-	ActionEndOfLine              = "EndOfLine"
-	ActionToggleOverwriteMode    = "ToggleOverwriteMode"
-	ActionEscape                 = "Escape"
-	ActionInsertEnter            = "InsertEnter"
-	ActionUnbindKey              = "UnbindKey"
+	ActionCursorUp            = "CursorUp"
+	ActionCursorDown          = "CursorDown"
+	ActionCursorPageUp        = "CursorPageUp"
+	ActionCursorPageDown      = "CursorPageDown"
+	ActionCursorLeft          = "CursorLeft"
+	ActionCursorRight         = "CursorRight"
+	ActionCursorStart         = "CursorStart"
+	ActionCursorEnd           = "CursorEnd"
+	ActionInsertNewline       = "InsertNewline"
+	ActionInsertSpace         = "InsertSpace"
+	ActionBackspace           = "Backspace"
+	ActionDelete              = "Delete"
+	ActionInsertTab           = "InsertTab"
+	ActionCenter              = "Center"
+	ActionDeleteLine          = "DeleteLine"
+	ActionDeleteToEnd         = "DeleteToEnd"
+	ActionIndentSelection     = "IndentSelection"
+	ActionOutdentSelection    = "OutdentSelection"
+	ActionOutdentLine         = "OutdentLine"
+	ActionStart               = "Start"
+	ActionEnd                 = "End"
+	ActionPageUp              = "PageUp"
+	ActionPageDown            = "PageDown"
+	ActionHalfPageUp          = "HalfPageUp"
+	ActionHalfPageDown        = "HalfPageDown"
+	ActionStartOfLine         = "StartOfLine"
+	ActionEndOfLine           = "EndOfLine"
+	ActionToggleOverwriteMode = "ToggleOverwriteMode"
+	ActionEscape              = "Escape"
+	ActionInsertEnter         = "InsertEnter"
+	ActionUnbindKey           = "UnbindKey"
 )
 
 // keyDesc holds the data for a keypress (keycode + modifiers)
@@ -98,36 +98,36 @@ func (bindings KeyBindings) BindKeys(keys map[string]string) KeyBindings {
 }
 
 var bindingActions = map[string]func(*View) bool{
-	ActionCursorUp:               (*View).CursorUp,
-	ActionCursorDown:             (*View).CursorDown,
-	ActionCursorPageUp:           (*View).CursorPageUp,
-	ActionCursorPageDown:         (*View).CursorPageDown,
-	ActionCursorLeft:             (*View).CursorLeft,
-	ActionCursorRight:            (*View).CursorRight,
-	ActionCursorStart:            (*View).CursorStart,
-	ActionCursorEnd:              (*View).CursorEnd,
-	ActionInsertNewline:          (*View).InsertNewline,
-	ActionInsertSpace:            (*View).InsertSpace,
-	ActionBackspace:              (*View).Backspace,
-	ActionDelete:                 (*View).Delete,
-	ActionInsertTab:              (*View).InsertTab,
-	ActionCenter:                 (*View).Center,
-	ActionDeleteLine:             (*View).DeleteLine,
-	ActionDeleteToEnd:            (*View).DeleteToEnd,
-	ActionIndentSelection:        (*View).IndentSelection,
-	ActionOutdentSelection:       (*View).OutdentSelection,
-	ActionOutdentLine:            (*View).OutdentLine,
-	ActionStart:                  (*View).Start,
-	ActionEnd:                    (*View).End,
-	ActionPageUp:                 (*View).PageUp,
-	ActionPageDown:               (*View).PageDown,
-	ActionHalfPageUp:             (*View).HalfPageUp,
-	ActionHalfPageDown:           (*View).HalfPageDown,
-	ActionStartOfLine:            (*View).StartOfLine,
-	ActionEndOfLine:              (*View).EndOfLine,
-	ActionToggleOverwriteMode:    (*View).ToggleOverwriteMode,
-	ActionEscape:                 (*View).Escape,
-	ActionInsertEnter:            (*View).InsertNewline,
+	ActionCursorUp:            (*View).CursorUp,
+	ActionCursorDown:          (*View).CursorDown,
+	ActionCursorPageUp:        (*View).CursorPageUp,
+	ActionCursorPageDown:      (*View).CursorPageDown,
+	ActionCursorLeft:          (*View).CursorLeft,
+	ActionCursorRight:         (*View).CursorRight,
+	ActionCursorStart:         (*View).CursorStart,
+	ActionCursorEnd:           (*View).CursorEnd,
+	ActionInsertNewline:       (*View).InsertNewline,
+	ActionInsertSpace:         (*View).InsertSpace,
+	ActionBackspace:           (*View).Backspace,
+	ActionDelete:              (*View).Delete,
+	ActionInsertTab:           (*View).InsertTab,
+	ActionCenter:              (*View).Center,
+	ActionDeleteLine:          (*View).DeleteLine,
+	ActionDeleteToEnd:         (*View).DeleteToEnd,
+	ActionIndentSelection:     (*View).IndentSelection,
+	ActionOutdentSelection:    (*View).OutdentSelection,
+	ActionOutdentLine:         (*View).OutdentLine,
+	ActionStart:               (*View).Start,
+	ActionEnd:                 (*View).End,
+	ActionPageUp:              (*View).PageUp,
+	ActionPageDown:            (*View).PageDown,
+	ActionHalfPageUp:          (*View).HalfPageUp,
+	ActionHalfPageDown:        (*View).HalfPageDown,
+	ActionStartOfLine:         (*View).StartOfLine,
+	ActionEndOfLine:           (*View).EndOfLine,
+	ActionToggleOverwriteMode: (*View).ToggleOverwriteMode,
+	ActionEscape:              (*View).Escape,
+	ActionInsertEnter:         (*View).InsertNewline,
 }
 
 var bindingKeys = map[string]tcell.Key{
@@ -267,27 +267,27 @@ var DefaultKeyBindings KeyBindings
 // InitBindings initializes the keybindings for micro
 func init() {
 	DefaultKeyBindings = NewKeyBindings(map[string]string{
-		"Up":             ActionCursorUp,
-		"Down":           ActionCursorDown,
-		"Right":          ActionCursorRight,
-		"Left":           ActionCursorLeft,
-		"Enter":          ActionInsertNewline,
-		"CtrlH":          ActionBackspace,
-		"Backspace":      ActionBackspace,
-		"Tab":            ActionIndentSelection + "," + ActionInsertTab,
-		"Backtab":        ActionOutdentSelection + "," + ActionOutdentLine,
-		"CtrlY":          ActionDeleteLine,
-		"CtrlK":          ActionDeleteToEnd,
-		"Home":           ActionStartOfLine,
-		"End":            ActionEndOfLine,
-		"CtrlHome":       ActionCursorStart,
-		"CtrlEnd":        ActionCursorEnd,
-		"PageUp":         ActionCursorPageUp,
-		"PageDown":       ActionCursorPageDown,
-		"Delete":         ActionDelete,
-		"Insert":         ActionToggleOverwriteMode,
-		"Esc":            ActionEscape,
-		"F2":             ActionEscape,
+		"Up":        ActionCursorUp,
+		"Down":      ActionCursorDown,
+		"Right":     ActionCursorRight,
+		"Left":      ActionCursorLeft,
+		"Enter":     ActionInsertNewline,
+		"CtrlH":     ActionBackspace,
+		"Backspace": ActionBackspace,
+		"Tab":       ActionIndentSelection + "," + ActionInsertTab,
+		"Backtab":   ActionOutdentSelection + "," + ActionOutdentLine,
+		"CtrlY":     ActionDeleteLine,
+		"CtrlK":     ActionDeleteToEnd,
+		"Home":      ActionStartOfLine,
+		"End":       ActionEndOfLine,
+		"CtrlHome":  ActionCursorStart,
+		"CtrlEnd":   ActionCursorEnd,
+		"PageUp":    ActionCursorPageUp,
+		"PageDown":  ActionCursorPageDown,
+		"Delete":    ActionDelete,
+		"Insert":    ActionToggleOverwriteMode,
+		"Esc":       ActionEscape,
+		"F2":        ActionEscape,
 	})
 }
 
