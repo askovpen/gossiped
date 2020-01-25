@@ -125,7 +125,7 @@ func readSQDH(headerb *bytes.Buffer) (sqdH, error) {
 		return sqdh, err
 	}
 	if sqdh.ID != 0xafae4453 {
-		return sqdh, fmt.Errorf("Wrong Squish header %08x", sqdh.ID)
+		return sqdh, fmt.Errorf("wrong Squish header %08x", sqdh.ID)
 	}
 	return sqdh, nil
 }
@@ -502,7 +502,7 @@ func (s *Squish) GetMessages() *[]MessageListItem {
 // DelMsg remove msg
 func (s *Squish) DelMsg(l uint32) error {
 	if len(s.indexStructure) == 0 {
-		return errors.New("Empty Area")
+		return errors.New("empty Area")
 	}
 	if l == 0 {
 		l = 1
