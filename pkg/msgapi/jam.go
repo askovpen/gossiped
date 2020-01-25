@@ -9,6 +9,7 @@ import (
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/utils"
 	//"hash/crc32"
+	"io"
 	"io/ioutil"
 	//"log"
 	"os"
@@ -440,7 +441,7 @@ func (j *JAM) SetLast(l uint32) {
 		return
 	}
 }
-func packJamKludge(b *bytes.Buffer, LoID uint16, HiID uint16, data []byte) {
+func packJamKludge(b io.Writer, LoID uint16, HiID uint16, data []byte) {
 	datLen := uint32(len(data))
 	binary.Write(b, binary.LittleEndian, LoID)
 	binary.Write(b, binary.LittleEndian, HiID)
