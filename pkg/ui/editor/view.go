@@ -153,7 +153,6 @@ func (v *View) OpenBuffer(buf *Buffer) {
 	color-link tagline "bold white"
 	color-link kludge "bold black"
 	`))
-
 }
 
 // Bottomline returns the line number of the lowest line in the view
@@ -262,7 +261,6 @@ func (v *View) HandleEvent(event tcell.Event) {
 		// Check first if input is a key binding, if it is we 'eat' the input and don't insert a rune
 		isBinding := false
 		for key, actions := range v.bindings {
-
 			if e.Key() == key.keyCode {
 				if e.Key() == tcell.KeyRune {
 					if e.Rune() != key.r {
@@ -446,7 +444,6 @@ func (v *View) Draw(screen tcell.Screen) {
 	if v.Buf.Settings["scrollbar"].(bool) {
 		v.scrollbar.Display(screen)
 	}
-
 }
 
 // SetDoneFunc callback

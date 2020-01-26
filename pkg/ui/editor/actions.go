@@ -382,7 +382,6 @@ func (v *View) End() bool {
 		} else {
 			v.Topline = v.Buf.NumLines - v.height
 		}
-
 	}
 	return false
 }
@@ -458,7 +457,6 @@ func (v *View) HalfPageDown() bool {
 			v.ScrollDown(v.height / 2)
 		} else if v.Buf.NumLines >= v.height {
 			v.Topline = v.Buf.NumLines - v.height
-
 		}
 	}
 	return false

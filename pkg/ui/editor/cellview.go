@@ -197,7 +197,6 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 
 				viewCol = 0
 			}
-
 		}
 		if group, ok := buf.Match(lineN)[len(line)]; ok {
 			curStyle = colorscheme.GetColor(group.String())

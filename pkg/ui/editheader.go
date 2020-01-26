@@ -69,7 +69,6 @@ func (e *EditHeader) Draw(screen tcell.Screen) {
 	if e.HasFocus() {
 		screen.ShowCursor(x+e.sCoords[e.sIndex].f+len(e.sInputs[e.sIndex][:e.sPosition[e.sIndex]]), y+e.sCoords[e.sIndex].y)
 	}
-
 }
 
 // InputHandler event handler
@@ -118,7 +117,6 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 					e.sInputs[e.sIndex] = e.sInputs[e.sIndex][:(e.sPosition[e.sIndex] - 1)]
 				}
 				e.sPosition[e.sIndex]--
-
 			}
 		case tcell.KeyRune:
 			add(event.Rune())

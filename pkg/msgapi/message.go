@@ -198,7 +198,6 @@ func (m *Message) ToEditNewView() string {
 	nm = append(nm, " * Origin: "+config.Config.Origin+" ("+m.FromAddr.String()+")")
 	//log.Printf("pp: %d", p)
 	return strings.Join(nm, "\n")
-
 }
 
 // GetForward get forward

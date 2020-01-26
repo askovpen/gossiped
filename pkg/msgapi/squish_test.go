@@ -27,8 +27,8 @@ func TestSquishBufHash32(t *testing.T) {
 			g.Assert(bufHash32(string([]byte{'\x9E', '\xE0', '\xA8', '\xA9', '\x20', '\x83', '\xE0', '\xA8', '\xA3', '\xAE', '\xE0', '\xEC', '\xA5', '\xA2'}))).Equal(uint32(0x7c100ff2))
 		})
 	})
-
 }
+
 func TestSquish(t *testing.T) {
 	Area := &Squish{
 		AreaPath: "../../testdata/sqtest",
