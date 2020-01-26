@@ -42,9 +42,27 @@ func detectComment(line string) bool {
 	return false
 }
 
+func parseFile(res []string) {
+	reEnv := regexp.MustCompile(`\[(.+?)\]`)
+	if strings.EqualFold(res[1], "include") {
+		readFile(reEnv.ReplaceAllStringFunc(res[2], replaceEnv))
+	} else if strings.EqualFold(res[1], "echoarea") {
+		processArea(res[0], msgapi.EchoAreaTypeEcho)
+	} else if strings.EqualFold(res[1], "localarea") {
+		processArea(res[0], msgapi.EchoAreaTypeLocal)
+	} else if strings.EqualFold(res[1], "netmailarea") {
+		processArea(res[0], msgapi.EchoAreaTypeNetmail)
+	} else if strings.EqualFold(res[1], "dupearea") {
+		processArea(res[0], msgapi.EchoAreaTypeDupe)
+	} else if strings.EqualFold(res[1], "badarea") {
+		processArea(res[0], msgapi.EchoAreaTypeBad)
+	} else if strings.EqualFold(res[1], "EchoAreaDefaults") {
+		processDef(res[0])
+	}
+}
+
 func readFile(fn string) {
 	re := regexp.MustCompile(`(\w+?)\s+(.*)`)
-	reEnv := regexp.MustCompile(`\[(.+?)\]`)
 	nfn, err := checkIncludePath(fn)
 	if err != nil {
 		log.Print(err)
@@ -67,21 +85,7 @@ func readFile(fn string) {
 		}
 		res := re.FindStringSubmatch(scanner.Text())
 		if len(res) > 2 {
-			if strings.EqualFold(res[1], "include") {
-				readFile(reEnv.ReplaceAllStringFunc(res[2], replaceEnv))
-			} else if strings.EqualFold(res[1], "echoarea") {
-				processArea(res[0], msgapi.EchoAreaTypeEcho)
-			} else if strings.EqualFold(res[1], "localarea") {
-				processArea(res[0], msgapi.EchoAreaTypeLocal)
-			} else if strings.EqualFold(res[1], "netmailarea") {
-				processArea(res[0], msgapi.EchoAreaTypeNetmail)
-			} else if strings.EqualFold(res[1], "dupearea") {
-				processArea(res[0], msgapi.EchoAreaTypeDupe)
-			} else if strings.EqualFold(res[1], "badarea") {
-				processArea(res[0], msgapi.EchoAreaTypeBad)
-			} else if strings.EqualFold(res[1], "EchoAreaDefaults") {
-				processDef(res[0])
-			}
+			parseFile(res)
 		}
 	}
 }
