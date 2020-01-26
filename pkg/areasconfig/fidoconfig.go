@@ -14,6 +14,13 @@ import (
 
 var (
 	defaultMsgType msgapi.EchoAreaMsgType
+	mp             = map[string]msgapi.EchoAreaType{
+		"ECHOAREA":    msgapi.EchoAreaTypeEcho,
+		"LOCALAREA":   msgapi.EchoAreaTypeLocal,
+		"NETMAILAREA": msgapi.EchoAreaTypeNetmail,
+		"DUPEAREA":    msgapi.EchoAreaTypeDupe,
+		"BADAREA":     msgapi.EchoAreaTypeBad,
+	}
 )
 
 func fidoConfigRead(fn string) error {
@@ -41,19 +48,11 @@ func detectComment(line string) bool {
 
 func parseFile(res []string) {
 	reEnv := regexp.MustCompile(`\[(.+?)\]`)
-	switch strings.ToUpper(res[1]) {
+	switch tag := strings.ToUpper(res[1]); tag {
 	case "INCLUDE":
 		readFile(reEnv.ReplaceAllStringFunc(res[2], replaceEnv))
-	case "ECHOAREA":
-		processArea(res[0], msgapi.EchoAreaTypeEcho)
-	case "LOCALAREA":
-		processArea(res[0], msgapi.EchoAreaTypeLocal)
-	case "NETMAILAREA":
-		processArea(res[0], msgapi.EchoAreaTypeNetmail)
-	case "DUPEAREA":
-		processArea(res[0], msgapi.EchoAreaTypeDupe)
-	case "BADAREA":
-		processArea(res[0], msgapi.EchoAreaTypeBad)
+	case "ECHOAREA", "LOCALAREA", "NETMAILAREA", "DUPEAREA", "BADAREA":
+		processArea(res[0], mp[tag])
 	case "ECHOAREADEFAULTS":
 		processDef(res[0])
 	}
