@@ -6,7 +6,6 @@ import (
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -19,9 +18,7 @@ var (
 
 func fidoConfigRead(fn string) error {
 	defaultMsgType = msgapi.EchoAreaMsgTypeMSG
-	readFile(fn)
-
-	return nil
+	return readFile(fn)
 }
 
 func checkIncludePath(fn string) (string, error) {
@@ -44,39 +41,37 @@ func detectComment(line string) bool {
 
 func parseFile(res []string) {
 	reEnv := regexp.MustCompile(`\[(.+?)\]`)
-	if strings.EqualFold(res[1], "include") {
+	switch strings.ToUpper(res[1]) {
+	case "INCLUDE":
 		readFile(reEnv.ReplaceAllStringFunc(res[2], replaceEnv))
-	} else if strings.EqualFold(res[1], "echoarea") {
+	case "ECHOAREA":
 		processArea(res[0], msgapi.EchoAreaTypeEcho)
-	} else if strings.EqualFold(res[1], "localarea") {
+	case "LOCALAREA":
 		processArea(res[0], msgapi.EchoAreaTypeLocal)
-	} else if strings.EqualFold(res[1], "netmailarea") {
+	case "NETMAILAREA":
 		processArea(res[0], msgapi.EchoAreaTypeNetmail)
-	} else if strings.EqualFold(res[1], "dupearea") {
+	case "DUPEAREA":
 		processArea(res[0], msgapi.EchoAreaTypeDupe)
-	} else if strings.EqualFold(res[1], "badarea") {
+	case "BADAREA":
 		processArea(res[0], msgapi.EchoAreaTypeBad)
-	} else if strings.EqualFold(res[1], "EchoAreaDefaults") {
+	case "ECHOAREADEFAULTS":
 		processDef(res[0])
 	}
 }
 
-func readFile(fn string) {
+func readFile(fn string) error {
 	re := regexp.MustCompile(`(\w+?)\s+(.*)`)
 	nfn, err := checkIncludePath(fn)
 	if err != nil {
-		log.Print(err)
-		return
+		return err
 	}
 	file, err := os.Open(nfn)
 	if err != nil {
-		log.Print(err)
-		return
+		return err
 	}
 	b, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Print(err)
-		return
+		return err
 	}
 	scanner := bufio.NewScanner(strings.NewReader(string(b)))
 	for scanner.Scan() {
@@ -88,6 +83,7 @@ func readFile(fn string) {
 			parseFile(res)
 		}
 	}
+	return nil
 }
 
 func replaceEnv(s string) string {
