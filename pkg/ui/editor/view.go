@@ -1,7 +1,6 @@
 package editor
 
 import (
-	"strconv"
 	"strings"
 	//"time"
 
@@ -348,10 +347,6 @@ func (v *View) displayView(screen tcell.Screen) {
 		v.leftCol = 0
 	}
 
-	// We need to know the string length of the largest line number
-	// so we can pad appropriately when displaying line numbers
-	maxLineNumLength := len(strconv.Itoa(v.Buf.NumLines))
-
 	v.lineNumOffset = 0
 
 	xOffset := v.x + v.lineNumOffset
@@ -364,8 +359,6 @@ func (v *View) displayView(screen tcell.Screen) {
 
 	v.cellview.Draw(v.Buf, v.colorscheme, top, height, left, width-v.lineNumOffset)
 
-	var screenX int
-	//screenX := v.x
 	realLineN := top - 1
 	visualLineN := 0
 	var line []*Char
@@ -375,11 +368,7 @@ func (v *View) displayView(screen tcell.Screen) {
 			firstChar = line[0]
 		}
 
-		var softwrapped bool
 		if firstChar != nil {
-			if firstChar.realLoc.Y == realLineN {
-				softwrapped = true
-			}
 			realLineN = firstChar.realLoc.Y
 		} else {
 			realLineN++
@@ -391,46 +380,6 @@ func (v *View) displayView(screen tcell.Screen) {
 			fg, _, _ := style.Decompose()
 			st := defStyle.Background(fg)
 			screen.SetContent(xOffset+colorcolumn-v.leftCol, yOffset+visualLineN, ' ', nil, st)
-		}
-
-		screenX = v.x
-
-		lineNumStyle := defStyle
-		if v.Buf.Settings["ruler"] == true {
-			// Write the line number
-			if style, ok := v.colorscheme["line-number"]; ok {
-				lineNumStyle = style
-			}
-			if style, ok := v.colorscheme["current-line-number"]; ok {
-				if realLineN == v.Cursor.Y && !v.Cursor.HasSelection() {
-					lineNumStyle = style
-				}
-			}
-
-			lineNum := strconv.Itoa(realLineN + 1)
-
-			// Write the spaces before the line number if necessary
-			for i := 0; i < maxLineNumLength-len(lineNum); i++ {
-				screen.SetContent(screenX, yOffset+visualLineN, ' ', nil, lineNumStyle)
-				screenX++
-			}
-			if softwrapped && visualLineN != 0 {
-				// Pad without the line number because it was written on the visual line before
-				for range lineNum {
-					screen.SetContent(screenX, yOffset+visualLineN, ' ', nil, lineNumStyle)
-					screenX++
-				}
-			} else {
-				// Write the actual line number
-				for _, ch := range lineNum {
-					screen.SetContent(screenX, yOffset+visualLineN, ch, nil, lineNumStyle)
-					screenX++
-				}
-			}
-
-			// Write the extra space
-			screen.SetContent(screenX, yOffset+visualLineN, ' ', nil, lineNumStyle)
-			//screenX++
 		}
 
 		var lastChar *Char
@@ -462,13 +411,6 @@ func (v *View) displayView(screen tcell.Screen) {
 				}
 				v.SetCursor(&v.Buf.Cursor)
 
-				if v.Buf.Settings["cursorline"].(bool) &&
-					!v.Cursor.HasSelection() && v.Cursor.Y == realLineN {
-					style := v.colorscheme.GetColor("cursor-line")
-					fg, _, _ := style.Decompose()
-					lineStyle = lineStyle.Background(fg)
-				}
-
 				screen.SetContent(xOffset+char.visualLoc.X, yOffset+char.visualLoc.Y, char.drawChar, nil, lineStyle)
 
 				for i, c := range v.Buf.cursors {
@@ -488,7 +430,6 @@ func (v *View) displayView(screen tcell.Screen) {
 		lastX := 0
 		var realLoc Loc
 		var visualLoc Loc
-		var cx, cy int
 		if lastChar != nil {
 			lastX = xOffset + lastChar.visualLoc.X + lastChar.width
 			for i, c := range v.Buf.cursors {
@@ -496,7 +437,6 @@ func (v *View) displayView(screen tcell.Screen) {
 				if !v.Cursor.HasSelection() &&
 					v.Cursor.Y == lastChar.realLoc.Y && v.Cursor.X == lastChar.realLoc.X+1 {
 					ShowMultiCursor(screen, lastX, yOffset+lastChar.visualLoc.Y, i)
-					cx, cy = lastX, yOffset+lastChar.visualLoc.Y
 				}
 			}
 			v.SetCursor(&v.Buf.Cursor)
@@ -508,7 +448,6 @@ func (v *View) displayView(screen tcell.Screen) {
 				if !v.Cursor.HasSelection() &&
 					v.Cursor.Y == realLineN {
 					ShowMultiCursor(screen, xOffset, yOffset+visualLineN, i)
-					cx, cy = xOffset, yOffset+visualLineN
 				}
 			}
 			v.SetCursor(&v.Buf.Cursor)
@@ -527,18 +466,6 @@ func (v *View) displayView(screen tcell.Screen) {
 				selectStyle = style
 			}
 			screen.SetContent(xOffset+visualLoc.X, yOffset+visualLoc.Y, ' ', nil, selectStyle)
-		}
-
-		if v.Buf.Settings["cursorline"].(bool) &&
-			!v.Cursor.HasSelection() && v.Cursor.Y == realLineN {
-			for i := lastX; i < xOffset+v.width-v.lineNumOffset; i++ {
-				style := v.colorscheme.GetColor("cursor-line")
-				fg, _, _ := style.Decompose()
-				style = style.Background(fg)
-				if !(!v.Cursor.HasSelection() && i == cx && yOffset+visualLineN == cy) {
-					screen.SetContent(i, yOffset+visualLineN, ' ', nil, style)
-				}
-			}
 		}
 	}
 }

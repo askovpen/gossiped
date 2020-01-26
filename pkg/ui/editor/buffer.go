@@ -113,7 +113,6 @@ rules:
 - kludge: "^@.*$"
 - kludge: "^SEEN-BY: .*$"
 `
-	rehighlight := false
 	file, err := highlight.ParseFile([]byte(ryaml))
 	if err != nil {
 		return
@@ -129,15 +128,10 @@ rules:
 	if err != nil {
 		return
 	}
-	rehighlight = true
-	if b.highlighter == nil || rehighlight {
-		if b.syntaxDef != nil {
-			b.Settings["filetype"] = b.syntaxDef.FileType
-			b.highlighter = highlight.NewHighlighter(b.syntaxDef)
-			if b.Settings["syntax"].(bool) {
-				b.highlighter.HighlightStates(b)
-			}
-		}
+	if b.syntaxDef != nil {
+		b.Settings["filetype"] = b.syntaxDef.FileType
+		b.highlighter = highlight.NewHighlighter(b.syntaxDef)
+		b.highlighter.HighlightStates(b)
 	}
 
 }
