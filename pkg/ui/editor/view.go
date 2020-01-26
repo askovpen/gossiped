@@ -359,26 +359,11 @@ func (v *View) displayView(screen tcell.Screen) {
 			realLineN++
 		}
 
-		colorcolumn := int(v.Buf.Settings["colorcolumn"].(float64))
-		if colorcolumn != 0 && xOffset+colorcolumn-v.leftCol < v.width {
-			style := v.colorscheme.GetColor("color-column")
-			fg, _, _ := style.Decompose()
-			st := defStyle.Background(fg)
-			screen.SetContent(xOffset+colorcolumn-v.leftCol, yOffset+visualLineN, ' ', nil, st)
-		}
-
 		var lastChar *Char
 		cursorSet := false
 		for _, char := range line {
 			if char != nil {
 				lineStyle := char.style
-
-				colorcolumn := int(v.Buf.Settings["colorcolumn"].(float64))
-				if colorcolumn != 0 && char.visualLoc.X == colorcolumn {
-					style := v.colorscheme.GetColor("color-column")
-					fg, _, _ := style.Decompose()
-					lineStyle = lineStyle.Background(fg)
-				}
 
 				charLoc := char.realLoc
 				for _, c := range v.Buf.cursors {
