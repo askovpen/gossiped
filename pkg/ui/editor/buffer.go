@@ -263,7 +263,7 @@ func (b *Buffer) LinesNum() int {
 // Lines returns an array of strings containing the lines from start to end
 func (b *Buffer) Lines(start, end int) []string {
 	lines := b.lines[start:end]
-	slice:=make([]string,len(lines))
+	slice := make([]string, len(lines))
 	for _, line := range lines {
 		slice = append(slice, string(line.data))
 	}
