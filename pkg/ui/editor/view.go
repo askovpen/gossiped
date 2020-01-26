@@ -365,19 +365,8 @@ func (v *View) displayView(screen tcell.Screen) {
 			if char != nil {
 				lineStyle := char.style
 
-				charLoc := char.realLoc
 				for _, c := range v.Buf.cursors {
 					v.SetCursor(c)
-					if v.Cursor.HasSelection() &&
-						(charLoc.GreaterEqual(v.Cursor.CurSelection[0]) && charLoc.LessThan(v.Cursor.CurSelection[1]) ||
-							charLoc.LessThan(v.Cursor.CurSelection[0]) && charLoc.GreaterEqual(v.Cursor.CurSelection[1])) {
-						// The current character is selected
-						lineStyle = defStyle.Reverse(true)
-
-						if style, ok := v.colorscheme["selection"]; ok {
-							lineStyle = style
-						}
-					}
 				}
 				v.SetCursor(&v.Buf.Cursor)
 
@@ -398,8 +387,6 @@ func (v *View) displayView(screen tcell.Screen) {
 		}
 
 		lastX := 0
-		var realLoc Loc
-		var visualLoc Loc
 		if lastChar != nil {
 			lastX = xOffset + lastChar.visualLoc.X + lastChar.width
 			for i, c := range v.Buf.cursors {
@@ -410,8 +397,6 @@ func (v *View) displayView(screen tcell.Screen) {
 				}
 			}
 			v.SetCursor(&v.Buf.Cursor)
-			realLoc = Loc{lastChar.realLoc.X + 1, realLineN}
-			visualLoc = Loc{lastX - xOffset, lastChar.visualLoc.Y}
 		} else if len(line) == 0 {
 			for i, c := range v.Buf.cursors {
 				v.SetCursor(c)
@@ -422,20 +407,6 @@ func (v *View) displayView(screen tcell.Screen) {
 			}
 			v.SetCursor(&v.Buf.Cursor)
 			lastX = xOffset
-			realLoc = Loc{0, realLineN}
-			visualLoc = Loc{0, visualLineN}
-		}
-
-		if v.Cursor.HasSelection() &&
-			(realLoc.GreaterEqual(v.Cursor.CurSelection[0]) && realLoc.LessThan(v.Cursor.CurSelection[1]) ||
-				realLoc.LessThan(v.Cursor.CurSelection[0]) && realLoc.GreaterEqual(v.Cursor.CurSelection[1])) {
-			// The current character is selected
-			selectStyle := defStyle.Reverse(true)
-
-			if style, ok := v.colorscheme["selection"]; ok {
-				selectStyle = style
-			}
-			screen.SetContent(xOffset+visualLoc.X, yOffset+visualLoc.Y, ' ', nil, selectStyle)
 		}
 	}
 }
