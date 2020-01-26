@@ -161,10 +161,6 @@ func (v *View) OpenBuffer(buf *Buffer) {
 // but if softwrap is enabled things get complicated since one buffer
 // line can take up multiple lines in the view
 func (v *View) Bottomline() int {
-	if !v.Buf.Settings["softwrap"].(bool) {
-		return v.Topline + v.height
-	}
-
 	screenX, screenY := 0, 0
 	numLines := 0
 	for lineN := v.Topline; lineN < v.Topline+v.height; lineN++ {
@@ -217,17 +213,6 @@ func (v *View) Relocate() bool {
 		ret = true
 	}
 
-	if !v.Buf.Settings["softwrap"].(bool) {
-		cx := v.Cursor.GetVisualX()
-		if cx < v.leftCol {
-			v.leftCol = cx
-			ret = true
-		}
-		if cx+v.lineNumOffset+1 > v.leftCol+v.width && v.width > cx+v.lineNumOffset+1 {
-			v.leftCol = cx - v.width + v.lineNumOffset + 1
-			ret = true
-		}
-	}
 	return ret
 }
 
@@ -343,7 +328,7 @@ func (v *View) mainCursor() bool {
 
 // displayView draws the view to the screen
 func (v *View) displayView(screen tcell.Screen) {
-	if v.Buf.Settings["softwrap"].(bool) && v.leftCol != 0 {
+	if v.leftCol != 0 {
 		v.leftCol = 0
 	}
 

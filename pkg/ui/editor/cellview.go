@@ -73,7 +73,6 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 	}
 
 	tabsize := int(buf.Settings["tabsize"].(float64))
-	softwrap := buf.Settings["softwrap"].(bool)
 	indentrunes := []rune(buf.Settings["indentchar"].(string))
 	// if empty indentchar settings, use space
 	if len(indentrunes) == 0 {
@@ -123,7 +122,7 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 
 		wrap := false
 		// We only need to wrap if the length of the line is greater than the width of the terminal screen
-		if softwrap && StringWidth(lineStr, tabsize) > width {
+		if StringWidth(lineStr, tabsize) > width {
 			wrap = true
 			// We're going to draw the entire line now
 			lineLength = StringWidth(lineStr, tabsize)
