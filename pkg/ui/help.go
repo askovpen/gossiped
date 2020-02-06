@@ -5,6 +5,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// ModalHelp widget
 type ModalHelp struct {
 	*tview.Box
 	txt       *tview.TextView
@@ -14,6 +15,7 @@ type ModalHelp struct {
 	done      func()
 }
 
+// NewModalHelp return new ModalHelp
 func NewModalHelp() *ModalHelp {
 	m := &ModalHelp{
 		Box:       tview.NewBox(),
@@ -28,6 +30,7 @@ func NewModalHelp() *ModalHelp {
 	return m
 }
 
+// InputHandler Input Handler
 func (e *ModalHelp) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 	return e.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 		if event.Key() == tcell.KeyEscape {
@@ -36,11 +39,13 @@ func (e *ModalHelp) InputHandler() func(event *tcell.EventKey, setFocus func(p t
 	})
 }
 
+// SetText Set Text
 func (m *ModalHelp) SetText(txt string) *ModalHelp {
 	m.txt.SetText(txt)
 	return m
 }
 
+// Draw draw
 func (m *ModalHelp) Draw(screen tcell.Screen) {
 	width, height := screen.Size()
 	height -= 1
@@ -54,11 +59,13 @@ func (m *ModalHelp) Draw(screen tcell.Screen) {
 	m.frame.Draw(screen)
 }
 
+// SetDoneFunc Set Done Function
 func (m *ModalHelp) SetDoneFunc(handler func()) *ModalHelp {
 	m.done = handler
 	return m
 }
 
+//AreaListHelp Area List Help
 func (a *App) AreaListHelp() (string, tview.Primitive, bool, bool) {
 	modal := NewModalHelp().
 		SetText(`
@@ -76,6 +83,7 @@ Ctrl-C       Exit immediately, no questions asked
 	return "AreaListHelp", modal, false, false
 }
 
+// ViewMsgHelp View Msg Help
 func (a *App) ViewMsgHelp() (string, tview.Primitive, bool, bool) {
 	modal := NewModalHelp().
 		SetText(`
