@@ -31,10 +31,10 @@ func NewModalHelp() *ModalHelp {
 }
 
 // InputHandler Input Handler
-func (e *ModalHelp) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
-	return e.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+func (m *ModalHelp) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+	return m.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 		if event.Key() == tcell.KeyEscape {
-			e.done()
+			m.done()
 		}
 	})
 }
