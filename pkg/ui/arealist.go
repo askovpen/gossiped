@@ -80,6 +80,8 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 		case tcell.KeyEsc:
 			searchString.Clear()
 			a.Pages.ShowPage("AreaListQuit")
+		case tcell.KeyF1:
+			a.Pages.ShowPage("AreaListHelp")
 		case tcell.KeyRight:
 			searchString.Clear()
 			a.onSelected(a.al.GetSelection())
