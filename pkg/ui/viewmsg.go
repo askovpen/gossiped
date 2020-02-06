@@ -75,7 +75,9 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 		//		}
 	})
 	body.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyRight {
+		if event.Key() == tcell.KeyF1 {
+			a.Pages.AddPage(a.ViewMsgHelp())
+		} else if event.Key() == tcell.KeyRight {
 			if msgNum == msgapi.Areas[areaID].GetCount() {
 				a.Pages.SwitchToPage("AreaList")
 				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))

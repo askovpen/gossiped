@@ -23,6 +23,8 @@ func NewApp() *App {
 	a.Pages = tview.NewPages()
 	a.Pages.AddPage(a.AreaList())
 	a.Pages.AddPage(a.AreaListQuit())
+	a.Pages.AddPage(a.AreaListHelp())
+	//a.Pages.AddPage(a.ViewMsgHelp())
 
 	a.sb = NewStatusBar(a)
 	a.sb.Run()
