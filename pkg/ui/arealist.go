@@ -81,7 +81,6 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 			searchString.Clear()
 			a.Pages.ShowPage("AreaListQuit")
 		case tcell.KeyF1:
-			searchString.Clear()
 			a.Pages.ShowPage("AreaListHelp")
 		case tcell.KeyRight:
 			searchString.Clear()

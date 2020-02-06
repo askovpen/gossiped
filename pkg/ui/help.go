@@ -101,7 +101,6 @@ Ctrl-F         Forward message to another area
 		SetDoneFunc(func() {
 			a.Pages.HidePage("ViewMsgHelp")
 			a.Pages.RemovePage("ViewMsgHelp")
-			//a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgapi.Areas[areaID].GetLast()))
 		})
 	return "ViewMsgHelp", modal, true, true
 }
