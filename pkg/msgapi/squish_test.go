@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 	"time"
+	"unsafe"
 )
 
 func TestSquishBufHash32(t *testing.T) {
@@ -81,9 +82,58 @@ func TestSquish(t *testing.T) {
 	os.Remove("../../testdata/sqtest.sqi")
 	os.Remove("../../testdata/sqtest.sql")
 }
+
 func BenchmarkSquishBufHash32(b *testing.B) {
 	b.SetBytes(20)
 	for n := 0; n < b.N; n++ {
 		bufHash32("Alexander N. Skovpen")
 	}
+}
+
+func BenchmarkSquishGetMessages(b *testing.B) {
+	Area := &Squish{
+		AreaPath: "../../testdata/sqtest",
+		AreaName: "test",
+		AreaType: EchoAreaTypeEcho,
+	}
+	Areas = Areas[:0]
+	Areas = append(Areas, Area)
+	for n := 0; n < b.N; n++ {
+		m := &Message{
+			AreaID:      0,
+			From:        "SysOp",
+			To:          "SysOp",
+			Subject:     "Test",
+			FromAddr:    types.AddrFromNum(2, 5020, 9696, 1),
+			ToAddr:      types.AddrFromNum(2, 5020, 9696, 2),
+			DateWritten: time.Now(),
+			DateArrived: time.Now(),
+			Body:        "Test\nBody",
+			Kludges:     make(map[string]string),
+		}
+		m.MakeBody()
+		Area.SaveMsg(m)
+	}
+	m := &Message{
+		AreaID:      0,
+		From:        "SysOp",
+		To:          "SysOp",
+		Subject:     "Test",
+		FromAddr:    types.AddrFromNum(2, 5020, 9696, 1),
+		ToAddr:      types.AddrFromNum(2, 5020, 9696, 2),
+		DateWritten: time.Now(),
+		DateArrived: time.Now(),
+		Body:        "Test\nBody",
+		Kludges:     make(map[string]string),
+	}
+	m.MakeBody()
+	b.SetBytes(int64(unsafe.Sizeof(m)))
+	b.ResetTimer()
+	//for n := 0; n < b.N; n++ {
+	//	Area.GetMsg(uint32(n))
+	//}
+	Area.GetMessages()
+	b.StopTimer()
+	os.Remove("../../testdata/sqtest.sqd")
+	os.Remove("../../testdata/sqtest.sqi")
 }
