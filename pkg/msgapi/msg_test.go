@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 	"time"
+	"unsafe"
 )
 
 func TestMSG(t *testing.T) {
@@ -58,4 +59,52 @@ func TestMSG(t *testing.T) {
 		})
 	})
 	os.RemoveAll("../../testdata/test")
+}
+
+func BenchmarkMSGGetMessages(b *testing.B) {
+	Area := &MSG{
+		AreaPath: "../../testdata/test",
+		AreaName: "test",
+		AreaType: EchoAreaTypeNetmail,
+	}
+	Areas = Areas[:0]
+	Areas = append(Areas, Area)
+	for n := 0; n < b.N; n++ {
+		m := &Message{
+			AreaID:      0,
+			From:        "SysOp",
+			To:          "SysOp",
+			Subject:     "Test",
+			FromAddr:    types.AddrFromNum(2, 5020, 9696, 1),
+			ToAddr:      types.AddrFromNum(2, 5020, 9696, 2),
+			DateWritten: time.Now(),
+			DateArrived: time.Now(),
+			Body:        "Test\nBody",
+			Kludges:     make(map[string]string),
+		}
+		m.MakeBody()
+		Area.SaveMsg(m)
+	}
+	m := &Message{
+		AreaID:      0,
+		From:        "SysOp",
+		To:          "SysOp",
+		Subject:     "Test",
+		FromAddr:    types.AddrFromNum(2, 5020, 9696, 1),
+		ToAddr:      types.AddrFromNum(2, 5020, 9696, 2),
+		DateWritten: time.Now(),
+		DateArrived: time.Now(),
+		Body:        "Test\nBody",
+		Kludges:     make(map[string]string),
+	}
+	m.MakeBody()
+	b.SetBytes(int64(unsafe.Sizeof(m)))
+	b.ResetTimer()
+	//for n := 0; n < b.N; n++ {
+	//      Area.GetMsg(uint32(n))
+	//}
+	Area.GetMessages()
+	b.StopTimer()
+	os.RemoveAll("../../testdata/test")
+
 }
