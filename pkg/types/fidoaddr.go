@@ -14,6 +14,10 @@ type FidoAddr struct {
 	point uint16
 }
 
+var (
+	fidoAddrRE = regexp.MustCompile(`(\d+):(\d+)/(\d+)\.?(\d+)?(@.*)?`)
+)
+
 // Equal compare two *FidoAddr
 func (f *FidoAddr) Equal(fn *FidoAddr) bool {
 	if f.zone == fn.zone && f.net == fn.net && f.node == fn.node && f.point == fn.point {
@@ -54,7 +58,7 @@ func (f *FidoAddr) FQDN() (string, error) {
 // AddrFromString return FidoAddr from string
 func AddrFromString(s string) *FidoAddr {
 	f := &FidoAddr{}
-	res := regexp.MustCompile(`(\d+):(\d+)/(\d+)\.?(\d+)?(@.*)?`).FindStringSubmatch(s)
+	res := fidoAddrRE.FindStringSubmatch(s)
 	if len(res) == 0 {
 		return nil
 	}
