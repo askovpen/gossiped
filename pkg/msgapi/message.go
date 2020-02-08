@@ -43,6 +43,10 @@ type Message struct {
 	Corrupted   bool
 }
 
+var (
+	originRE = regexp.MustCompile(`\d+:\d+/\d+\.*\d*`)
+)
+
 // ParseRaw parse raw msg
 func (m *Message) ParseRaw() error {
 	m.Kludges = make(map[string]string)
@@ -56,9 +60,9 @@ func (m *Message) ParseRaw() error {
 		} else if len(l) > 6 && l[0:7] == "\x01MSGID:" {
 			m.Kludges["MSGID:"] = strings.Trim(l[7:], " ")
 		} else if len(l) > 10 && l[0:11] == "\x20*\x20Origin: " {
-			re := regexp.MustCompile(`\d+:\d+/\d+\.*\d*`)
-			if len(re.FindStringSubmatch(l)) > 0 {
-				m.Kludges["ORIGIN"] = re.FindStringSubmatch(l)[0]
+			//re := regexp.MustCompile(`\d+:\d+/\d+\.*\d*`)
+			if len(originRE.FindStringSubmatch(l)) > 0 {
+				m.Kludges["ORIGIN"] = originRE.FindStringSubmatch(l)[0]
 			}
 		} else if len(l) > 5 && l[0:6] == "\x01CHRS:" {
 			m.Kludges["CHRS"] = strings.ToUpper(strings.Split(strings.Trim(l[6:], " "), " ")[0])
@@ -377,7 +381,7 @@ func (m *Message) MakeBody() *Message {
 		}
 	}
 	m.Kludges["MSGID:"] = fmt.Sprintf("%s %08x", m.FromAddr.String(), uint32(time.Now().Unix()))
-	m.Body = strings.Join(strings.Split(m.Body, "\n"), "\x0d")+"\x0d"
+	m.Body = strings.Join(strings.Split(m.Body, "\n"), "\x0d") + "\x0d"
 	m.DateWritten = time.Now()
 	m.DateArrived = m.DateWritten
 	m.Kludges["TZUTC:"] = strings.Replace(m.DateWritten.Format("-0700"), "+", "", 1)
