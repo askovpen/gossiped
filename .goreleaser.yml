@@ -38,7 +38,7 @@ builds:
 
 archives:
 -
-  name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}"
+  name_template: "{{.ProjectName}}-{{.Version}}-{{.Os}}{{.Arch}}"
   builds:
     - win
     - osx
@@ -59,7 +59,7 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{.Tag}}-snapshot"
+  name_template: "{{.Version}}-snapshot"
 changelog:
   skip: true
   filters:
@@ -73,7 +73,7 @@ nfpms:
     homepage: https://github.com/askovpen/gossiped
     maintainer: askovpen <spam-from-github@skovpen.org>
     license: MIT
-    file_name_template: "{{.ProjectName}}-{{.Tag}}-{{.Os}}{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    file_name_template: "{{.ProjectName}}-{{.Version}}-{{.Os}}{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     replacements:
       darwin: osx
       linux: lnx
