@@ -3,7 +3,7 @@ language: go
 branches:
   only:
   - master
-  - /^\d+\.\d+\.\d+/
+  - /^v\d+\.\d+\.\d+/
 
 go:
 - 1.13
