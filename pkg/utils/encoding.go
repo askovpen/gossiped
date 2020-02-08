@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"io/ioutil"
+	//"io/ioutil"
 	"strings"
 
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
-	"golang.org/x/text/transform"
+	//"golang.org/x/text/transform"
 )
 
 var (
@@ -24,6 +24,7 @@ var (
 		"CP10000": charmap.Macintosh.NewDecoder(),
 		"CP437":   charmap.CodePage437.NewDecoder(),
 		"IBMPC":   charmap.CodePage437.NewDecoder(),
+		"LATIN-1": charmap.ISO8859_1.NewDecoder(),
 		"LATIN-2": charmap.ISO8859_2.NewDecoder(),
 		"LATIN-5": charmap.ISO8859_5.NewDecoder(),
 		"LATIN-9": charmap.ISO8859_9.NewDecoder(),
@@ -42,6 +43,7 @@ var (
 		"CP10000": charmap.Macintosh.NewEncoder(),
 		"CP437":   charmap.CodePage437.NewEncoder(),
 		"IBMPC":   charmap.CodePage437.NewEncoder(),
+		"LATIN-1": charmap.ISO8859_1.NewEncoder(),
 		"LATIN-2": charmap.ISO8859_2.NewEncoder(),
 		"LATIN-5": charmap.ISO8859_5.NewEncoder(),
 		"LATIN-9": charmap.ISO8859_9.NewEncoder(),
@@ -50,21 +52,20 @@ var (
 
 // DecodeCharmap decode string from charmap
 func DecodeCharmap(s string, c string) string {
-	sr := strings.NewReader(s)
-	var tr *transform.Reader
+	var dec *encoding.Decoder
 	switch chrs := strings.ToUpper(c); chrs {
 	case "CP866", "+7_FIDO", "+7", "IBM866", "CP850", "CP852", "CP848", "CP1250", "CP1251", "CP1252", "CP10000", "CP437", "IBMPC", "LATIN-2", "LATIN-5", "LATIN-9":
-		tr = transform.NewReader(sr, cDecoder[chrs])
+		dec = cDecoder[chrs]
 	case "UTF-8":
 		return s
 	default:
-		tr = transform.NewReader(sr, charmap.ISO8859_1.NewDecoder())
+		dec = cDecoder["LATIN-1"]
 	}
-	b, err := ioutil.ReadAll(tr)
+	b, err := dec.String(s)
 	if err != nil {
-		panic(err)
+		return s
 	}
-	return string(b)
+	return b
 }
 
 // EncodeCharmap encode string to charmap
@@ -76,7 +77,7 @@ func EncodeCharmap(s string, c string) string {
 	case "UTF-8":
 		return s
 	default:
-		enc = charmap.ISO8859_1.NewEncoder()
+		enc = cEncoder["LATIN-1"]
 	}
 	out, err := encoding.ReplaceUnsupported(enc).String(s)
 	if err != nil {
