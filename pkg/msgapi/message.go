@@ -377,7 +377,7 @@ func (m *Message) MakeBody() *Message {
 		}
 	}
 	m.Kludges["MSGID:"] = fmt.Sprintf("%s %08x", m.FromAddr.String(), uint32(time.Now().Unix()))
-	m.Body = strings.Join(strings.Split(m.Body, "\n"), "\x0d")
+	m.Body = strings.Join(strings.Split(m.Body, "\n"), "\x0d")+"\x0d"
 	m.DateWritten = time.Now()
 	m.DateArrived = m.DateWritten
 	m.Kludges["TZUTC:"] = strings.Replace(m.DateWritten.Format("-0700"), "+", "", 1)
