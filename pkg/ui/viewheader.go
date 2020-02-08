@@ -35,6 +35,9 @@ func NewViewHeader(msg *msgapi.Message) *ViewHeader {
 		for _, rn := range msg.Replies {
 			repl += fmt.Sprintf("+%d ", rn)
 		}
+		if msg.Corrupted {
+			msg.Attrs = append(msg.Attrs, "[red]Corrupted")
+		}
 		if len(msg.Attrs) > 0 {
 			repl += "[" + strings.Join(msg.Attrs, " ") + "]"
 		}
