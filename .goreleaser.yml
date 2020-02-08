@@ -61,6 +61,7 @@ checksum:
 snapshot:
   name_template: "{{.Tag}}-snapshot"
 changelog:
+  skip: true
   filters:
     exclude:
     - '^docs:'
