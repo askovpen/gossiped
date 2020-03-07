@@ -48,7 +48,7 @@ func (m *ModalHelp) SetText(txt string) *ModalHelp {
 // Draw draw
 func (m *ModalHelp) Draw(screen tcell.Screen) {
 	width, height := screen.Size()
-	height --
+	height--
 	m.frame.Clear()
 	x := 0
 	y := 0
