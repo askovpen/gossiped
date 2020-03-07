@@ -24,6 +24,9 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 		return fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum), modal, true, true
 	}
 	if msg != nil {
+		if msgNum == 0 {
+			msgNum = 1
+		}
 		msgapi.Areas[areaID].SetLast(msgNum)
 	}
 	if msgapi.Areas[areaID].GetCount()-msgapi.Areas[areaID].GetLast() > 0 {
