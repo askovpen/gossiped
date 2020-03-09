@@ -185,11 +185,13 @@ func (s *Squish) GetMsg(position uint32) (*Message, error) {
 			rm.Replies = append(rm.Replies, s.getOffsetByNum(reply))
 		}
 	}
-	kla := strings.Split(rm.Body[1:sqdh.CLen], "\x01")
-	for i := range kla {
-		kla[i] = strings.Trim(kla[i], "\x00")
+	if sqdh.CLen > 0 {
+		kla := strings.Split(rm.Body[1:sqdh.CLen], "\x01")
+		for i := range kla {
+			kla[i] = strings.Trim(kla[i], "\x00")
+		}
+		rm.Body = "\x01" + strings.Join(kla, "\x0d\x01") + "\x0d" + rm.Body[sqdh.CLen:]
 	}
-	rm.Body = "\x01" + strings.Join(kla, "\x0d\x01") + "\x0d" + rm.Body[sqdh.CLen:]
 	if strings.Contains(rm.Body, "\x00") {
 		rm.Body = rm.Body[0:strings.Index(rm.Body, "\x00")]
 	}
