@@ -19,29 +19,29 @@ before_build:
 build_script:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOOS=linux)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (go build -v -ldflags "-w -s")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-lnx64.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-lnx64.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOARCH=386)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (go build -v -ldflags "-w -s")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-lnx32.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-lnx32.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOOS=darwin)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (go build -v -ldflags "-w -s")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-osx32.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-osx32.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOARCH=amd64)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (go build -v -ldflags "-w -s")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-osx64.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-osx64.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOOS=freebsd)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (go build -v -ldflags "-w -s")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-fbsd64.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-fbsd64.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOARCH=386)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (go build -v -ldflags "-w -s")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-fbsd32.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-fbsd32.zip gossiped gossiped.example.yml gossiped.tpl city.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOOS=windows)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (go build -v -ldflags "-w -s")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-win32.zip gossiped.exe gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-win32.zip gossiped.exe gossiped.example.yml gossiped.tpl city.yml)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (set GOARCH=amd64)
   - go build -v -ldflags "-w -s"
   - gossiped
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a %APPVEYOR_REPO_TAG_NAME%-win64.zip gossiped.exe gossiped.example.yml gossiped.tpl city.yml)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (7z a gossiped-%APPVEYOR_REPO_TAG_NAME%-win64.zip gossiped.exe gossiped.example.yml gossiped.tpl city.yml)
 
 test_script:
   - go test ./... -v -cover -coverprofile=coverage.txt --bench=. -benchmem
