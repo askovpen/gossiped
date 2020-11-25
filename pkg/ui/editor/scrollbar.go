@@ -1,6 +1,6 @@
 package editor
 
-import "github.com/gdamore/tcell"
+import "github.com/gdamore/tcell/v2"
 
 // ScrollBar represents an optional scrollbar that can be used
 type ScrollBar struct {
