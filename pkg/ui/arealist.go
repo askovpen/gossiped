@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 	"github.com/askovpen/gossiped/pkg/msgapi"
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	// "log"
 	"strconv"
@@ -51,7 +51,7 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 	a.al.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue)
-	a.al.SetSelectedStyle(tcell.ColorWhite, tcell.ColorNavy, tcell.AttrBold)
+	a.al.SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNavy).Bold(true))
 	a.al.SetCell(
 		0, 0, tview.NewTableCell(" Area").
 			SetTextColor(tcell.ColorYellow).

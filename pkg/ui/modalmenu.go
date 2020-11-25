@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -27,7 +27,7 @@ func NewModalMenu() *ModalMenu {
 	}
 	m.table = tview.NewTable().
 		SetSelectable(true, false).
-		SetSelectedStyle(tcell.ColorWhite, tcell.ColorNavy, tcell.AttrBold).
+		SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNavy).Bold(true)).
 		SetSelectedFunc(func(row int, column int) {
 			m.done(row)
 		})
@@ -110,4 +110,15 @@ func (m *ModalMenu) Draw(screen tcell.Screen) {
 	// Draw the frame.
 	m.frame.SetRect(x, y, width, height)
 	m.frame.Draw(screen)
+}
+
+func (m *ModalMenu) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+	return m.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+		if m.HasFocus() {
+			if handler := m.table.InputHandler(); handler != nil {
+				handler(event, setFocus)
+			}
+			return
+		}
+	})
 }
