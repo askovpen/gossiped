@@ -144,6 +144,8 @@ func (m *ModalMessageList) Draw(screen tcell.Screen) {
 	m.frame.SetRect(x, y, width, height)
 	m.frame.Draw(screen)
 }
+
+// InputHandler handle input
 func (m *ModalMessageList) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 	return m.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 		if m.HasFocus() {
