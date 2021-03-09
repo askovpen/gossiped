@@ -53,7 +53,7 @@ var (
 // Package initialization.
 func init() {
 	// We'll use zero width joiners.
-	runewidth.ZeroWidthJoiner = true
+	//runewidth.ZeroWidthJoiner = true
 
 	// Initialize the predefined input field handlers.
 	InputFieldInteger = func(text string, ch rune) bool {
