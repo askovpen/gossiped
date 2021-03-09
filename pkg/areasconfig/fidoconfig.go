@@ -141,7 +141,7 @@ func getMsgBType(tokens []string) msgapi.EchoAreaMsgType {
 }
 
 func isPassthrough(tokens []string) bool {
-	if tokens[2] == "passthrough" {
+	if strings.EqualFold(tokens[2], "passthrough") {
 		return true
 	}
 	for _, t := range tokens {
