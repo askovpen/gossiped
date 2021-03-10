@@ -12,7 +12,7 @@ Echoarea sdn.local      /var/spool/ftn/mail/sdn.local      -b squish -dupeCheck 
 LocalArea sdn.me         /var/spool/ftn/mail/sdn.me         -b squish
 LocalArea sdn.nado       /var/spool/ftn/mail/sdn.nado       -b squish
 LocalArea sdn.pesni      /var/spool/ftn/mail/sdn.pesni      -b squish
-Echoarea sdn.pointoffka /var/spool/ftn/mail/sdn.pointoffka -pass -b squish -dupeCheck move -dupeHistory 11 -g Z  2:5020/9696.*
+Echoarea sdn.pointoffka /var/spool/ftn/mail/sdn.pointoffka -Pass -b squish -dupeCheck move -dupeHistory 11 -g Z  2:5020/9696.*
 LocalArea sdn.points     /var/spool/ftn/mail/sdn.points     -b squish
 LocalArea sdn.test     /var/spool/ftn/mail/sdn.test     -b jam
 LocalArea starper.limited     /var/spool/ftn/mail/starper.limited     -b squish
