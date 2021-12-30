@@ -2,11 +2,12 @@ package config
 
 import (
 	"errors"
-	"github.com/askovpen/gossiped/pkg/types"
-	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"runtime"
 	"strings"
+
+	"github.com/askovpen/gossiped/pkg/types"
+	"gopkg.in/yaml.v3"
 )
 
 type configS struct {
@@ -27,6 +28,7 @@ type configS struct {
 	Origin   string
 	Tearline string
 	Template string
+	ScanFlag string
 	Chrs     struct {
 		Default string
 		IBMPC   string
@@ -35,12 +37,13 @@ type configS struct {
 
 // vars
 var (
-	Version  string
-	PID      string
-	LongPID  string
-	Config   configS
-	Template []string
-	city     map[string]string
+	Version    string
+	PID        string
+	LongPID    string
+	Config     configS
+	Template   []string
+	city       map[string]string
+	NewMsgFlag bool
 )
 
 // InitVars define version variables

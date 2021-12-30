@@ -2,9 +2,14 @@ package ui
 
 import (
 	"fmt"
+	"log"
+
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
+	"github.com/askovpen/gossiped/pkg/utils"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+
 	// "log"
 	"strconv"
 )
@@ -19,6 +24,11 @@ func (a *App) AreaListQuit() (string, tview.Primitive, bool, bool) {
 		}).
 		SetDoneFunc(func(buttonIndex int) {
 			if buttonIndex == 0 {
+				if config.NewMsgFlag {
+					if err := utils.CreateFlagFile(config.Config.ScanFlag); err != nil {
+						log.Printf("Cannot create scanmail flag.")
+					}
+				}
 				a.App.Stop()
 			} else {
 				a.Pages.HidePage("AreaListQuit")
