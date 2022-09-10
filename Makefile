@@ -15,11 +15,11 @@ get: format
 	@echo get depencies
 
 test:
-	@echo Testing goated
+	@echo Testing gossiped
 	@go test -v -cover ./...
 
 build:
-	@echo Building goated
+	@echo Building gossiped
 	@go build
 
 clean:

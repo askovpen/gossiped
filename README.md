@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/b04rcghch4pskvmu/branch/master?svg=true)](https://ci.appveyor.com/project/askovpen/gossiped/branch/master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/askovpen/gossiped)](https://goreportcard.com/report/github.com/askovpen/gossiped)
 [![codecov](https://codecov.io/gh/askovpen/gossiped/branch/master/graph/badge.svg)](https://codecov.io/gh/askovpen/gossiped)
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/askovpen/goated/blob/master/LICENSE.txt)
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/askovpen/gossiped/blob/master/LICENSE.txt)
 
 *gossipEd* - ftn message editor
 
