@@ -6,6 +6,7 @@ branches:
     - master
     - /^gossiped-.*/
 
+image: Previous Visual Studio 2022
 environment:
   GOPATH: c:\gopath
 
