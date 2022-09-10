@@ -89,6 +89,11 @@ nfpms:
     - rpm
     bindir: /usr/bin
     vendor: askovpen
-    config_files:
-      "gossiped.example.yml": "/etc/ftn/gossiped.example.yml"
-      "gossiped.tpl": "/etc/ftn/gossiped.tpl"
+    contents:
+      - src: gossiped.example.yml
+        dst: /etc/ftn/gossiped.example.yml
+        type: config
+      - src: gossiped.tpl
+        dst: /etc/ftn/gossiped.tpl
+        type: config
+
