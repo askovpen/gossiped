@@ -1,6 +1,6 @@
 # gossiped
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/askovpen/gossiped/linux.yml?logo=linux&logoColor=grey)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/askovpen/gossiped/windows.yml?logo=windows&logoColor=grey)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/askovpen/gossiped/linux.yml?logo=linux&logoColor=grey&label=)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/askovpen/gossiped/windows.yml?logo=windows&logoColor=grey&label=)
 [![Go Report Card](https://goreportcard.com/badge/github.com/askovpen/gossiped)](https://goreportcard.com/report/github.com/askovpen/gossiped)
 [![codecov](https://codecov.io/gh/askovpen/gossiped/branch/master/graph/badge.svg)](https://codecov.io/gh/askovpen/gossiped)
 [![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/askovpen/gossiped/blob/master/LICENSE.txt)
