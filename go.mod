@@ -8,6 +8,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/rivo/tview v0.0.0-20230225110121-c8e57d57c67f
 	github.com/rivo/uniseg v0.4.4
-	golang.org/x/text v0.11.0
+	golang.org/x/text v0.12.0
 	gopkg.in/yaml.v3 v3.0.1
 )
