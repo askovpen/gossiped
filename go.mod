@@ -7,7 +7,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.7.0
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/rivo/tview v0.0.0-20230225110121-c8e57d57c67f
-	github.com/rivo/uniseg v0.4.6
+	github.com/rivo/uniseg v0.4.7
 	golang.org/x/text v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 )
