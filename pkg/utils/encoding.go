@@ -28,6 +28,7 @@ var (
 		"LATIN-2": charmap.ISO8859_2.NewDecoder(),
 		"LATIN-5": charmap.ISO8859_5.NewDecoder(),
 		"LATIN-9": charmap.ISO8859_9.NewDecoder(),
+		"KOI8-R":  charmap.KOI8R.NewDecoder(),
 	}
 	cEncoder = map[string]*encoding.Encoder{
 		"CP866":   charmap.CodePage866.NewEncoder(),
@@ -47,6 +48,7 @@ var (
 		"LATIN-2": charmap.ISO8859_2.NewEncoder(),
 		"LATIN-5": charmap.ISO8859_5.NewEncoder(),
 		"LATIN-9": charmap.ISO8859_9.NewEncoder(),
+		"KOI8-R":  charmap.KOI8R.NewEncoder(),
 	}
 )
 
@@ -54,7 +56,7 @@ var (
 func DecodeCharmap(s string, c string) string {
 	var dec *encoding.Decoder
 	switch chrs := strings.ToUpper(c); chrs {
-	case "CP866", "+7_FIDO", "+7", "IBM866", "CP850", "CP852", "CP848", "CP1250", "CP1251", "CP1252", "CP10000", "CP437", "IBMPC", "LATIN-2", "LATIN-5", "LATIN-9":
+	case "CP866", "+7_FIDO", "+7", "IBM866", "CP850", "CP852", "CP848", "CP1250", "CP1251", "CP1252", "CP10000", "CP437", "IBMPC", "LATIN-2", "LATIN-5", "LATIN-9", "KOI8-R":
 		dec = cDecoder[chrs]
 	case "UTF-8":
 		return s
@@ -72,7 +74,7 @@ func DecodeCharmap(s string, c string) string {
 func EncodeCharmap(s string, c string) string {
 	var enc *encoding.Encoder
 	switch c {
-	case "CP866", "+7_FIDO", "+7", "IBM866", "CP850", "CP852", "CP848", "CP1250", "CP1251", "CP1252", "CP10000", "CP437", "IBMPC", "LATIN-2", "LATIN-5", "LATIN-9":
+	case "CP866", "+7_FIDO", "+7", "IBM866", "CP850", "CP852", "CP848", "CP1250", "CP1251", "CP1252", "CP10000", "CP437", "IBMPC", "LATIN-2", "LATIN-5", "LATIN-9", "KOI8-R":
 		enc = cEncoder[c]
 	case "UTF-8":
 		return s
