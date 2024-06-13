@@ -3,13 +3,14 @@ package areasconfig
 import (
 	"bufio"
 	"errors"
-	"github.com/askovpen/gossiped/pkg/config"
-	"github.com/askovpen/gossiped/pkg/msgapi"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/askovpen/gossiped/pkg/msgapi"
 )
 
 var (
