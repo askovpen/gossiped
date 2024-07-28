@@ -7,6 +7,7 @@ log: ./app.log
 template: gossiped.tpl
 origin: Just Origin
 tearline: ''
+scanflag: ''
 chrs:
   default: CP866 2 # <charset> <lvl> http://ftsc.org/docs/fts-5003.001
   ibmpc: CP866

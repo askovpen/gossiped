@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/types"
@@ -45,6 +46,7 @@ func (a *App) InsertMsgMenu() (string, tview.Primitive, bool, bool) {
 				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[a.im.curArea].GetName(), msgapi.Areas[a.im.curArea].GetLast()))
 				a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[a.im.curArea].GetName()))
 				a.App.SetFocus(a.Pages)
+				config.NewMsgFlag = true
 			case 1:
 				a.Pages.HidePage("InsertMsgMenu")
 				a.Pages.RemovePage("InsertMsgMenu")
