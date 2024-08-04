@@ -282,62 +282,62 @@ func printWithStyle(screen tcell.Screen, text string, x, y, maxWidth, align int,
 			// We have more space than we need.
 			half := (maxWidth - strippedWidth) / 2
 			return printWithStyle(screen, text, x+half, y, maxWidth-half, AlignLeft, style)
-		} else {
-			// Chop off runes until we have a perfect fit.
-			var choppedLeft, choppedRight, leftIndex, rightIndex int
-			rightIndex = len(strippedText)
-			for rightIndex-1 > leftIndex && strippedWidth-choppedLeft-choppedRight > maxWidth {
-				if choppedLeft < choppedRight {
-					// Iterate on the left by one character.
-					iterateString(strippedText[leftIndex:], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
-						choppedLeft += screenWidth
-						leftIndex += textWidth
-						return true
-					})
-				} else {
-					// Iterate on the right by one character.
-					iterateStringReverse(strippedText[leftIndex:rightIndex], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
-						choppedRight += screenWidth
-						rightIndex -= textWidth
-						return true
-					})
-				}
-			}
-
-			// Add tag offsets and determine start style.
-			var (
-				colorPos, escapePos, tagOffset               int
-				foregroundColor, backgroundColor, attributes string
-			)
-			_, originalBackground, _ := style.Decompose()
-			for index := range strippedText {
-				// We only need the offset of the left index.
-				if index > leftIndex {
-					// We're done.
-					if escapePos > 0 && leftIndex+tagOffset-1 >= escapeIndices[escapePos-1][0] && leftIndex+tagOffset-1 < escapeIndices[escapePos-1][1] {
-						// Unescape open escape sequences.
-						escapeCharPos := escapeIndices[escapePos-1][1] - 2
-						text = text[:escapeCharPos] + text[escapeCharPos+1:]
-					}
-					break
-				}
-
-				// Update color/escape tag offset.
-				if colorPos < len(colorIndices) && index+tagOffset >= colorIndices[colorPos][0] && index+tagOffset < colorIndices[colorPos][1] {
-					if index <= leftIndex {
-						foregroundColor, backgroundColor, attributes = styleFromTag(foregroundColor, backgroundColor, attributes, colors[colorPos])
-						style = overlayStyle(originalBackground, style, foregroundColor, backgroundColor, attributes)
-					}
-					tagOffset += colorIndices[colorPos][1] - colorIndices[colorPos][0]
-					colorPos++
-				}
-				if escapePos < len(escapeIndices) && index+tagOffset >= escapeIndices[escapePos][0] && index+tagOffset < escapeIndices[escapePos][1] {
-					tagOffset++
-					escapePos++
-				}
-			}
-			return printWithStyle(screen, text[leftIndex+tagOffset:], x, y, maxWidth, AlignLeft, style)
 		}
+		// Chop off runes until we have a perfect fit.
+		var choppedLeft, choppedRight, leftIndex, rightIndex int
+		rightIndex = len(strippedText)
+		for rightIndex-1 > leftIndex && strippedWidth-choppedLeft-choppedRight > maxWidth {
+			if choppedLeft < choppedRight {
+				// Iterate on the left by one character.
+				iterateString(strippedText[leftIndex:], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+					choppedLeft += screenWidth
+					leftIndex += textWidth
+					return true
+				})
+			} else {
+				// Iterate on the right by one character.
+				iterateStringReverse(strippedText[leftIndex:rightIndex], func(main rune, comb []rune, textPos, textWidth, screenPos, screenWidth int) bool {
+					choppedRight += screenWidth
+					rightIndex -= textWidth
+					return true
+				})
+			}
+		}
+
+		// Add tag offsets and determine start style.
+		var (
+			colorPos, escapePos, tagOffset               int
+			foregroundColor, backgroundColor, attributes string
+		)
+		_, originalBackground, _ := style.Decompose()
+		for index := range strippedText {
+			// We only need the offset of the left index.
+			if index > leftIndex {
+				// We're done.
+				if escapePos > 0 && leftIndex+tagOffset-1 >= escapeIndices[escapePos-1][0] && leftIndex+tagOffset-1 < escapeIndices[escapePos-1][1] {
+					// Unescape open escape sequences.
+					escapeCharPos := escapeIndices[escapePos-1][1] - 2
+					text = text[:escapeCharPos] + text[escapeCharPos+1:]
+				}
+				break
+			}
+
+			// Update color/escape tag offset.
+			if colorPos < len(colorIndices) && index+tagOffset >= colorIndices[colorPos][0] && index+tagOffset < colorIndices[colorPos][1] {
+				if index <= leftIndex {
+					foregroundColor, backgroundColor, attributes = styleFromTag(foregroundColor, backgroundColor, attributes, colors[colorPos])
+					style = overlayStyle(originalBackground, style, foregroundColor, backgroundColor, attributes)
+				}
+				tagOffset += colorIndices[colorPos][1] - colorIndices[colorPos][0]
+				colorPos++
+			}
+			if escapePos < len(escapeIndices) && index+tagOffset >= escapeIndices[escapePos][0] && index+tagOffset < escapeIndices[escapePos][1] {
+				tagOffset++
+				escapePos++
+			}
+		}
+		return printWithStyle(screen, text[leftIndex+tagOffset:], x, y, maxWidth, AlignLeft, style)
+
 	}
 
 	// Draw text.
@@ -517,8 +517,8 @@ func WordWrap(text string, width int) (lines []string) {
 // recognized and substituted by the print functions of this package. For
 // example, to include a tag-like string in a box title or in a TextView:
 //
-//   box.SetTitle(tview.Escape("[squarebrackets]"))
-//   fmt.Fprint(textView, tview.Escape(`["quoted"]`))
+//	box.SetTitle(tview.Escape("[squarebrackets]"))
+//	fmt.Fprint(textView, tview.Escape(`["quoted"]`))
 func Escape(text string) string {
 	return nonEscapePattern.ReplaceAllString(text, "$1[]")
 }
