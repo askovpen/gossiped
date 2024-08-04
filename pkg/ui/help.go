@@ -65,7 +65,7 @@ func (m *ModalHelp) SetDoneFunc(handler func()) *ModalHelp {
 	return m
 }
 
-//AreaListHelp Area List Help
+// AreaListHelp Area List Help
 func (a *App) AreaListHelp() (string, tview.Primitive, bool, bool) {
 	modal := NewModalHelp().
 		SetText(`
