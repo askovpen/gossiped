@@ -1,5 +1,6 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+version: 2
 before:
   hooks:
     # you may remove this if you don't use vgo
@@ -42,7 +43,14 @@ builds:
   - amd64
 archives:
 -
-  name_template: "{{.ProjectName}}-{{.Version}}-{{.Os}}{{.Arch}}"
+#  name_template: "{{.ProjectName}}-{{.Version}}-{{.Os}}{{.Arch}}"
+  name_template: >-
+    {{- .ProjectName }}-
+    {{- .Version }}-
+    {{- title .Os }}
+    {{- if eq .Arch "amd64" }}64
+    {{- else if eq .Arch "386" }}32
+    {{- else }}{{ .Arch }}{{ end }}
   builds:
     - win
     - osx
@@ -53,19 +61,19 @@ archives:
   format_overrides:
     - goos: windows
       format: zip
-  replacements:
-    darwin: osx
-    linux: lnx
-    windows: win
-    freebsd: fbsd
-    386: 32
-    amd64: 64
+#  replacements:
+#    darwin: osx
+#    linux: lnx
+#    windows: win
+#    freebsd: fbsd
+#    386: 32
+#    amd64: 64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
   name_template: "{{.Version}}-snapshot"
 changelog:
-  skip: true
+  disable: true
   filters:
     exclude:
     - '^docs:'
@@ -77,13 +85,21 @@ nfpms:
     homepage: https://github.com/askovpen/gossiped
     maintainer: askovpen <spam-from-github@skovpen.org>
     license: MIT
-    file_name_template: "{{.ProjectName}}-{{.Version}}-{{.Os}}{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    replacements:
-      darwin: osx
-      linux: lnx
-      windows: win
-      386: 32
-      amd64: 64
+    file_name_template: >-
+      {{- .ProjectName }}-
+      {{- .Version }}-
+      {{- title .Os }}
+      {{- if eq .Arch "amd64" }}64
+      {{- else if eq .Arch "386" }}32
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
+#    file_name_template: "{{.ProjectName}}-{{.Version}}-{{.Os}}{{.Arch}}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+#    replacements:
+#      darwin: osx
+#      linux: lnx
+#      windows: win
+#      386: 32
+#      amd64: 64
     formats:
     - deb
     - rpm
