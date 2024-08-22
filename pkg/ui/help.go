@@ -91,12 +91,13 @@ Ins, Ctrl-I    Enter a new message
 Del            Delete current/marked message(s), ask first
 Right/Left     Next/Previous message
 Home/End       Display first/last part of current message
-</>            Go to First/Last mesage
+</>            Go to First/Last message
 Ctrl-G         Go to message number
 F3, Ctrl-Q     Quote-Reply to message. (Reply to FROM name)
 Ctrl-N         Quote-Reply in another area
 Ctrl-L         Enter the Message Lister
 Ctrl-F         Forward message to another area
+Alt-K          Show Kludges
 `).
 		SetDoneFunc(func() {
 			a.Pages.HidePage("ViewMsgHelp")
