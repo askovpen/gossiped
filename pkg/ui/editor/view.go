@@ -151,7 +151,7 @@ func (v *View) OpenBuffer(buf *Buffer) {
 	color-link origin "bold white"
 	color-link tearline "bold white"
 	color-link tagline "bold white"
-	color-link kludge "bold black"
+	color-link kludge "bold gray"
 	`))
 }
 

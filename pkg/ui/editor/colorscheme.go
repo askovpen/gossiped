@@ -165,7 +165,7 @@ func StringToColor(str string) tcell.Color {
 		return tcell.ColorTeal
 	case "white":
 		return tcell.ColorSilver
-	case "brightblack", "lightblack":
+	case "brightblack", "lightblack", "grey", "gray":
 		return tcell.ColorGray
 	case "brightred", "lightred":
 		return tcell.ColorRed
