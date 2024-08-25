@@ -1,22 +1,34 @@
 package editor
 
 import (
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/gdamore/tcell/v2"
 	"log"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/gdamore/tcell/v2"
 )
 
 // Colorscheme is a map from string to style -- it represents a colorscheme
 type Colorscheme map[string]tcell.Style
 
-// The current default colorscheme
-var colorscheme Colorscheme
+const ConfigColorArea = "editor"
 
-// The default cell style
-var defStyle tcell.Style
+var (
+	// The current default colorscheme
+	colorscheme Colorscheme
+	// The default cell style
+	defStyle tcell.Style
+	// Default colors
+	defaultColors = config.ColorMap{
+		"comment":  "bold yellow",
+		"icomment": "bold white",
+		"origin":   "bold white",
+		"tearline": "bold white",
+		"tagline":  "bold white",
+		"kludge":   "bold gray",
+	}
+)
 
 // GetColor takes in a syntax group and returns the colorscheme's style for that group
 func GetColor(color string) tcell.Style {
@@ -238,4 +250,11 @@ func GetColor256(color int) tcell.Color {
 	}
 
 	return tcell.ColorDefault
+}
+
+func (scheme Colorscheme) ReadFromConfig() Colorscheme {
+	for colorType, colorValue := range defaultColors.ProduceFromConfig(ConfigColorArea) {
+		scheme[colorType] = StringToStyle(colorValue)
+	}
+	return scheme
 }
