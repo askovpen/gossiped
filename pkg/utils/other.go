@@ -12,3 +12,11 @@ func FileExists(filename string) bool {
 	}
 	return !info.IsDir()
 }
+
+func CreateFlagFile(filename string) error {
+	if filename != "" {
+		_, err := os.Create(filename)
+		return err
+	}
+	return nil
+}
