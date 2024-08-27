@@ -144,7 +144,8 @@ func (v *View) OpenBuffer(buf *Buffer) {
 	// is opened
 	v.isOverwriteMode = false
 	v.Buf.updateRules()
-	v.SetColorscheme(Colorscheme{}.ReadFromConfig())
+	// Prepare color scheme
+	v.SetColorscheme(ProduceColorSchemeFromConfig())
 }
 
 // Bottomline returns the line number of the lowest line in the view

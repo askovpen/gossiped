@@ -103,20 +103,3 @@ func GetCity(sa string) string {
 	}
 	return "unknown"
 }
-
-func (defaultColors ColorMap) ProduceFromConfig(colorArea string) ColorMap {
-	var out = make(ColorMap)
-	var validKeys = make(map[string]bool)
-	for k, v := range defaultColors {
-		validKeys[k] = true
-		out[k] = v
-	}
-	if Config.Colors[colorArea] != nil {
-		for element, colorValue := range Config.Colors[colorArea] {
-			if validKeys[element] {
-				out[element] = colorValue
-			}
-		}
-	}
-	return out
-}
