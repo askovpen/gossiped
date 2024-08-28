@@ -2,7 +2,6 @@ package editor
 
 import (
 	"strings"
-	//"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -145,14 +144,8 @@ func (v *View) OpenBuffer(buf *Buffer) {
 	// is opened
 	v.isOverwriteMode = false
 	v.Buf.updateRules()
-	v.SetColorscheme(ParseColorscheme(`
-	color-link comment "bold yellow"
-	color-link icomment "bold white"
-	color-link origin "bold white"
-	color-link tearline "bold white"
-	color-link tagline "bold white"
-	color-link kludge "bold gray"
-	`))
+	// Prepare color scheme
+	v.SetColorscheme(ProduceColorSchemeFromConfig())
 }
 
 // Bottomline returns the line number of the lowest line in the view

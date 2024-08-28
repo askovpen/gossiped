@@ -1,22 +1,42 @@
 package editor
 
 import (
+	"errors"
+	"fmt"
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/gdamore/tcell/v2"
 	"log"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/gdamore/tcell/v2"
 )
 
 // Colorscheme is a map from string to style -- it represents a colorscheme
 type Colorscheme map[string]tcell.Style
 
-// The current default colorscheme
-var colorscheme Colorscheme
+const ConfigColorArea = "editor"
 
-// The default cell style
-var defStyle tcell.Style
+const (
+	StyleUnderline = "underline"
+	StyleBold      = "bold"
+	StyleReverse   = "reverse"
+)
+
+var (
+	// The current default colorscheme
+	colorscheme Colorscheme
+	// The default cell style
+	defStyle tcell.Style
+	// Default colors
+	defaultColors = config.ColorMap{
+		"comment":  "bold yellow",
+		"icomment": "bold white",
+		"origin":   "bold white",
+		"tearline": "bold white",
+		"tagline":  "bold white",
+		"kludge":   "bold gray",
+	}
+)
 
 // GetColor takes in a syntax group and returns the colorscheme's style for that group
 func GetColor(color string) tcell.Style {
@@ -44,7 +64,7 @@ func (colorscheme Colorscheme) GetColor(color string) tcell.Style {
 	} else if style, ok := colorscheme[color]; ok {
 		st = style
 	} else {
-		st = StringToStyle(color)
+		st, _ = StringToStyle(color)
 	}
 
 	return st
@@ -86,7 +106,7 @@ func ParseColorscheme(text string) Colorscheme {
 			link := string(matches[1])
 			colors := string(matches[2])
 
-			style := StringToStyle(colors)
+			style, _ := StringToStyle(colors)
 			c[link] = style
 
 			if link == "default" {
@@ -103,15 +123,17 @@ func ParseColorscheme(text string) Colorscheme {
 // StringToStyle returns a style from a string
 // The strings must be in the format "extra foregroundcolor,backgroundcolor"
 // The 'extra' can be bold, reverse, or underline
-func StringToStyle(str string) tcell.Style {
-	var fg, bg string
-	spaceSplit := strings.Split(str, " ")
-	var split []string
-	if len(spaceSplit) > 1 {
-		split = strings.Split(spaceSplit[1], ",")
-	} else {
-		split = strings.Split(str, ",")
+func StringToStyle(str string) (tcell.Style, error) {
+	var errStack error
+	str = strings.ToLower(strings.TrimSpace(str))
+
+	if len(str) == 0 {
+		errStack = errors.New("empty color value")
+		return tcell.StyleDefault, errStack
 	}
+
+	var fg, bg string
+	var split = strings.Split(str, ",")
 	if len(split) > 1 {
 		fg, bg = split[0], split[1]
 	} else {
@@ -120,122 +142,97 @@ func StringToStyle(str string) tcell.Style {
 	fg = strings.TrimSpace(fg)
 	bg = strings.TrimSpace(bg)
 
-	var fgColor, bgColor tcell.Color
-	if fg == "" {
-		fgColor, _, _ = defStyle.Decompose()
+	var styles = ""
+	var splitFg = strings.Split(fg, " ")
+	if len(splitFg) > 1 {
+		styles = strings.TrimSpace(splitFg[0])
+		fg = strings.TrimSpace(splitFg[1])
 	} else {
+		fg = strings.TrimSpace(splitFg[0])
+	}
+
+	var fgColor, bgColor, _ = defStyle.Decompose()
+
+	if fg != "" && fg != "default" {
+		if _, ok := tcell.ColorNames[fg]; !ok && fg != "default" {
+			errStack = errors.Join(errStack, errors.New(fmt.Sprintf("unknown foreground color name \"%s\"", fg)))
+		}
 		fgColor = StringToColor(fg)
 	}
-	if bg == "" {
-		_, bgColor, _ = defStyle.Decompose()
-	} else {
+	if bg != "" && bg != "default" {
+		if _, ok := tcell.ColorNames[bg]; !ok {
+			errStack = errors.Join(errStack, errors.New(fmt.Sprintf("unknown background color name \"%s\"", bg)))
+		}
 		bgColor = StringToColor(bg)
 	}
 
 	style := defStyle.Foreground(fgColor).Background(bgColor)
-	if strings.Contains(str, "bold") {
-		style = style.Bold(true)
+	var splitStyles = strings.Split(styles, "|")
+	for _, v := range splitStyles {
+		v = strings.TrimSpace(v)
+		if v == StyleReverse {
+			style = style.Reverse(true)
+		} else if v == StyleUnderline {
+			style = style.Underline(true)
+		} else if v == StyleBold {
+			style = style.Bold(true)
+		} else if v != "" {
+			errStack = errors.Join(errStack, errors.New(fmt.Sprintf("unknown style \"%s\"", v)))
+		}
 	}
-	if strings.Contains(str, "reverse") {
-		style = style.Reverse(true)
-	}
-	if strings.Contains(str, "underline") {
-		style = style.Underline(true)
-	}
-	return style
+	return style, errStack
 }
 
 // StringToColor returns a tcell color from a string representation of a color
-// We accept either bright... or light... to mean the brighter version of a color
 func StringToColor(str string) tcell.Color {
-	switch str {
-	case "black":
-		return tcell.ColorBlack
-	case "red":
-		return tcell.ColorMaroon
-	case "green":
-		return tcell.ColorGreen
-	case "yellow":
-		return tcell.ColorOlive
-	case "blue":
-		return tcell.ColorNavy
-	case "magenta":
-		return tcell.ColorPurple
-	case "cyan":
-		return tcell.ColorTeal
-	case "white":
-		return tcell.ColorSilver
-	case "brightblack", "lightblack", "grey", "gray":
-		return tcell.ColorGray
-	case "brightred", "lightred":
-		return tcell.ColorRed
-	case "brightgreen", "lightgreen":
-		return tcell.ColorLime
-	case "brightyellow", "lightyellow":
-		return tcell.ColorYellow
-	case "brightblue", "lightblue":
-		return tcell.ColorBlue
-	case "brightmagenta", "lightmagenta":
-		return tcell.ColorFuchsia
-	case "brightcyan", "lightcyan":
-		return tcell.ColorAqua
-	case "brightwhite", "lightwhite":
-		return tcell.ColorWhite
-	case "default":
-		return tcell.ColorDefault
-	default:
-		// Check if this is a 256 color
-		if num, err := strconv.Atoi(str); err == nil {
-			return GetColor256(num)
+	if num, err := strconv.Atoi(str); err == nil {
+		if num > 255 || num < 0 {
+			return tcell.ColorDefault
 		}
-		// Probably a truecolor hex value
-		return tcell.GetColor(str)
+		return tcell.PaletteColor(num)
 	}
+	return tcell.GetColor(str)
 }
 
-// GetColor256 returns the tcell color for a number between 0 and 255
-func GetColor256(color int) tcell.Color {
-	colors := []tcell.Color{tcell.ColorBlack, tcell.ColorMaroon, tcell.ColorGreen,
-		tcell.ColorOlive, tcell.ColorNavy, tcell.ColorPurple,
-		tcell.ColorTeal, tcell.ColorSilver, tcell.ColorGray,
-		tcell.ColorRed, tcell.ColorLime, tcell.ColorYellow,
-		tcell.ColorBlue, tcell.ColorFuchsia, tcell.ColorAqua,
-		tcell.ColorWhite, tcell.Color16, tcell.Color17, tcell.Color18, tcell.Color19, tcell.Color20,
-		tcell.Color21, tcell.Color22, tcell.Color23, tcell.Color24, tcell.Color25, tcell.Color26, tcell.Color27, tcell.Color28,
-		tcell.Color29, tcell.Color30, tcell.Color31, tcell.Color32, tcell.Color33, tcell.Color34, tcell.Color35, tcell.Color36,
-		tcell.Color37, tcell.Color38, tcell.Color39, tcell.Color40, tcell.Color41, tcell.Color42, tcell.Color43, tcell.Color44,
-		tcell.Color45, tcell.Color46, tcell.Color47, tcell.Color48, tcell.Color49, tcell.Color50, tcell.Color51, tcell.Color52,
-		tcell.Color53, tcell.Color54, tcell.Color55, tcell.Color56, tcell.Color57, tcell.Color58, tcell.Color59, tcell.Color60,
-		tcell.Color61, tcell.Color62, tcell.Color63, tcell.Color64, tcell.Color65, tcell.Color66, tcell.Color67, tcell.Color68,
-		tcell.Color69, tcell.Color70, tcell.Color71, tcell.Color72, tcell.Color73, tcell.Color74, tcell.Color75, tcell.Color76,
-		tcell.Color77, tcell.Color78, tcell.Color79, tcell.Color80, tcell.Color81, tcell.Color82, tcell.Color83, tcell.Color84,
-		tcell.Color85, tcell.Color86, tcell.Color87, tcell.Color88, tcell.Color89, tcell.Color90, tcell.Color91, tcell.Color92,
-		tcell.Color93, tcell.Color94, tcell.Color95, tcell.Color96, tcell.Color97, tcell.Color98, tcell.Color99, tcell.Color100,
-		tcell.Color101, tcell.Color102, tcell.Color103, tcell.Color104, tcell.Color105, tcell.Color106, tcell.Color107, tcell.Color108,
-		tcell.Color109, tcell.Color110, tcell.Color111, tcell.Color112, tcell.Color113, tcell.Color114, tcell.Color115, tcell.Color116,
-		tcell.Color117, tcell.Color118, tcell.Color119, tcell.Color120, tcell.Color121, tcell.Color122, tcell.Color123, tcell.Color124,
-		tcell.Color125, tcell.Color126, tcell.Color127, tcell.Color128, tcell.Color129, tcell.Color130, tcell.Color131, tcell.Color132,
-		tcell.Color133, tcell.Color134, tcell.Color135, tcell.Color136, tcell.Color137, tcell.Color138, tcell.Color139, tcell.Color140,
-		tcell.Color141, tcell.Color142, tcell.Color143, tcell.Color144, tcell.Color145, tcell.Color146, tcell.Color147, tcell.Color148,
-		tcell.Color149, tcell.Color150, tcell.Color151, tcell.Color152, tcell.Color153, tcell.Color154, tcell.Color155, tcell.Color156,
-		tcell.Color157, tcell.Color158, tcell.Color159, tcell.Color160, tcell.Color161, tcell.Color162, tcell.Color163, tcell.Color164,
-		tcell.Color165, tcell.Color166, tcell.Color167, tcell.Color168, tcell.Color169, tcell.Color170, tcell.Color171, tcell.Color172,
-		tcell.Color173, tcell.Color174, tcell.Color175, tcell.Color176, tcell.Color177, tcell.Color178, tcell.Color179, tcell.Color180,
-		tcell.Color181, tcell.Color182, tcell.Color183, tcell.Color184, tcell.Color185, tcell.Color186, tcell.Color187, tcell.Color188,
-		tcell.Color189, tcell.Color190, tcell.Color191, tcell.Color192, tcell.Color193, tcell.Color194, tcell.Color195, tcell.Color196,
-		tcell.Color197, tcell.Color198, tcell.Color199, tcell.Color200, tcell.Color201, tcell.Color202, tcell.Color203, tcell.Color204,
-		tcell.Color205, tcell.Color206, tcell.Color207, tcell.Color208, tcell.Color209, tcell.Color210, tcell.Color211, tcell.Color212,
-		tcell.Color213, tcell.Color214, tcell.Color215, tcell.Color216, tcell.Color217, tcell.Color218, tcell.Color219, tcell.Color220,
-		tcell.Color221, tcell.Color222, tcell.Color223, tcell.Color224, tcell.Color225, tcell.Color226, tcell.Color227, tcell.Color228,
-		tcell.Color229, tcell.Color230, tcell.Color231, tcell.Color232, tcell.Color233, tcell.Color234, tcell.Color235, tcell.Color236,
-		tcell.Color237, tcell.Color238, tcell.Color239, tcell.Color240, tcell.Color241, tcell.Color242, tcell.Color243, tcell.Color244,
-		tcell.Color245, tcell.Color246, tcell.Color247, tcell.Color248, tcell.Color249, tcell.Color250, tcell.Color251, tcell.Color252,
-		tcell.Color253, tcell.Color254, tcell.Color255,
+func ProduceColorMapFromConfig(colorArea string, fallbackColors *config.ColorMap) (config.ColorMap, error) {
+	var out = make(config.ColorMap)
+	var validKeys = make(map[string]bool)
+	for k, v := range *fallbackColors {
+		validKeys[k] = true
+		out[k] = v
 	}
-
-	if color >= 0 && color < len(colors) {
-		return colors[color]
+	var fallback = out
+	if config.Config.Colors[colorArea] == nil || len(config.Config.Colors[colorArea]) == 0 {
+		return fallback, nil
 	}
+	var validation error = nil
+	for element, colorValue := range config.Config.Colors[colorArea] {
+		colorValue = strings.ToLower(strings.TrimSpace(colorValue))
+		if !validKeys[element] {
+			validation = errors.Join(
+				validation,
+				errors.New("not valid element for area (element: "+element+", area: "+colorArea+")"),
+			)
+			continue
+		}
 
-	return tcell.ColorDefault
+		if _, err := StringToStyle(colorValue); err != nil {
+			validation = errors.Join(
+				validation,
+				errors.New(err.Error()+" (element: "+element+", area: "+colorArea+")"),
+			)
+			continue
+		}
+		out[element] = colorValue
+	}
+	return out, validation
+}
+
+func ProduceColorSchemeFromConfig() Colorscheme {
+	var scheme = Colorscheme{}
+	colors, _ := ProduceColorMapFromConfig(ConfigColorArea, &defaultColors)
+	for colorType, colorValue := range colors {
+		scheme[colorType], _ = StringToStyle(colorValue)
+	}
+	return scheme
 }

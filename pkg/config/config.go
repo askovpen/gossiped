@@ -9,29 +9,33 @@ import (
 	"strings"
 )
 
-type configS struct {
-	Username string
-	AreaFile struct {
-		Path string
-		Type string
+type (
+	ColorMap map[string]string
+	configS  struct {
+		Username string
+		AreaFile struct {
+			Path string
+			Type string
+		}
+		Areas []struct {
+			Name     string
+			Path     string
+			Type     string
+			BaseType string
+			Chrs     string
+		}
+		Colors   map[string]ColorMap
+		Log      string
+		Address  *types.FidoAddr
+		Origin   string
+		Tearline string
+		Template string
+		Chrs     struct {
+			Default string
+			IBMPC   string
+		}
 	}
-	Areas []struct {
-		Name     string
-		Path     string
-		Type     string
-		BaseType string
-		Chrs     string
-	}
-	Log      string
-	Address  *types.FidoAddr
-	Origin   string
-	Tearline string
-	Template string
-	Chrs     struct {
-		Default string
-		IBMPC   string
-	}
-}
+)
 
 // vars
 var (

@@ -17,3 +17,11 @@ areas:
     basetype: msg # msg, squish, jam
   - name: utf-8
     chrs: UTF-8 4
+colors:
+  editor:
+    comment:  bold yellow
+    icomment: bold white
+    origin:   bold green
+    tearline: bold green
+    tagline:  bold green
+    kludge:   bold gray
