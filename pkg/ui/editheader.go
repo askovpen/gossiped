@@ -85,7 +85,7 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 			e.sIndex++
 			if e.sIndex == 5 {
 				e.sIndex = 0
-			} else if msgapi.Areas[e.msg.AreaID].GetType() != msgapi.EchoAreaTypeNetmail && e.sIndex == 3 {
+			} else if (*e.msg.AreaObject).GetType() != msgapi.EchoAreaTypeNetmail && e.sIndex == 3 {
 				e.sIndex = 4
 			}
 		case tcell.KeyRight:
@@ -105,7 +105,7 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				}
 			} else {
 				e.sIndex++
-				if msgapi.Areas[e.msg.AreaID].GetType() != msgapi.EchoAreaTypeNetmail && e.sIndex == 3 {
+				if (*e.msg.AreaObject).GetType() != msgapi.EchoAreaTypeNetmail && e.sIndex == 3 {
 					e.sIndex = 4
 				}
 			}

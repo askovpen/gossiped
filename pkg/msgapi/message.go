@@ -25,7 +25,7 @@ type MessageListItem struct {
 // Message struct
 type Message struct {
 	Area        string
-	AreaID      int
+	AreaObject  *AreaPrimitive
 	MsgNum      uint32
 	MaxNum      uint32
 	DateWritten time.Time
@@ -85,7 +85,8 @@ func (m *Message) ParseRaw() error {
 	if m.ToAddr == nil {
 		m.ToAddr = &types.FidoAddr{}
 	}
-	if Areas[m.AreaID].GetType() == EchoAreaTypeNetmail {
+
+	if (m.AreaObject == nil) || (*m.AreaObject).GetType() == EchoAreaTypeNetmail {
 		if _, ok := m.Kludges["FMPT"]; ok {
 			a, err := strconv.ParseUint(m.Kludges["FMPT"], 10, 16)
 			if err == nil {
@@ -119,8 +120,8 @@ func (m *Message) parseTabs(s string) string {
 // Encode charset
 func (m *Message) Encode() {
 	enc := strings.Split(config.Config.Chrs.Default, " ")[0]
-	if Areas[m.AreaID].GetChrs() != "" {
-		enc = strings.Split(Areas[m.AreaID].GetChrs(), " ")[0]
+	if (*m.AreaObject).GetChrs() != "" {
+		enc = strings.Split((*m.AreaObject).GetChrs(), " ")[0]
 	}
 	m.Body = utils.EncodeCharmap(m.Body, enc)
 	m.From = utils.EncodeCharmap(m.From, enc)
@@ -326,7 +327,7 @@ func (m *Message) ToEditForwardView(om *Message) string {
 		"@OName", om.From,
 		"@OAddr", om.FromAddr.String(),
 		"@DName", om.To,
-		"@OEcho", Areas[om.AreaID].GetName(),
+		"@OEcho", (*m.AreaObject).GetName(),
 		"@Subject", om.Subject,
 		"@CAddr", config.Config.Address.String(),
 		"@CName", config.Config.Username)
@@ -365,7 +366,7 @@ func (m *Message) ToEditForwardView(om *Message) string {
 
 // MakeBody make body
 func (m *Message) MakeBody() *Message {
-	if Areas[m.AreaID].GetType() == EchoAreaTypeNetmail {
+	if (*m.AreaObject).GetType() == EchoAreaTypeNetmail {
 		to := m.ToAddr
 		top := to.GetPoint()
 		to.SetPoint(0)

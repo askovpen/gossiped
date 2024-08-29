@@ -4,8 +4,7 @@ import (
 	"errors"
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
-	// "log"
-	"sort"
+
 	"strings"
 )
 
@@ -49,14 +48,6 @@ func Read() error {
 	if len(msgapi.Areas) == 0 {
 		return errors.New("no Areas found")
 	}
-
-	sort.Slice(msgapi.Areas, func(i, j int) bool {
-		if msgapi.Areas[i].GetType() != msgapi.Areas[j].GetType() {
-			return msgapi.Areas[i].GetType() < msgapi.Areas[j].GetType()
-		}
-		return msgapi.Areas[i].GetName() < msgapi.Areas[j].GetName()
-	})
-	//	log.Printf("%q",msgapi.Areas)
 	return nil
 }
 

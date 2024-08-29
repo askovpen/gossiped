@@ -31,7 +31,7 @@ func TestJam(t *testing.T) {
 	g := Goblin(t)
 	g.Describe("Check JAM read/write", func() {
 		m := &Message{
-			AreaID:      0,
+			AreaObject:  &Areas[0],
 			From:        "SysOp",
 			To:          "SysOp",
 			Subject:     "Test",
@@ -90,7 +90,7 @@ func BenchmarkJamGetMessages(b *testing.B) {
 	Areas = append(Areas, Area)
 	for n := 0; n < b.N; n++ {
 		m := &Message{
-			AreaID:      0,
+			AreaObject:  &Areas[0],
 			From:        "SysOp",
 			To:          "SysOp",
 			Subject:     "Test",
@@ -105,7 +105,7 @@ func BenchmarkJamGetMessages(b *testing.B) {
 		Area.SaveMsg(m)
 	}
 	m := &Message{
-		AreaID:      0,
+		AreaObject:  &Areas[0],
 		From:        "SysOp",
 		To:          "SysOp",
 		Subject:     "Test",
