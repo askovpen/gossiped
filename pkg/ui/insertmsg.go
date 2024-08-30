@@ -22,8 +22,8 @@ type IM struct {
 	eb         *editor.View
 	eh         *EditHeader
 	newMsg     *msgapi.Message
-	curArea    int
-	postArea   int
+	curArea    *msgapi.AreaPrimitive
+	postArea   *msgapi.AreaPrimitive
 	newMsgType int
 	buffer     *editor.Buffer
 }
@@ -39,17 +39,17 @@ func (a *App) InsertMsgMenu() (string, tview.Primitive, bool, bool) {
 			case 0:
 				//a.im.newMsg.Body = a.im.eb.GetText(false)
 				a.im.newMsg.Body = a.im.buffer.String()
-				msgapi.Areas[a.im.postArea].SaveMsg(a.im.newMsg.MakeBody())
+				(*a.im.postArea).SaveMsg(a.im.newMsg.MakeBody())
 				a.Pages.HidePage("InsertMsgMenu")
 				a.Pages.RemovePage("InsertMsgMenu")
-				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[a.im.curArea].GetName(), msgapi.Areas[a.im.curArea].GetLast()))
-				a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[a.im.curArea].GetName()))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*a.im.curArea).GetName(), (*a.im.curArea).GetLast()))
+				a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", (*a.im.curArea).GetName()))
 				a.App.SetFocus(a.Pages)
 			case 1:
 				a.Pages.HidePage("InsertMsgMenu")
 				a.Pages.RemovePage("InsertMsgMenu")
-				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[a.im.curArea].GetName(), msgapi.Areas[a.im.curArea].GetLast()))
-				a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[a.im.curArea].GetName()))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*a.im.curArea).GetName(), (*a.im.curArea).GetLast()))
+				a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", (*a.im.curArea).GetName()))
 				a.App.SetFocus(a.Pages)
 			case 2:
 				a.Pages.HidePage("InsertMsgMenu")
@@ -63,38 +63,38 @@ func (a *App) InsertMsgMenu() (string, tview.Primitive, bool, bool) {
 }
 
 // InsertMsg widget
-func (a *App) InsertMsg(areaID int, msgType int) (string, tview.Primitive, bool, bool) {
+func (a *App) InsertMsg(area *msgapi.AreaPrimitive, msgType int) (string, tview.Primitive, bool, bool) {
 	var omsg *msgapi.Message
-	a.im.curArea = areaID
+	a.im.curArea = area
 	a.im.newMsgType = msgType
 	if a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeAnswer {
-		a.im.postArea = areaID
+		a.im.postArea = area
 	}
-	a.im.newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaID: a.im.postArea}
+	a.im.newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaObject: area}
 	a.im.newMsg.Kludges = make(map[string]string)
 	a.im.newMsg.Kludges["PID:"] = config.PID
 	a.im.newMsg.Kludges["CHRS:"] = config.Config.Chrs.Default
-	if msgapi.Areas[a.im.postArea].GetChrs() != "" {
-		a.im.newMsg.Kludges["CHRS:"] = msgapi.Areas[a.im.postArea].GetChrs()
+	if (*a.im.postArea).GetChrs() != "" {
+		a.im.newMsg.Kludges["CHRS:"] = (*a.im.postArea).GetChrs()
 	}
-	if msgapi.Areas[a.im.postArea].GetType() != msgapi.EchoAreaTypeNetmail && (a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeForward) {
+	if (*a.im.postArea).GetType() != msgapi.EchoAreaTypeNetmail && (a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeForward) {
 		a.im.newMsg.To = "All"
 	}
 	if (a.im.newMsgType&newMsgTypeAnswer) != 0 || (a.im.newMsgType&newMsgTypeAnswerNewArea) != 0 {
-		omsg, _ = msgapi.Areas[areaID].GetMsg(msgapi.Areas[a.im.curArea].GetLast())
+		omsg, _ = (*area).GetMsg((*a.im.curArea).GetLast())
 		a.im.newMsg.To = omsg.From
 		a.im.newMsg.ToAddr = omsg.FromAddr
 		a.im.newMsg.Kludges["REPLY:"] = omsg.Kludges["MSGID:"]
 		a.im.newMsg.Subject = omsg.Subject
 	} else if (a.im.newMsgType & newMsgTypeForward) != 0 {
-		omsg, _ = msgapi.Areas[areaID].GetMsg(msgapi.Areas[a.im.curArea].GetLast())
+		omsg, _ = (*area).GetMsg((*a.im.curArea).GetLast())
 		a.im.newMsg.Subject = omsg.Subject
 	}
 	a.im.eh = NewEditHeader(a.im.newMsg)
 	a.im.eh.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).
-		SetTitle(" " + msgapi.Areas[a.im.postArea].GetName() + " ").
+		SetTitle(" " + (*a.im.postArea).GetName() + " ").
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
 	a.im.eb = editor.NewView(editor.NewBufferFromString(""))
@@ -133,5 +133,5 @@ func (a *App) InsertMsg(areaID int, msgType int) (string, tview.Primitive, bool,
 		SetDirection(tview.FlexRow).
 		AddItem(a.im.eh, 6, 1, true).
 		AddItem(a.im.eb, 0, 1, false)
-	return fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaID].GetName()), layout, true, true
+	return fmt.Sprintf("InsertMsg-%s", (*area).GetName()), layout, true, true
 }

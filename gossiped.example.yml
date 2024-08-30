@@ -25,3 +25,5 @@ colors:
     tearline: bold green
     tagline:  bold green
     kludge:   bold gray
+sorting:
+  areas: unread   # unread, default

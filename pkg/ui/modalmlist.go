@@ -23,7 +23,7 @@ type ModalMessageList struct {
 }
 
 // NewModalMessageList returns a new modal message window.
-func NewModalMessageList(areaID int) *ModalMessageList {
+func NewModalMessageList(area *msgapi.AreaPrimitive) *ModalMessageList {
 	m := &ModalMessageList{
 		Box:       tview.NewBox(),
 		textColor: tview.Styles.PrimaryTextColor,
@@ -68,9 +68,9 @@ func NewModalMessageList(areaID int) *ModalMessageList {
 			SetAttributes(tcell.AttrBold).
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
-	for i, mh := range *msgapi.Areas[areaID].GetMessages() {
+	for i, mh := range *(*area).GetMessages() {
 		ch := " "
-		if i == int(msgapi.Areas[areaID].GetLast()-1) {
+		if i == int((*area).GetLast()-1) {
 			ch = "[::b],"
 		}
 		//mh.From, mh.To, mh.Subject, mh.DateWritten.Format("02 Jan 06"))
@@ -88,7 +88,7 @@ func NewModalMessageList(areaID int) *ModalMessageList {
 		m.table.SetCell(i+1, 3, tview.NewTableCell(mh.Subject).SetTextColor(tcell.ColorSilver))
 		m.table.SetCell(i+1, 4, tview.NewTableCell(mh.DateWritten.Format("02 Jan 06")).SetTextColor(tcell.ColorSilver))
 	}
-	m.table.Select(int(msgapi.Areas[areaID].GetLast()), 0)
+	m.table.Select(int((*area).GetLast()), 0)
 	return m
 }
 

@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/rivo/tview"
 )
 
@@ -13,19 +14,18 @@ type App struct {
 	al          *tview.Table
 	im          IM
 	showKludges bool
+	CurrentArea *msgapi.AreaPrimitive
 }
 
 // NewApp return new App
 func NewApp() *App {
 	a := &App{}
 	a.App = tview.NewApplication()
-
+	a.sb = NewStatusBar(a)
 	a.Pages = tview.NewPages()
 	a.Pages.AddPage(a.AreaList())
 	a.Pages.AddPage(a.AreaListQuit())
 	a.Pages.AddPage(a.AreaListHelp())
-
-	a.sb = NewStatusBar(a)
 	a.sb.Run()
 	a.Layout = tview.NewFlex().
 		SetDirection(tview.FlexRow).

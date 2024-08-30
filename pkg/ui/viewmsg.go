@@ -11,41 +11,40 @@ import (
 	//"strings"
 )
 
+func (a *App) SwitchToAreaListPage() {
+	a.RefreshAreaList()
+	a.Pages.SwitchToPage("AreaList")
+}
+
 // ViewMsg widget
-func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool, bool) {
-	msg, err := msgapi.Areas[areaID].GetMsg(msgNum)
+func (a *App) ViewMsg(area *msgapi.AreaPrimitive, msgNum uint32) (string, tview.Primitive, bool, bool) {
+	msg, err := (*area).GetMsg(msgNum)
 	if err != nil {
 		modal := tview.NewModal().
 			SetText(err.Error()).
 			AddButtons([]string{"Quit"}).
 			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-				a.Pages.SwitchToPage("AreaList")
+				a.SwitchToAreaListPage()
 			})
-		return fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum), modal, true, true
+		return fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum), modal, true, true
 	}
 	if msg != nil {
 		if msgNum == 0 {
 			msgNum = 1
 		}
-		msgapi.Areas[areaID].SetLast(msgNum)
+		(*area).SetLast(msgNum)
 	}
-	if msgapi.Areas[areaID].GetCount()-msgapi.Areas[areaID].GetLast() > 0 {
-		a.al.SetCell(areaID+1, 0, tview.NewTableCell(strconv.FormatInt(int64(areaID), 10)+"[::b]+").SetAlign(tview.AlignRight))
-	} else {
-		a.al.SetCell(areaID+1, 0, tview.NewTableCell(strconv.FormatInt(int64(areaID), 10)+" ").SetAlign(tview.AlignRight))
-	}
-	a.al.SetCell(areaID+1, 2, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaID].GetCount()), 10)).SetAlign(tview.AlignRight))
-	a.al.SetCell(areaID+1, 3, tview.NewTableCell(strconv.FormatInt(int64(msgapi.Areas[areaID].GetCount()-msgapi.Areas[areaID].GetLast()), 10)).SetAlign(tview.AlignRight))
-	a.sb.SetStatus(fmt.Sprintf("Msg %d of %d (%d left)",
+	a.sb.SetStatus(fmt.Sprintf("%s: message %d of %d (%d left)",
+		(*area).GetName(),
 		msgNum,
-		msgapi.Areas[areaID].GetCount(),
-		msgapi.Areas[areaID].GetCount()-msgNum,
+		(*area).GetCount(),
+		(*area).GetCount()-msgNum,
 	))
 	header := NewViewHeader(msg)
 	header.SetBorder(true).
 		SetBorderAttributes(tcell.AttrBold).
 		SetBorderColor(tcell.ColorBlue).
-		SetTitle(" " + msgapi.Areas[areaID].GetName() + " ").
+		SetTitle(" " + (*area).GetName() + " ").
 		SetTitleAlign(tview.AlignLeft).
 		SetTitleColor(tcell.ColorYellow)
 	var body *editor.View
@@ -56,62 +55,75 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 	}
 	header.SetDoneFunc(func(s string) {
 		num, _ := strconv.ParseUint(s, 10, 32)
-		if uint32(num) >= msgapi.Areas[areaID].GetCount() {
+		if uint32(num) >= (*area).GetCount() {
 			a.App.SetFocus(body)
 		} else {
-			if a.Pages.HasPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), num)) {
-				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), num))
-				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+			if a.Pages.HasPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), num)) {
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), num))
+				go (func() {
+					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+				})()
 			} else {
-				a.Pages.AddPage(a.ViewMsg(areaID, uint32(num)))
-				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), num))
-				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+				a.Pages.AddPage(a.ViewMsg(area, uint32(num)))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), num))
+				go (func() {
+					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+				})()
 			}
 		}
 	})
 
 	body.Readonly = true
 	body.SetDoneFunc(func() {
-		//		if key == tcell.KeyEscape {
-		a.Pages.SwitchToPage("AreaList")
-		a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
-		//		}
+		a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+		a.SwitchToAreaListPage()
 	})
 	body.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		var area = a.CurrentArea
 		if event.Key() == tcell.KeyF1 {
 			a.Pages.AddPage(a.ViewMsgHelp())
 		} else if event.Key() == tcell.KeyRight {
-			if msgNum == msgapi.Areas[areaID].GetCount() {
-				a.Pages.SwitchToPage("AreaList")
-				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+			if msgNum == (*area).GetCount() {
+				a.SwitchToAreaListPage()
+				go (func() {
+					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+				})()
 			} else {
-				if a.Pages.HasPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum+1)) {
-					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum+1))
-					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+				if a.Pages.HasPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum+1)) {
+					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum+1))
+					go (func() {
+						a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+					})()
 				} else {
-					a.Pages.AddPage(a.ViewMsg(areaID, msgNum+1))
-					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum+1))
-					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+					a.Pages.AddPage(a.ViewMsg(area, msgNum+1))
+					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum+1))
+					go (func() {
+						a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+					})()
 				}
 			}
 		} else if event.Key() == tcell.KeyLeft {
 			if msgNum <= 1 {
-				a.Pages.SwitchToPage("AreaList")
-				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+				a.SwitchToAreaListPage()
 			} else {
-				if a.Pages.HasPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum-1)) {
-					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum-1))
-					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+				if a.Pages.HasPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum-1)) {
+					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum-1))
+					go (func() {
+						a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+					})()
 				} else {
-					a.Pages.AddPage(a.ViewMsg(areaID, msgNum-1))
-					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum-1))
-					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+					a.Pages.AddPage(a.ViewMsg(area, msgNum-1))
+					a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum-1))
+					go (func() {
+						a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+					})()
 				}
 			}
 		} else if event.Key() == tcell.KeyInsert || event.Key() == tcell.KeyCtrlI {
-			a.Pages.AddPage(a.InsertMsg(areaID, 0))
+			a.Pages.AddPage(a.InsertMsg(area, 0))
 			a.Pages.AddPage(a.InsertMsgMenu())
-			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaID].GetName()))
+			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", (*area).GetName()))
 		} else if msg == nil {
 			return event
 		} else if event.Key() == tcell.KeyCtrlK || (event.Rune() == 'k' && event.Modifiers()&tcell.ModAlt > 0) {
@@ -119,36 +131,40 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 			//body.SetText(msg.ToView(a.showKludges))
 			body.OpenBuffer(editor.NewBufferFromString(msg.ToView(a.showKludges)))
 		} else if event.Key() == tcell.KeyCtrlQ || event.Key() == tcell.KeyF3 || (event.Rune() == 'q') {
-			a.Pages.AddPage(a.InsertMsg(areaID, newMsgTypeAnswer))
+			a.Pages.AddPage(a.InsertMsg(area, newMsgTypeAnswer))
 			a.Pages.AddPage(a.InsertMsgMenu())
-			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaID].GetName()))
+			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", (*area).GetName()))
 		} else if event.Key() == tcell.KeyCtrlN || (event.Rune() == 'n' && event.Modifiers()&tcell.ModAlt > 0) {
-			a.Pages.AddPage(a.showAreaList(areaID, newMsgTypeAnswerNewArea))
+			a.Pages.AddPage(a.showAreaList(area, newMsgTypeAnswerNewArea))
 			a.Pages.ShowPage("AreaListModal")
 		} else if event.Key() == tcell.KeyCtrlF || (event.Rune() == 'f' && event.Modifiers()&tcell.ModAlt > 0) {
-			a.Pages.AddPage(a.showAreaList(areaID, newMsgTypeForward))
+			a.Pages.AddPage(a.showAreaList(area, newMsgTypeForward))
 			a.Pages.ShowPage("AreaListModal")
 		} else if event.Key() == tcell.KeyDelete {
-			a.Pages.AddPage(a.showDelMsg(areaID, msgNum))
+			a.Pages.AddPage(a.showDelMsg(area, msgNum))
 			a.Pages.ShowPage("DelMsgModal")
 		} else if event.Key() == tcell.KeyCtrlL || event.Rune() == 'l' {
-			a.Pages.AddPage(a.showMessageList(areaID))
+			a.Pages.AddPage(a.showMessageList(area))
 			a.Pages.ShowPage("MessageListModal")
 		} else if event.Key() == tcell.KeyCtrlG || event.Rune() == 'g' {
 			a.App.SetFocus(header)
-			//a.Pages.AddPage(a.showMessageList(areaID))
+			//a.Pages.AddPage(a.showMessageList(area))
 			//a.Pages.ShowPage("MessageListModal")
 		} else if event.Rune() == '<' {
 			if msgNum != 1 {
-				a.Pages.AddPage(a.ViewMsg(areaID, 1))
-				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), 1))
-				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+				a.Pages.AddPage(a.ViewMsg(area, 1))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), 1))
+				go (func() {
+					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+				})()
 			}
 		} else if event.Rune() == '>' {
-			if msgNum != msgapi.Areas[areaID].GetCount() {
-				a.Pages.AddPage(a.ViewMsg(areaID, msgapi.Areas[areaID].GetCount()))
-				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgapi.Areas[areaID].GetCount()))
-				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+			if msgNum != (*area).GetCount() {
+				a.Pages.AddPage(a.ViewMsg(area, (*area).GetCount()))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), (*area).GetCount()))
+				go (func() {
+					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+				})()
 			}
 		}
 
@@ -159,30 +175,30 @@ func (a *App) ViewMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool,
 		SetDirection(tview.FlexRow).
 		AddItem(header, 6, 1, false).
 		AddItem(body, 0, 1, true)
-	return fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum), layout, true, true
+	return fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum), layout, true, true
 }
 
-func (a *App) showMessageList(areaID int) (string, tview.Primitive, bool, bool) {
-	modal := NewModalMessageList(areaID).
+func (a *App) showMessageList(area *msgapi.AreaPrimitive) (string, tview.Primitive, bool, bool) {
+	modal := NewModalMessageList(area).
 		SetDoneFunc(func(msgNum uint32) {
 			a.Pages.HidePage("MessageListModal")
 			a.Pages.RemovePage("MessageListModal")
-			a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgapi.Areas[areaID].GetLast()))
-			a.Pages.AddPage(a.ViewMsg(areaID, msgNum))
-			a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+			a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), (*area).GetLast()))
+			a.Pages.AddPage(a.ViewMsg(area, msgNum))
+			a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
 			a.App.SetFocus(a.Pages)
 		})
 	return "MessageListModal", modal, true, true
 }
-func (a *App) showAreaList(areaID int, newMsgType int) (string, tview.Primitive, bool, bool) {
+func (a *App) showAreaList(area *msgapi.AreaPrimitive, newMsgType int) (string, tview.Primitive, bool, bool) {
 	modal := NewModalAreaList().
 		SetDoneFunc(func(buttonIndex int) {
-			a.im.postArea = buttonIndex - 1
+			a.im.postArea = area
 			a.Pages.HidePage("AreaListModal")
 			a.Pages.RemovePage("AreaListModal")
-			a.Pages.AddPage(a.InsertMsg(areaID, newMsgType))
+			a.Pages.AddPage(a.InsertMsg(area, newMsgType))
 			a.Pages.AddPage(a.InsertMsgMenu())
-			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", msgapi.Areas[areaID].GetName()))
+			a.Pages.SwitchToPage(fmt.Sprintf("InsertMsg-%s", (*area).GetName()))
 			a.App.SetFocus(a.Pages)
 		})
 	if newMsgType == newMsgTypeAnswerNewArea {
@@ -193,7 +209,7 @@ func (a *App) showAreaList(areaID int, newMsgType int) (string, tview.Primitive,
 	}
 	return "AreaListModal", modal, true, true
 }
-func (a *App) showDelMsg(areaID int, msgNum uint32) (string, tview.Primitive, bool, bool) {
+func (a *App) showDelMsg(area *msgapi.AreaPrimitive, msgNum uint32) (string, tview.Primitive, bool, bool) {
 	modal := NewModalMenu().
 		SetY(6).
 		SetText("Delete?").
@@ -202,10 +218,12 @@ func (a *App) showDelMsg(areaID int, msgNum uint32) (string, tview.Primitive, bo
 			a.Pages.HidePage("DelMsgModal")
 			a.Pages.RemovePage("DelMsgModal")
 			if buttonIndex == 0 {
-				msgapi.Areas[areaID].DelMsg(msgNum)
-				a.Pages.AddPage(a.ViewMsg(areaID, msgNum-1))
-				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum-1))
-				a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", msgapi.Areas[areaID].GetName(), msgNum))
+				(*area).DelMsg(msgNum)
+				a.Pages.AddPage(a.ViewMsg(area, msgNum-1))
+				a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum-1))
+				go (func() {
+					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
+				})()
 			}
 			a.App.SetFocus(a.Pages)
 		})

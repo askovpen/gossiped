@@ -1,6 +1,9 @@
 package msgapi
 
 import (
+	"cmp"
+	"github.com/askovpen/gossiped/pkg/config"
+	"slices"
 	"strings"
 )
 
@@ -10,7 +13,16 @@ type EchoAreaMsgType string
 // EchoAreaType Area type
 type EchoAreaType uint8
 
+const (
+	AreasSortingDefault = "default"
+	AreasSortingUnread  = "unread"
+)
+
 var (
+	validAreaSortModes = map[string]bool{
+		AreasSortingDefault: true,
+		AreasSortingUnread:  true,
+	}
 	// Areas list
 	Areas []AreaPrimitive
 )
@@ -44,6 +56,34 @@ type AreaPrimitive interface {
 	DelMsg(uint32) error
 	SaveMsg(*Message) error
 	GetMessages() *[]MessageListItem
+}
+
+func AreaHasUnreadMessages(area *AreaPrimitive) bool {
+	return (*area).GetCount()-(*area).GetLast() > 0
+}
+
+func SortAreas() {
+	var configMode = AreasSortingDefault
+	var configValue, _ = config.Config.Sorting["areas"]
+	var match, okMode = validAreaSortModes[configValue]
+	if okMode && match {
+		configMode = configValue
+	}
+	slices.SortFunc(Areas, func(a AreaPrimitive, b AreaPrimitive) int {
+		var n = 0
+		if configMode == AreasSortingUnread {
+			var aUnread = a.GetCount() - a.GetLast()
+			var bUnread = b.GetCount() - b.GetLast()
+			if n = cmp.Compare(bUnread, aUnread); n != 0 {
+				return n
+			}
+		}
+		if n = cmp.Compare(a.GetType(), b.GetType()); n != 0 {
+			return n
+		}
+		n = strings.Compare(a.GetName(), b.GetName())
+		return n
+	})
 }
 
 // Lookup name->id

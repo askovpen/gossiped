@@ -120,7 +120,8 @@ func (j *JAM) GetMsg(position uint32) (*Message, error) {
 	if jamh.Signature != 0x4d414a {
 		return nil, errors.New("wrong message signature")
 	}
-	rm := &Message{Area: j.AreaName,
+	rm := &Message{
+		Area:        j.AreaName,
 		MsgNum:      position,
 		MaxNum:      uint32(len(j.indexStructure)),
 		DateWritten: time.Unix(int64(jamh.DateWritten), 0)}

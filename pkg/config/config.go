@@ -10,8 +10,9 @@ import (
 )
 
 type (
-	ColorMap map[string]string
-	configS  struct {
+	ColorMap    map[string]string
+	SortTypeMap map[string]string
+	configS     struct {
 		Username string
 		AreaFile struct {
 			Path string
@@ -34,6 +35,7 @@ type (
 			Default string
 			IBMPC   string
 		}
+		Sorting SortTypeMap
 	}
 )
 
