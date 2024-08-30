@@ -26,4 +26,4 @@ colors:
     tagline:  bold green
     kludge:   bold gray
 sorting:
-  areas: unread   # unread, alphabet
+  areas: unread   # unread, default
