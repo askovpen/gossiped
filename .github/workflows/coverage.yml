@@ -32,4 +32,3 @@ jobs:
         file: ./coverage.txt
         flags: unittests
         name: codecov-umbrella
-        codecov_yml_path: ./codecov.yml
