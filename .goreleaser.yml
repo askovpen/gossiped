@@ -58,6 +58,7 @@ archives:
   files:
     - gossiped.example.yml
     - gossiped.tpl
+    - colors/*.yml
   format_overrides:
     - goos: windows
       format: zip
