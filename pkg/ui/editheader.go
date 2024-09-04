@@ -56,17 +56,12 @@ func (e *EditHeader) Draw(screen tcell.Screen) {
 	e.Box.Draw(screen)
 
 	boxFg, boxBg, _ := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementWindow).Decompose()
-	//_, defBg, _ := config.StyleDefault.Decompose()
 	e.Box.SetBackgroundColor(boxBg)
 	x, y, _, _ := e.GetInnerRect()
 	itemStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementItem)
 	itemStyle = itemStyle.Attributes(tcell.AttrNone)
 	headerStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementHeader)
 	selectionStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementSelection)
-
-	//defaultStyle := config.StyleDefault
-	//defFg, _, _ := defaultStyle.Decompose()
-	//_, bgSel, _ := styles.GetElementStyleDecomposed(styles.ColorAreaMessageHeader, styles.ColorElementSelection)
 
 	tview.Print(screen, config.FormatTextWithStyle("Msg  :", headerStyle), x+1, y, 6, 0, boxBg)
 	tview.Print(screen, config.FormatTextWithStyle("From :", headerStyle), x+1, y+1, 6, 0, boxBg)

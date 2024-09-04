@@ -20,7 +20,6 @@ type ModalMenu struct {
 
 // NewModalMenu returns a new modal message window.
 func NewModalMenu() *ModalMenu {
-	//defFg, defBg, _ := config.StyleDefault.Decompose()
 	itemStyle := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementItem)
 	defFg, defBg, _ := itemStyle.Decompose()
 	m := &ModalMenu{
@@ -30,8 +29,6 @@ func NewModalMenu() *ModalMenu {
 		width:     0,
 	}
 	selStyle := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementSelection)
-	//selFg, selBg, _ := selStyle.Decompose()
-	//panic(selFg.String() + " " + selBg.String())
 	borderStyle := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementBorder)
 	fgTitle, _, _ := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementTitle).Decompose()
 	m.table = tview.NewTable().
