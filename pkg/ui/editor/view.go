@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"github.com/askovpen/gossiped/pkg/config"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -55,7 +56,7 @@ type View struct {
 	bindings KeyBindings
 
 	// The colorscheme
-	colorscheme Colorscheme
+	colorscheme *config.ColorScheme
 
 	// The runtime files
 	done func()
@@ -104,7 +105,7 @@ func (v *View) SetKeybindings(bindings KeyBindings) {
 }
 
 // SetColorscheme sets the colorscheme for this view.
-func (v *View) SetColorscheme(colorscheme Colorscheme) {
+func (v *View) SetColorscheme(colorscheme *config.ColorScheme) {
 	v.colorscheme = colorscheme
 	v.Buf.updateRules()
 }
@@ -145,7 +146,7 @@ func (v *View) OpenBuffer(buf *Buffer) {
 	v.isOverwriteMode = false
 	v.Buf.updateRules()
 	// Prepare color scheme
-	v.SetColorscheme(ProduceColorSchemeFromConfig())
+	v.SetColorscheme(config.GetColors(config.ColorAreaEditor))
 }
 
 // Bottomline returns the line number of the lowest line in the view
@@ -410,20 +411,19 @@ func ShowMultiCursor(screen tcell.Screen, x, y, i int) {
 		screen.ShowCursor(x, y)
 	} else {
 		r, _, _, _ := screen.GetContent(x, y)
-		screen.SetContent(x, y, r, nil, defStyle.Reverse(true))
+		screen.SetContent(x, y, r, nil, config.StyleDefault.Reverse(true))
 	}
 }
 
 // Draw renders the view and the cursor
 func (v *View) Draw(screen tcell.Screen) {
 	v.Box.Draw(screen)
-
 	v.x, v.y, v.width, v.height = v.Box.GetInnerRect()
 
 	// TODO(pdg): just clear from the last line down.
 	for y := v.y; y < v.y+v.height; y++ {
 		for x := v.x; x < v.x+v.width; x++ {
-			screen.SetContent(x, y, ' ', nil, defStyle)
+			screen.SetContent(x, y, ' ', nil, config.StyleDefault)
 		}
 	}
 

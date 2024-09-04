@@ -3,8 +3,9 @@ package config
 import (
 	"errors"
 	"github.com/askovpen/gossiped/pkg/types"
+	"github.com/gdamore/tcell/v2"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
+	"os"
 	"runtime"
 	"strings"
 )
@@ -25,28 +26,33 @@ type (
 			BaseType string
 			Chrs     string
 		}
-		Colors   map[string]ColorMap
-		Log      string
-		Address  *types.FidoAddr
-		Origin   string
-		Tearline string
-		Template string
-		Chrs     struct {
+		Colorscheme string
+		Log         string
+		Address     *types.FidoAddr
+		Origin      string
+		Tearline    string
+		Template    string
+		Chrs        struct {
 			Default string
 			IBMPC   string
 		}
+		Statusbar struct {
+			Clock bool
+		}
 		Sorting SortTypeMap
+		Colors  map[string]ColorMap
 	}
 )
 
 // vars
 var (
-	Version  string
-	PID      string
-	LongPID  string
-	Config   configS
-	Template []string
-	city     map[string]string
+	Version      string
+	PID          string
+	LongPID      string
+	Config       configS
+	Template     []string
+	city         map[string]string
+	StyleDefault tcell.Style
 )
 
 // InitVars define version variables
@@ -57,7 +63,7 @@ func InitVars() {
 
 // Read config
 func Read(fn string) error {
-	yamlFile, err := ioutil.ReadFile(fn)
+	yamlFile, err := os.ReadFile(fn)
 	if err != nil {
 		return err
 	}
@@ -71,37 +77,27 @@ func Read(fn string) error {
 	if Config.Chrs.Default == "" {
 		return errors.New("Config.Chrs.Default not defined")
 	}
-	tpl, err := ioutil.ReadFile(Config.Template)
+	tpl, err := os.ReadFile(Config.Template)
 	if err != nil {
 		return err
 	}
+	readTemplate(tpl)
+	if len(Config.Tearline) == 0 {
+		Config.Tearline = LongPID
+	}
+	errColors := readColors()
+	if errColors != nil {
+		return errColors
+	}
+	readCity()
+	return nil
+}
+
+func readTemplate(tpl []byte) {
 	for _, l := range strings.Split(string(tpl), "\n") {
 		if len(l) > 0 && l[0] == ';' {
 			continue
 		}
 		Template = append(Template, l)
 	}
-	if len(Config.Tearline) == 0 {
-		Config.Tearline = LongPID
-	}
-	readCity()
-	return nil
-}
-func readCity() {
-	yamlFile, err := ioutil.ReadFile("city.yaml")
-	if err != nil {
-		return
-	}
-	err = yaml.Unmarshal(yamlFile, &city)
-	if err != nil {
-		return
-	}
-}
-
-// GetCity return city
-func GetCity(sa string) string {
-	if val, ok := city[sa]; ok {
-		return val
-	}
-	return "unknown"
 }

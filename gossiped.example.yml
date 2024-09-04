@@ -6,6 +6,8 @@ areafile:
 log: ./app.log
 template: gossiped.tpl
 origin: Just Origin
+# Uncomment to enable blue colorscheme
+#colorscheme: ./colors/blue.yml
 tearline: ''
 chrs:
   default: CP866 2 # <charset> <lvl> http://ftsc.org/docs/fts-5003.001
@@ -17,13 +19,7 @@ areas:
     basetype: msg # msg, squish, jam
   - name: utf-8
     chrs: UTF-8 4
-colors:
-  editor:
-    comment:  bold yellow
-    icomment: bold white
-    origin:   bold green
-    tearline: bold green
-    tagline:  bold green
-    kludge:   bold gray
 sorting:
   areas: unread   # unread, default
+statusbar:
+  clock: true

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/askovpen/gossiped/pkg/areasconfig"
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/ui"
@@ -52,24 +53,25 @@ func main() {
 			return
 		}
 	}
-
+	log.Println(fmt.Sprintf("reading configuration from %s", fn))
 	err := config.Read(fn)
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 		return
 	}
 	f, _ := os.OpenFile(config.Config.Log, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	defer f.Close()
 	log.SetOutput(f)
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	log.Print("reading areas")
 	err = areasconfig.Read()
 	if err != nil {
 		log.Print(err)
 		return
 	}
 	// ui.App, err = gocui.NewGui(gocui.OutputNormal)
+	log.Print("starting ui")
 	app := ui.NewApp()
-	log.Print("start")
 	if err = app.Run(); err != nil {
 		log.Print("started ui")
 		log.Print(err)

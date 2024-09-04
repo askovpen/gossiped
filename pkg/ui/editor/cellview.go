@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/gdamore/tcell/v2"
 	"github.com/mattn/go-runewidth"
 )
@@ -12,7 +13,12 @@ func min(a, b int) int {
 	return b
 }
 
-func visualToCharPos(visualIndex int, lineN int, str string, buf *Buffer, colorscheme Colorscheme, tabsize int) (int, int, *tcell.Style) {
+func visualToCharPos(visualIndex int,
+	lineN int,
+	str string,
+	buf *Buffer,
+	colorscheme *config.ColorScheme,
+	tabsize int) (int, int, *tcell.Style) {
 	charPos := 0
 	var lineIdx int
 	var lastWidth int
@@ -23,7 +29,7 @@ func visualToCharPos(visualIndex int, lineN int, str string, buf *Buffer, colors
 		// width := StringWidth(str[:i], tabsize)
 
 		if group, ok := buf.Match(lineN)[charPos]; ok {
-			s := colorscheme.GetColor(group.String())
+			s := (*colorscheme).GetColor(group.String())
 			style = &s
 		}
 
@@ -67,11 +73,10 @@ type CellView struct {
 }
 
 // Draw func
-func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left, width int) {
+func (c *CellView) Draw(buf *Buffer, colorscheme *config.ColorScheme, top, height, left, width int) {
 	if width <= 0 {
 		return
 	}
-
 	tabsize := int(buf.Settings["tabsize"].(float64))
 	indentrunes := []rune(buf.Settings["indentchar"].(string))
 	// if empty indentchar settings, use space
@@ -97,7 +102,7 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 	viewLine := 0
 	lineN := top
 
-	curStyle := defStyle
+	curStyle := config.StyleDefault
 	for viewLine < height {
 		if lineN >= len(buf.lines) {
 			break
@@ -133,7 +138,7 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 				break
 			}
 			if group, ok := buf.Match(lineN)[colN]; ok {
-				curStyle = colorscheme.GetColor(group.String())
+				curStyle = (*colorscheme).GetColor(group.String())
 			}
 
 			char := line[colN]
@@ -152,7 +157,7 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 
 					indentStyle := curStyle
 					ch := buf.Settings["indentchar"].(string)
-					if group, ok := colorscheme["indent-char"]; ok && !IsStrWhitespace(ch) && ch != "" {
+					if group, ok := (*colorscheme)["indent-char"]; ok && !IsStrWhitespace(ch) && ch != "" {
 						indentStyle = group
 					}
 
@@ -199,7 +204,7 @@ func (c *CellView) Draw(buf *Buffer, colorscheme Colorscheme, top, height, left,
 			}
 		}
 		if group, ok := buf.Match(lineN)[len(line)]; ok {
-			curStyle = colorscheme.GetColor(group.String())
+			curStyle = (*colorscheme).GetColor(group.String())
 		}
 
 		// newline

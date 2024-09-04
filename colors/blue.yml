@@ -1,0 +1,52 @@
+default:
+  text: white, navy
+editor:
+  comment:  bold yellow
+  icomment: bold white
+  origin:   bold lcyan
+  tearline: bold lcyan
+  tagline:  bold lcyan
+  kludge:   bold gray
+dialog:
+  border: bold white
+  item: white
+  selection: bold white, dcyan
+  title: bold red
+messageHeader:
+  title: bold white, dcyan
+  border: bold white
+  header: bold white
+  item: white
+  highlight: bold white
+  selection: default, dcyan
+  window: default, default
+messageList:
+  border: silver
+  header: bold green
+  title: bold white, dcyan
+  prompt: white
+  item: silver
+  highlight: bold lcyan
+  selection: bold white, dcyan
+areaList:
+  border: silver
+  header: bold green
+  title: bold white, dcyan
+  prompt: white
+  item: silver
+  highlight: bold lcyan
+  selection: bold white, dcyan
+areaListModal:
+  border: silver
+  header: bold green
+  title: bold white, dcyan
+  prompt: white
+  item: silver
+  highlight: bold lcyan
+  selection: bold white, dcyan
+statusbar:
+  text: bold white, navy
+help:
+  border: bold white
+  title: bold yellow, green
+  text: default

@@ -1,6 +1,9 @@
 package editor
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/gdamore/tcell/v2"
+)
 
 // ScrollBar represents an optional scrollbar that can be used
 type ScrollBar struct {
@@ -9,7 +12,7 @@ type ScrollBar struct {
 
 // Display shows the scrollbar
 func (sb *ScrollBar) Display(screen tcell.Screen) {
-	style := defStyle.Reverse(true)
+	style := config.StyleDefault.Reverse(true)
 	screen.SetContent(sb.view.x+sb.view.width-1, sb.view.y+sb.pos(), ' ', nil, style)
 }
 

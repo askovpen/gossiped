@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -20,10 +21,15 @@ func NewSearchString() *SearchString {
 
 // Draw searchString
 func (e *SearchString) Draw(screen tcell.Screen) {
+	stylePrompt := config.GetElementStyle(config.ColorAreaAreaList, config.ColorElementPrompt)
+	//styleBorder := styles.GetElementStyle(styles.ColorAreaAreaList, styles.ColorElementBorder)
+	fg, bg, _ := stylePrompt.Decompose()
 	e.Box.Draw(screen)
+	e.Box.SetBackgroundColor(bg)
+	//e.Box.SetBorderStyle(styleBorder)
 	x, y, _, _ := e.GetInnerRect()
-	tview.Print(screen, ">>Pick New Area: ", x, y, 17, 0, tcell.ColorSilver)
-	tview.Print(screen, e.txt, x+17, y, len(e.txt), 0, tcell.ColorSilver)
+	tview.Print(screen, config.FormatTextWithStyle(">> Pick New Area: ", stylePrompt), x, y, 18, 0, fg)
+	tview.Print(screen, config.FormatTextWithStyle(e.txt, stylePrompt), x+18, y, len(e.txt), 0, fg)
 }
 
 // AddChar to searchString

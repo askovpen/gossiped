@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -19,22 +20,33 @@ type ModalMenu struct {
 
 // NewModalMenu returns a new modal message window.
 func NewModalMenu() *ModalMenu {
+	//defFg, defBg, _ := config.StyleDefault.Decompose()
+	itemStyle := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementItem)
+	defFg, defBg, _ := itemStyle.Decompose()
 	m := &ModalMenu{
-		Box:       tview.NewBox(),
-		textColor: tview.Styles.PrimaryTextColor,
+		Box:       tview.NewBox().SetBackgroundColor(defBg),
+		textColor: defFg,
 		y:         1,
 		width:     0,
 	}
+	selStyle := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementSelection)
+	//selFg, selBg, _ := selStyle.Decompose()
+	//panic(selFg.String() + " " + selBg.String())
+	borderStyle := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementBorder)
+	fgTitle, _, _ := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementTitle).Decompose()
 	m.table = tview.NewTable().
 		SetSelectable(true, false).
-		SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNavy).Bold(true)).
+		SetSelectedStyle(selStyle).
 		SetSelectedFunc(func(row int, column int) {
 			m.done(row)
 		})
+	m.table.SetBackgroundColor(defBg)
 	m.frame = tview.NewFrame(m.table).SetBorders(0, 0, 1, 0, 0, 0)
 	m.frame.SetBorder(true).
-		SetBackgroundColor(tcell.ColorBlack).
-		SetBorderPadding(0, 0, 1, 1).SetBorderColor(tcell.ColorRed).SetBorderAttributes(tcell.AttrBold).SetTitleColor(tcell.ColorYellow)
+		SetTitleColor(fgTitle).
+		SetBackgroundColor(defBg).
+		SetBorderPadding(0, 0, 1, 1).
+		SetBorderStyle(borderStyle)
 	return m
 }
 
@@ -57,8 +69,9 @@ func (m *ModalMenu) SetDoneFunc(handler func(buttonIndex int)) *ModalMenu {
 // breaks. Note that words are wrapped, too, based on the final size of the
 // window.
 func (m *ModalMenu) SetText(text string) *ModalMenu {
+	style := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementTitle)
 	m.title = text
-	m.frame.SetTitle(text)
+	m.frame.SetTitle(config.FormatTextWithStyle(text, style))
 	return m
 }
 
@@ -71,10 +84,14 @@ func (m *ModalMenu) SetY(y int) *ModalMenu {
 // AddButtons adds buttons to the window. There must be at least one button and
 // a "done" handler so the window can be closed again.
 func (m *ModalMenu) AddButtons(labels []string) *ModalMenu {
+	style := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementItem)
+	selStyle := config.GetElementStyle(config.ColorAreaDialog, config.ColorElementSelection)
+	fg, bg, attr := style.Decompose()
 	for index, label := range labels {
 		func(i int, l string) {
 			//m.list.AddItem(label,"",0,func() {m.done(i,l)})
-			m.table.SetCell(i, 0, tview.NewTableCell(label).SetTextColor(tcell.ColorSilver))
+			m.table.SetCell(i, 0, tview.NewTableCell(config.FormatTextWithStyle(label, style)).
+				SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr).SetSelectedStyle(selStyle))
 			if m.width < len(label) {
 				m.width = len(label)
 			}

@@ -1,8 +1,7 @@
-package editor
+package config
 
 import (
 	"fmt"
-	"github.com/askovpen/gossiped/pkg/config"
 	. "github.com/franela/goblin"
 	"github.com/gdamore/tcell/v2"
 	"regexp"
@@ -11,13 +10,17 @@ import (
 )
 
 var (
-	lineSplitter = regexp.MustCompile(`[\r\n]+`)
+	lineSplitter *regexp.Regexp
 )
+
+func init() {
+	lineSplitter = regexp.MustCompile(`[\r\n]+`)
+}
 
 func TestProduceColorMapFromConfig(t *testing.T) {
 	g := Goblin(t)
 	g.Describe("Check ProduceColorMapFromConfig()", func() {
-		config.Config.Colors = map[string]config.ColorMap{
+		Config.Colors = map[string]ColorMap{
 			"editor": {
 				"comment":  "bold yellow,red",
 				"icomment": "bold red",
@@ -28,7 +31,7 @@ func TestProduceColorMapFromConfig(t *testing.T) {
 			},
 		}
 		g.It("override for existing color definitions", func() {
-			colors := config.ColorMap{
+			colors := ColorMap{
 				"comment":  "bold yellow,red",
 				"icomment": "bold white",
 				"origin":   "bold white",
@@ -36,47 +39,47 @@ func TestProduceColorMapFromConfig(t *testing.T) {
 				"tagline":  "bold white",
 				"kludge":   "bold gray",
 			}
-			var produced, err = ProduceColorMapFromConfig(ConfigColorArea, &colors)
+			var produced, err = ProduceColorMapFromConfig("editor", &colors)
 			g.Assert(err).IsNil()
-			g.Assert(produced["kludge"]).Equal("bold red")
+			g.Assert((*produced)["kludge"]).Equal("bold red")
 		})
 		g.It("override for non-existing color definitions", func() {
-			colors := config.ColorMap{
+			colors := ColorMap{
 				"comment": "bold yellow",
 			}
 			var errorsGot, errorsExpected = map[string]bool{}, map[string]bool{}
-			var area = ConfigColorArea
+			var area = "editor"
 			var produced, err = ProduceColorMapFromConfig(area, &colors)
 			g.Assert(err).IsNotNil()
 			for _, i := range lineSplitter.Split(err.Error(), -1) {
 				errorsGot[strings.TrimSpace(i)] = true
 			}
-			for k, _ := range config.Config.Colors[area] {
+			for k := range Config.Colors[area] {
 				if colors[k] == "" {
 					errString := "not valid element for area (element: " + k + ", area: " + area + ")"
 					errorsExpected[errString] = true
 				}
 			}
 			g.Assert(errorsGot).Equal(errorsExpected)
-			g.Assert(produced["kludge"]).Equal("")
+			g.Assert((*produced)["kludge"]).Equal("")
 		})
 		g.It("fallback mode - empty config area", func() {
-			colors := config.ColorMap{
+			colors := ColorMap{
 				"comment": "bold yellow",
 			}
 			var produced, err = ProduceColorMapFromConfig("random-area", &colors)
 			g.Assert(err).IsNil()
 			g.Assert(produced).IsNotNil()
-			g.Assert(produced["kludge"]).Equal("")
-			g.Assert(produced["comment"]).Equal("bold yellow")
+			g.Assert((*produced)["kludge"]).Equal("")
+			g.Assert((*produced)["comment"]).Equal("bold yellow")
 		})
 		g.It("invalid config values - empty value ", func() {
-			config.Config.Colors = map[string]config.ColorMap{
+			Config.Colors = map[string]ColorMap{
 				"fictive": {
 					"comment": "",
 				},
 			}
-			colors := config.ColorMap{
+			colors := ColorMap{
 				"comment": "bold yellow",
 			}
 			var area = "fictive"
@@ -87,44 +90,13 @@ func TestProduceColorMapFromConfig(t *testing.T) {
 			for _, i := range lineSplitter.Split(err.Error(), -1) {
 				errorsGot[strings.TrimSpace(i)] = true
 			}
-			for k, _ := range config.Config.Colors[area] {
+			for k := range Config.Colors[area] {
 				if colors[k] != "" {
 					errString := "empty color value (element: " + k + ", area: " + area + ")"
 					errorsExpected[errString] = true
 				}
 			}
 			g.Assert(errorsGot).Equal(errorsExpected)
-		})
-	})
-}
-
-func TestProduceColorSchemeFromConfig(t *testing.T) {
-	g := Goblin(t)
-	g.Describe("Check ProduceColorSchemeFromConfig", func() {
-		g.It("fallback mode (config values are absent)", func() {
-			config.Config.Colors = map[string]config.ColorMap{
-				"editor": nil,
-			}
-			scheme := ProduceColorSchemeFromConfig()
-			for k, _ := range defaultColors {
-				g.Assert(scheme[k]).Equal(GetColor(defaultColors[k]))
-			}
-		})
-		g.It("normal mode (config values are present)", func() {
-			config.Config.Colors = map[string]config.ColorMap{
-				"editor": {
-					"comment":  "bold yellow,red",
-					"icomment": "bold red",
-					"origin":   "bold red",
-					"tearline": "bold red",
-					"tagline":  "bold red",
-					"kludge":   "bold red",
-				},
-			}
-			scheme := ProduceColorSchemeFromConfig()
-			for k, _ := range defaultColors {
-				g.Assert(scheme[k]).Equal(GetColor(config.Config.Colors["editor"][k]))
-			}
 		})
 	})
 }
@@ -165,6 +137,50 @@ func TestStringToStyle(t *testing.T) {
 					errorsGot[strings.TrimSpace(i)] = true
 				}
 				g.Assert(errorsGot).Equal(errorsExpected, fmt.Sprintf("failed record: %s", style))
+			}
+		})
+	})
+}
+
+func getDefaultColorsForEditor() ColorMap {
+	return ColorMap{
+		"comment":  "bold yellow",
+		"icomment": "bold white",
+		"origin":   "bold white",
+		"tearline": "bold white",
+		"tagline":  "bold white",
+		"kludge":   "bold gray",
+	}
+}
+
+func TestProduceColorSchemeFromConfig(t *testing.T) {
+	g := Goblin(t)
+	g.Describe("Check ProduceColorSchemeFromConfig", func() {
+		g.It("fallback mode (config values are absent)", func() {
+			Config.Colors = map[string]ColorMap{
+				"editor": nil,
+			}
+			var defaultColors = getDefaultColorsForEditor()
+			scheme := ProduceColorSchemeFromConfig("editor", &defaultColors)
+			for k := range defaultColors {
+				g.Assert((*scheme)[k]).Equal((*scheme).GetColor(defaultColors[k]))
+			}
+		})
+		g.It("normal mode (config values are present)", func() {
+			var defaultColors = getDefaultColorsForEditor()
+			Config.Colors = map[string]ColorMap{
+				"editor": {
+					"comment":  "bold yellow,red",
+					"icomment": "bold red",
+					"origin":   "bold red",
+					"tearline": "bold red",
+					"tagline":  "bold red",
+					"kludge":   "bold red",
+				},
+			}
+			scheme := ProduceColorSchemeFromConfig("editor", &defaultColors)
+			for k := range defaultColors {
+				g.Assert((*scheme)[k]).Equal((*scheme).GetColor(Config.Colors["editor"][k]))
 			}
 		})
 	})

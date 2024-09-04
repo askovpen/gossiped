@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"fmt"
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -23,10 +25,17 @@ func NewModalHelp() *ModalHelp {
 	}
 	m.txt = tview.NewTextView()
 	m.frame = tview.NewFrame(m.txt).SetBorders(0, 0, 1, 0, 0, 0)
+	fgBorder, bgBorder, styleBorder := config.GetElementStyle(config.ColorAreaHelp, "border").Decompose()
+	fgTitle, bgTitle, styleTitle := config.GetElementStyle(config.ColorAreaHelp, "title").Decompose()
+	title := fmt.Sprintf("[:%s:%s] Keys ", bgTitle.String(), config.MaskToStringStyle(styleTitle))
 	m.frame.SetBorder(true).
-		SetBackgroundColor(tcell.ColorBlack).
-		SetBorderPadding(0, 0, 1, 1).SetBorderColor(tcell.ColorYellow).SetBorderAttributes(tcell.AttrBold).SetTitleColor(tcell.ColorYellow).SetTitleAlign(tview.AlignLeft).SetTitle("Keys")
-
+		SetBackgroundColor(bgBorder).
+		SetBorderPadding(0, 0, 1, 1).
+		SetBorderColor(fgBorder).
+		SetBorderAttributes(styleBorder).
+		SetTitleColor(fgTitle).
+		SetTitleAlign(tview.AlignLeft).
+		SetTitle(title)
 	return m
 }
 
@@ -41,6 +50,8 @@ func (m *ModalHelp) InputHandler() func(event *tcell.EventKey, setFocus func(p t
 
 // SetText Set Text
 func (m *ModalHelp) SetText(txt string) *ModalHelp {
+	style := config.GetElementStyle(config.ColorAreaHelp, "text")
+	m.txt.SetTextStyle(style)
 	m.txt.SetText(txt)
 	return m
 }

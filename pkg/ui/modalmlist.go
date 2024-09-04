@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/utils"
@@ -24,69 +25,87 @@ type ModalMessageList struct {
 
 // NewModalMessageList returns a new modal message window.
 func NewModalMessageList(area *msgapi.AreaPrimitive) *ModalMessageList {
+	_, defBg, _ := config.StyleDefault.Decompose()
 	m := &ModalMessageList{
-		Box:       tview.NewBox(),
+		Box:       tview.NewBox().SetBackgroundColor(defBg),
 		textColor: tview.Styles.PrimaryTextColor,
 	}
+	styleBorder := config.GetElementStyle(config.ColorAreaMessageList, config.ColorElementBorder)
+	styleSelection := config.GetElementStyle(config.ColorAreaMessageList, config.ColorElementSelection)
+	fgHeader, bgHeader, attrHeader := config.GetElementStyle(config.ColorAreaMessageList, config.ColorElementHeader).Decompose()
+	fgItem, bgItem, attrItem := config.GetElementStyle(config.ColorAreaMessageList, config.ColorElementItem).Decompose()
+	fgTitle, bgTitle, attrTitle := config.GetElementStyle(config.ColorAreaMessageList, config.ColorElementTitle).Decompose()
+	fgHigh, bgHigh, attrHigh := config.GetElementStyle(config.ColorAreaMessageList, config.ColorElementHighlight).Decompose()
+	//fgCur, bgCur, attrCur := config.GetElementStyle(config.ColorAreaMessageList, config.ColorElementCurrent).Decompose()
 	m.table = tview.NewTable().
 		SetFixed(1, 0).
 		SetSelectable(true, false).
-		SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNavy).Bold(true)).
+		SetSelectedStyle(styleSelection).
 		SetSelectedFunc(func(row int, column int) {
 			m.done(uint32(row))
 		})
 	m.frame = tview.NewFrame(m.table).SetBorders(0, 0, 1, 0, 0, 0)
-	m.frame.SetTitle("List Messages")
+	m.frame.SetBackgroundColor(defBg)
+	m.table.SetBackgroundColor(defBg)
+	m.frame.SetTitle(fmt.Sprintf("[%s:%s:%s] List Messages ", fgTitle.String(), bgTitle.String(), config.MaskToStringStyle(attrTitle)))
 	m.frame.SetBorder(true).
-		SetBackgroundColor(tcell.ColorBlack).
-		SetBorderPadding(0, 0, 1, 1).SetBorderColor(tcell.ColorRed).SetBorderAttributes(tcell.AttrBold).SetTitleColor(tcell.ColorYellow).SetTitleAlign(tview.AlignLeft)
-	m.table.SetCell(
-		0, 0, tview.NewTableCell(" Msg ").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
-			SetSelectable(false).
-			SetAlign(tview.AlignRight))
+		SetBorderStyle(styleBorder).
+		SetBorderPadding(0, 0, 1, 1).
+		SetTitleAlign(tview.AlignLeft)
+	m.table.SetCell(0, 0, tview.NewTableCell(" Msg ").
+		SetSelectable(false).
+		SetAlign(tview.AlignRight).
+		SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader))
 	m.table.SetCell(
 		0, 1, tview.NewTableCell("From").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false))
 	m.table.SetCell(
 		0, 2, tview.NewTableCell("To").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false))
 	m.table.SetCell(
 		0, 3, tview.NewTableCell("Subj").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetExpansion(1).
 			SetSelectable(false))
 	m.table.SetCell(
 		0, 4, tview.NewTableCell("Written").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
 	for i, mh := range *(*area).GetMessages() {
 		ch := " "
+		fg, bg, attr := fgItem, bgItem, attrItem
 		if i == int((*area).GetLast()-1) {
-			ch = "[::b],"
+			//fg, bg, attr = fgCur, bgCur, attrCur
+			fg, bg, attr = fgHigh, bgHigh, attrHigh
+			ch = "*"
 		}
+		fromCondition := utils.NamesEqual(mh.From, config.Config.Username)
+		toCondition := utils.NamesEqual(mh.To, config.Config.Username)
+		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(mh.MsgNum), 10)+ch).
+			SetAlign(tview.AlignRight).
+			SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr))
 		//mh.From, mh.To, mh.Subject, mh.DateWritten.Format("02 Jan 06"))
-		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(mh.MsgNum), 10)+ch).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
-		if utils.NamesEqual(mh.From, config.Config.Username) {
-			m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).SetTextColor(tcell.ColorSilver).SetAttributes(tcell.AttrBold))
+		if fromCondition {
+			m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).
+				SetTextColor(fgHigh).SetBackgroundColor(bgHigh).SetAttributes(attrHigh))
 		} else {
-			m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).SetTextColor(tcell.ColorSilver))
+			m.table.SetCell(i+1, 1, tview.NewTableCell(mh.From).
+				SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr))
 		}
-		if utils.NamesEqual(mh.To, config.Config.Username) {
-			m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).SetTextColor(tcell.ColorSilver).SetAttributes(tcell.AttrBold))
+		if toCondition {
+			m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).
+				SetTextColor(fgHigh).SetBackgroundColor(bgHigh).SetAttributes(attrHigh))
 		} else {
-			m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).SetTextColor(tcell.ColorSilver))
+			m.table.SetCell(i+1, 2, tview.NewTableCell(mh.To).
+				SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr))
 		}
-		m.table.SetCell(i+1, 3, tview.NewTableCell(mh.Subject).SetTextColor(tcell.ColorSilver))
-		m.table.SetCell(i+1, 4, tview.NewTableCell(mh.DateWritten.Format("02 Jan 06")).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 3, tview.NewTableCell(mh.Subject).
+			SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr))
+		m.table.SetCell(i+1, 4, tview.NewTableCell(mh.DateWritten.Format("02 Jan 06")).
+			SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr))
 	}
 	m.table.Select(int((*area).GetLast()), 0)
 	return m

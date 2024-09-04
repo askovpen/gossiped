@@ -1,0 +1,56 @@
+#
+# Default Color Scheme
+# Use as reference when building your own one
+#
+default:
+  text: silver, black
+editor:
+  comment:  bold yellow
+  icomment: bold white
+  origin:   bold white
+  tearline: bold white
+  tagline:  bold white
+  kludge:   bold gray
+dialog:
+  border: bold red
+  item: bold silver
+  selection: bold silver, navy
+  title: bold yellow
+messageHeader:
+  title: bold yellow
+  border: bold blue
+  header: bold silver
+  item: silver
+  highlight: bold silver
+  selection: silver, navy
+  window: default, default
+messageList:
+  border: red
+  header: bold yellow
+  title: bold yellow
+  prompt: silver
+  item: silver
+  highlight: bold default
+  selection: bold white, navy
+areaList:
+  border: blue
+  header: bold yellow
+  title: bold yellow
+  prompt: silver
+  item: silver
+  highlight: bold silver
+  selection: white, navy
+areaListModal:
+  border: red
+  header: bold yellow
+  title: bold yellow
+  prompt: silver
+  item: silver
+  highlight: bold silver
+  selection: white, navy
+statusbar:
+  text: bold white, navy
+help:
+  border: bold blue
+  title: bold yellow
+  text: default

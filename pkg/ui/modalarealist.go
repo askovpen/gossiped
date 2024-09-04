@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -19,49 +20,63 @@ type ModalAreaList struct {
 
 // NewModalAreaList returns a new modal message window.
 func NewModalAreaList() *ModalAreaList {
+	defFg, defBg, _ := config.StyleDefault.Decompose()
 	m := &ModalAreaList{
-		Box:       tview.NewBox(),
-		textColor: tview.Styles.PrimaryTextColor,
+		Box:       tview.NewBox().SetBackgroundColor(defBg),
+		textColor: defFg,
 	}
+	borderFg, _, borderAttr := config.GetElementStyle(config.ColorAreaAreaListModal, config.ColorElementBorder).Decompose()
+	headerStyle := config.GetElementStyle(config.ColorAreaAreaListModal, config.ColorElementHeader)
+	selectionStyle := config.GetElementStyle(config.ColorAreaAreaListModal, config.ColorElementSelection)
+	itemStyle := config.GetElementStyle(config.ColorAreaAreaListModal, config.ColorElementItem)
+	fgItem, bgItem, attrItem := itemStyle.Decompose()
+	fgHeader, bgHeader, attrHeader := headerStyle.Decompose()
 	m.table = tview.NewTable().
 		SetFixed(1, 0).
+		SetBordersColor(borderFg).
 		SetSelectable(true, false).
-		SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNavy).Bold(true)).
+		SetSelectedStyle(selectionStyle).
 		SetSelectedFunc(func(row int, column int) {
 			m.done(row)
 		})
 	m.frame = tview.NewFrame(m.table).SetBorders(0, 0, 1, 0, 0, 0)
+	m.frame.SetBackgroundColor(defBg)
+	m.table.SetBackgroundColor(defBg)
 	m.frame.SetBorder(true).
-		SetBackgroundColor(tcell.ColorBlack).
-		SetBorderPadding(0, 0, 1, 1).SetBorderColor(tcell.ColorBlue).SetBorderAttributes(tcell.AttrBold).SetTitleColor(tcell.ColorYellow).SetTitleAlign(tview.AlignLeft)
+		SetTitleAlign(tview.AlignLeft).
+		SetBorderAttributes(borderAttr).
+		SetBorderColor(borderFg).
+		SetBorderPadding(0, 0, 1, 1)
 	m.table.SetCell(
 		0, 0, tview.NewTableCell(" Area").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false))
 	m.table.SetCell(
 		0, 1, tview.NewTableCell("EchoID").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetExpansion(1).
 			SetSelectable(false))
 	m.table.SetCell(
 		0, 2, tview.NewTableCell("Msgs").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
 	m.table.SetCell(
 		0, 3, tview.NewTableCell("   New").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
 	for i, ar := range msgapi.Areas {
-		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+" ").SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
-		m.table.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()).SetTextColor(tcell.ColorSilver))
-		m.table.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
-		m.table.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
+		m.table.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+" ").
+			SetAlign(tview.AlignRight).SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
+		m.table.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()).
+			SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
+		m.table.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).
+			SetAlign(tview.AlignRight).
+			SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
+		m.table.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).
+			SetAlign(tview.AlignRight).
+			SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
 	}
 	return m
 }
@@ -86,7 +101,8 @@ func (m *ModalAreaList) SetDoneFunc(handler func(buttonIndex int)) *ModalAreaLis
 // window.
 func (m *ModalAreaList) SetText(text string) *ModalAreaList {
 	m.title = text
-	m.frame.SetTitle(text)
+	style := config.GetElementStyle(config.ColorAreaAreaListModal, config.ColorElementTitle)
+	m.frame.SetTitle(config.FormatTextWithStyle(text, style))
 	return m
 }
 
