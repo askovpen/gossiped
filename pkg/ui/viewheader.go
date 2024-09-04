@@ -77,23 +77,35 @@ func NewViewHeader(msg *msgapi.Message) *ViewHeader {
 // Draw header
 func (e *ViewHeader) Draw(screen tcell.Screen) {
 	e.Box.Draw(screen)
+	defStyle := config.StyleDefault
+	boxFg, boxBg, _ := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementWindow).Decompose()
+	borderStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementBorder)
+	e.Box.SetBackgroundColor(boxBg)
+	e.Box.SetBorderStyle(borderStyle)
 	x, y, _, _ := e.GetInnerRect()
-	tview.Print(screen, "of", x+14, y, 2, 0, tcell.ColorSilver)
-	tview.Print(screen, "Msg  :", x+1, y, 6, 0, tcell.ColorSilver)
-	tview.Print(screen, "From :", x+1, y+1, 6, 0, tcell.ColorSilver)
-	tview.Print(screen, "To   :", x+1, y+2, 6, 0, tcell.ColorSilver)
-	tview.Print(screen, "Subj :", x+1, y+3, 6, 0, tcell.ColorSilver)
+	itemStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementItem)
+	highlightStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementHighlight)
+	headerStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementHeader)
+	_, bgSel, _ := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementSelection).Decompose()
+	tview.Print(screen, config.FormatTextWithStyle("of", itemStyle), x+14, y, 2, 0, boxFg)
+	tview.Print(screen, config.FormatTextWithStyle("Msg  :", headerStyle), x+1, y, 6, 0, boxFg)
+	tview.Print(screen, config.FormatTextWithStyle("From :", headerStyle), x+1, y+1, 6, 0, boxFg)
+	tview.Print(screen, config.FormatTextWithStyle("To   :", headerStyle), x+1, y+2, 6, 0, boxFg)
+	tview.Print(screen, config.FormatTextWithStyle("Subj :", headerStyle), x+1, y+3, 6, 0, boxFg)
 	if e.HasFocus() {
 		for i := e.sCoords[0].f; i < e.sCoords[0].t; i++ {
-			screen.SetContent(x+i, y+e.sCoords[0].y, ' ', nil, tcell.StyleDefault.Background(tcell.ColorNavy))
+			screen.SetContent(x+i, y+e.sCoords[0].y, ' ', nil, defStyle.Background(bgSel))
 		}
 	}
 	for i := 0; i < len(e.sCoords); i++ {
 		str := string(e.sInputs[i])
+		style := itemStyle
 		if utils.NamesEqual(config.Config.Username, str) {
-			str = "[::b]" + str
+			style = highlightStyle
+		} else {
+			style = itemStyle
 		}
-		tview.Print(screen, str, x+e.sCoords[i].f, y+e.sCoords[i].y, len(e.sInputs[i]), 0, tcell.ColorSilver)
+		tview.Print(screen, config.FormatTextWithStyle(str, style), x+e.sCoords[i].f, y+e.sCoords[i].y, len(e.sInputs[i]), 0, boxFg)
 	}
 	if e.HasFocus() {
 		screen.ShowCursor(x+e.sCoords[0].f+len(e.sInputs[0][:e.sPosition]), y+e.sCoords[0].y)

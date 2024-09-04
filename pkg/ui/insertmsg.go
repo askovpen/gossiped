@@ -6,7 +6,6 @@ import (
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/ui/editor"
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	//"log"
 )
@@ -90,14 +89,17 @@ func (a *App) InsertMsg(area *msgapi.AreaPrimitive, msgType int) (string, tview.
 		omsg, _ = (*area).GetMsg((*a.im.curArea).GetLast())
 		a.im.newMsg.Subject = omsg.Subject
 	}
+	_, boxBg, _ := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementWindow).Decompose()
+	mhStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementTitle)
 	a.im.eh = NewEditHeader(a.im.newMsg)
+	a.im.eh.SetBackgroundColor(boxBg)
 	a.im.eh.SetBorder(true).
-		SetBorderAttributes(tcell.AttrBold).
-		SetBorderColor(tcell.ColorBlue).
-		SetTitle(" " + (*a.im.postArea).GetName() + " ").
+		SetTitle(config.FormatTextWithStyle(" "+(*a.im.postArea).GetName()+" ", mhStyle)).
 		SetTitleAlign(tview.AlignLeft).
-		SetTitleColor(tcell.ColorYellow)
+		SetBorderStyle(config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementBorder))
+
 	a.im.eb = editor.NewView(editor.NewBufferFromString(""))
+	//a.im.eb.SetBackgroundColor()
 	//	a.im.eb = NewEditBody().
 	a.im.eb.SetDoneFunc(func() {
 		a.Pages.ShowPage("InsertMsgMenu")

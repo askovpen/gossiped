@@ -3,6 +3,7 @@ package ui
 import (
 	//"errors"
 	"fmt"
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/ui/editor"
 	"github.com/gdamore/tcell/v2"
@@ -40,13 +41,18 @@ func (a *App) ViewMsg(area *msgapi.AreaPrimitive, msgNum uint32) (string, tview.
 		(*area).GetCount(),
 		(*area).GetCount()-msgNum,
 	))
+	styleBorder := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementBorder)
+	fgTitle, bgTitle, titleAttrs := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementTitle).Decompose()
 	header := NewViewHeader(msg)
 	header.SetBorder(true).
-		SetBorderAttributes(tcell.AttrBold).
-		SetBorderColor(tcell.ColorBlue).
-		SetTitle(" " + (*area).GetName() + " ").
-		SetTitleAlign(tview.AlignLeft).
-		SetTitleColor(tcell.ColorYellow)
+		SetBorderStyle(styleBorder).
+		SetTitle(fmt.Sprintf("[%s:%s:%s] %s ",
+			fgTitle.String(),
+			bgTitle.String(),
+			config.MaskToStringStyle(titleAttrs),
+			(*area).GetName(),
+		)).
+		SetTitleAlign(tview.AlignLeft)
 	var body *editor.View
 	if msg != nil {
 		body = editor.NewView(editor.NewBufferFromString(msg.ToView(a.showKludges)))
@@ -190,6 +196,7 @@ func (a *App) showMessageList(area *msgapi.AreaPrimitive) (string, tview.Primiti
 		})
 	return "MessageListModal", modal, true, true
 }
+
 func (a *App) showAreaList(area *msgapi.AreaPrimitive, newMsgType int) (string, tview.Primitive, bool, bool) {
 	modal := NewModalAreaList().
 		SetDoneFunc(func(buttonIndex int) {

@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -29,31 +30,30 @@ func (a *App) AreaListQuit() (string, tview.Primitive, bool, bool) {
 }
 
 func initAreaListHeader(a *App) {
+	borderStyle := config.GetElementStyle(config.ColorAreaAreaList, config.ColorElementBorder)
+	headerStyle := config.GetElementStyle(config.ColorAreaAreaList, config.ColorElementHeader)
+	fgHeader, bgHeader, attrHeader := headerStyle.Decompose()
+	selStyle := config.GetElementStyle(config.ColorAreaAreaList, config.ColorElementSelection)
 	a.al.SetBorder(true).
-		SetBorderAttributes(tcell.AttrBold).
-		SetBorderColor(tcell.ColorBlue)
-	a.al.SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorNavy).Bold(true))
+		SetBorderStyle(borderStyle)
+	a.al.SetSelectedStyle(selStyle)
 	a.al.SetCell(
 		0, 0, tview.NewTableCell(" Area").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false))
 	a.al.SetCell(
 		0, 1, tview.NewTableCell("EchoID").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetExpansion(1).
 			SetSelectable(false))
 	a.al.SetCell(
 		0, 2, tview.NewTableCell("Msgs").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
 	a.al.SetCell(
 		0, 3, tview.NewTableCell("   New").
-			SetTextColor(tcell.ColorYellow).
-			SetAttributes(tcell.AttrBold).
+			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
 			SetSelectable(false).
 			SetAlign(tview.AlignRight))
 }
@@ -70,19 +70,29 @@ func refreshAreaList(a *App, currentArea string) {
 	msgapi.SortAreas()
 	a.al.Clear()
 	initAreaListHeader(a)
+	styleItem := config.GetElementStyle(config.ColorAreaAreaList, config.ColorElementItem)
+	styleHighligt := config.GetElementStyle(config.ColorAreaAreaList, config.ColorElementHighlight)
+	fgItem, bgItem, attrItem := styleItem.Decompose()
+	fgHigh, bgHigh, attrHigh := styleHighligt.Decompose()
 	var selectIndex = -1
 	for i, ar := range msgapi.Areas {
-		var areaStyle = " "
+		fg, bg, attr := fgItem, bgItem, attrItem
+		areaStyle := ""
 		if msgapi.AreaHasUnreadMessages(&ar) {
-			areaStyle = "[::b]+"
+			areaStyle = "+"
+			fg, bg, attr = fgHigh, bgHigh, attrHigh
 		}
-		a.al.SetCell(i+1, 0, tview.NewTableCell(strconv.FormatInt(int64(i), 10)+areaStyle).
-			SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
-		a.al.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()).SetTextColor(tcell.ColorSilver))
+		a.al.SetCell(i+1, 0, tview.NewTableCell(areaStyle+strconv.FormatInt(int64(i), 10)).
+			SetAlign(tview.AlignRight).
+			SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr))
+		a.al.SetCell(i+1, 1, tview.NewTableCell(ar.GetName()).
+			SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr))
 		a.al.SetCell(i+1, 2, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()), 10)).
-			SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
+			SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr).
+			SetAlign(tview.AlignRight))
 		a.al.SetCell(i+1, 3, tview.NewTableCell(strconv.FormatInt(int64(ar.GetCount()-ar.GetLast()), 10)).
-			SetAlign(tview.AlignRight).SetTextColor(tcell.ColorSilver))
+			SetTextColor(fg).SetBackgroundColor(bg).SetAttributes(attr).
+			SetAlign(tview.AlignRight))
 		if currentArea != "" && currentArea == ar.GetName() {
 			selectIndex = i + 1
 		}
@@ -110,6 +120,8 @@ func (a *App) AreaList() (string, tview.Primitive, bool, bool) {
 				area.GetCount()-area.GetLast(),
 			))
 		})
+	_, defBg, _ := config.StyleDefault.Decompose()
+	a.al.SetBackgroundColor(defBg)
 	a.al.SetSelectedFunc(func(row int, column int) {
 		a.onSelected(row, column)
 	})
