@@ -33,6 +33,7 @@ builds:
   - darwin
   goarch:
   - amd64
+  - arm64
 - id: fbsd
   env:
   - CGO_ENABLED=0
@@ -58,6 +59,7 @@ archives:
   files:
     - gossiped.example.yml
     - gossiped.tpl
+    - city.yml
     - colors/*.yml
   format_overrides:
     - goos: windows
