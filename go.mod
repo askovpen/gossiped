@@ -8,7 +8,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/rivo/tview v0.0.0-20240728114935-65571ae51e71
 	github.com/rivo/uniseg v0.4.7
-	golang.org/x/text v0.17.0
+	golang.org/x/text v0.18.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
