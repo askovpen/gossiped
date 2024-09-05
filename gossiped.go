@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	version = "v2.0"
+	version = "2.0"
 	commit  = "dev"
 )
 
@@ -35,7 +35,7 @@ func main() {
 	if len(commit) > 8 {
 		commit = commit[0:8]
 	}
-	config.Version = version[1:] + "-" + commit
+	config.Version = version + "-" + commit
 	config.InitVars()
 	log.Printf("%s started", config.LongPID)
 	var fn string
