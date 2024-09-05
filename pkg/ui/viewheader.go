@@ -2,13 +2,13 @@ package ui
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/utils"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	//"github.com/mattn/go-runewidth"
-	"strings"
 )
 
 // ViewHeader widget
@@ -40,6 +40,7 @@ func NewViewHeader(msg *msgapi.Message) *ViewHeader {
 		if len(msg.Attrs) > 0 {
 			repl += "[" + strings.Join(msg.Attrs, " ") + "]"
 		}
+		repl += " [" + config.GetCity(msg.FromAddr) + "]"
 		si = [10][]rune{
 			[]rune(fmt.Sprintf("%d", msg.MsgNum)),
 			[]rune(fmt.Sprintf("%d", msgapi.Areas[msgapi.Lookup(msg.Area)].GetCount())),

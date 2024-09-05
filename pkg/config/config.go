@@ -2,12 +2,15 @@ package config
 
 import (
 	"errors"
+	"os"
+	"path"
+	"path/filepath"
+	"runtime"
+	"strings"
+
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/gdamore/tcell/v2"
 	"gopkg.in/yaml.v3"
-	"os"
-	"runtime"
-	"strings"
 )
 
 type (
@@ -39,8 +42,9 @@ type (
 		Statusbar struct {
 			Clock bool
 		}
-		Sorting SortTypeMap
-		Colors  map[string]ColorMap
+		Sorting  SortTypeMap
+		Colors   map[string]ColorMap
+		CityPath string
 	}
 )
 
@@ -60,6 +64,15 @@ func InitVars() {
 	PID = "gossipEd+" + runtime.GOOS[0:3] + " " + Version
 	LongPID = "gossipEd-" + runtime.GOOS + "/" + runtime.GOARCH + " " + Version
 }
+func tryPath(rootPath string, filePath string) string {
+	if _, err := os.Stat(filePath); err == nil {
+		return filePath
+	}
+	if _, err := os.Stat(path.Join(rootPath, filePath)); err == nil {
+		return path.Join(rootPath, filePath)
+	}
+	return ""
+}
 
 // Read config
 func Read(fn string) error {
@@ -67,6 +80,8 @@ func Read(fn string) error {
 	if err != nil {
 		return err
 	}
+	rootPath := filepath.Dir(fn)
+
 	err = yaml.Unmarshal(yamlFile, &Config)
 	if err != nil {
 		return err
@@ -77,6 +92,7 @@ func Read(fn string) error {
 	if Config.Chrs.Default == "" {
 		return errors.New("Config.Chrs.Default not defined")
 	}
+	Config.Template = tryPath(rootPath, Config.Template)
 	tpl, err := os.ReadFile(Config.Template)
 	if err != nil {
 		return err
@@ -89,6 +105,10 @@ func Read(fn string) error {
 	if errColors != nil {
 		return errColors
 	}
+	if Config.CityPath == "" {
+		return errors.New("Config.CityPath not defined")
+	}
+	Config.CityPath = tryPath(rootPath, Config.CityPath)
 	readCity()
 	return nil
 }

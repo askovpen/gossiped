@@ -3,12 +3,14 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/gdamore/tcell/v2"
-	"gopkg.in/yaml.v3"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -301,7 +303,7 @@ func GetElementStyle(section string, element string) tcell.Style {
 
 func FormatTextWithStyle(text string, style tcell.Style) string {
 	fg, bg, attrs := style.Decompose()
-	return fmt.Sprintf("[%s:%s:%s]%s", fg.String(), bg.String(), MaskToStringStyle(attrs), text)
+	return fmt.Sprintf("[%s:%s:%s]%s", fg.String(), bg.String(), MaskToStringStyle(attrs), tview.Escape(text))
 }
 
 // initColorAliases()

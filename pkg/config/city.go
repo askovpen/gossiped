@@ -1,24 +1,26 @@
 package config
 
 import (
+	"os"
+
+	"github.com/askovpen/gossiped/pkg/types"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 )
 
 func readCity() {
-	yamlFile, err := ioutil.ReadFile("city.yaml")
+	yamlFile, err := os.ReadFile(Config.CityPath)
 	if err != nil {
-		return
+		panic(err)
 	}
 	err = yaml.Unmarshal(yamlFile, &city)
 	if err != nil {
-		return
+		panic(err)
 	}
 }
 
 // GetCity return city
-func GetCity(sa string) string {
-	if val, ok := city[sa]; ok {
+func GetCity(sfa *types.FidoAddr) string {
+	if val, ok := city[sfa.ShortString()]; ok {
 		return val
 	}
 	return "unknown"

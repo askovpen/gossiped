@@ -2,11 +2,12 @@ package config
 
 import (
 	"fmt"
-	. "github.com/franela/goblin"
-	"github.com/gdamore/tcell/v2"
 	"regexp"
 	"strings"
 	"testing"
+
+	. "github.com/franela/goblin"
+	"github.com/gdamore/tcell/v2"
 )
 
 var (
@@ -106,16 +107,16 @@ func TestStringToStyle(t *testing.T) {
 	g.Describe("Check StringToStyle", func() {
 		g.It("check expected success conversion (fg, bg, styles)", func() {
 			var testData = map[string]tcell.Style{
-				"default":                                tcell.StyleDefault,
-				"black,white":                            tcell.Style{}.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite),
-				"orange, red":                            tcell.Style{}.Foreground(tcell.ColorOrange).Background(tcell.ColorRed),
-				"yellow,  blue":                          tcell.Style{}.Foreground(tcell.ColorYellow).Background(tcell.ColorBlue),
-				"underline default,default":              tcell.Style{}.Underline(true),
-				"bold default,default":                   tcell.Style{}.Bold(true),
-				"bold|reverse|underline default,default": tcell.Style{}.Bold(true).Underline(true).Reverse(true),
-				"reverse yellow,red":                     tcell.Style{}.Reverse(true).Foreground(tcell.ColorYellow).Background(tcell.ColorRed),
-				"bold 201,114":                           tcell.Style{}.Foreground(tcell.Color201).Background(tcell.Color114).Bold(true),
-				"299,294":                                tcell.Style{}.Foreground(tcell.ColorDefault).Background(tcell.ColorDefault),
+				"default":                                StyleDefault,
+				"black,white":                            StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite),
+				"orange, red":                            StyleDefault.Foreground(tcell.ColorOrange).Background(tcell.ColorRed),
+				"yellow,  blue":                          StyleDefault.Foreground(tcell.ColorYellow).Background(tcell.ColorBlue),
+				"underline default,default":              StyleDefault.Underline(true),
+				"bold default,default":                   StyleDefault.Bold(true),
+				"bold|reverse|underline default,default": StyleDefault.Bold(true).Underline(true).Reverse(true),
+				"reverse yellow,red":                     StyleDefault.Reverse(true).Foreground(tcell.ColorYellow).Background(tcell.ColorRed),
+				"bold 201,114":                           StyleDefault.Foreground(tcell.Color201).Background(tcell.Color114).Bold(true),
+				"299,294":                                StyleDefault.Foreground(tcell.ColorDefault).Background(tcell.ColorDefault),
 			}
 			for from, to := range testData {
 				expected, _ := StringToStyle(from)
