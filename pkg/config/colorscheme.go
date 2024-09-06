@@ -333,6 +333,6 @@ func readColors() error {
 		}
 	}
 	StyleDefault = GetElementStyle(ColorAreaDefault, ColorElementText)
-	// ??? StyleDefault.Attributes(tcell.AttrNone)
+	StyleDefault = StyleDefault.Attributes(tcell.AttrNone)
 	return nil
 }
