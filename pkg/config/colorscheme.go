@@ -220,13 +220,13 @@ func StringToStyle(str string) (tcell.Style, error) {
 
 	if fg != "" && fg != "default" {
 		if _, ok := tcell.ColorNames[fg]; !ok {
-			errStack = errors.Join(errStack, errors.New(fmt.Sprintf("unknown foreground color name \"%s\"", fg)))
+			errStack = errors.Join(errStack, fmt.Errorf("unknown foreground color name \"%s\"", fg))
 		}
 		fgColor = StringToColor(fg)
 	}
 	if bg != "" && bg != "default" {
 		if _, ok := tcell.ColorNames[bg]; !ok {
-			errStack = errors.Join(errStack, errors.New(fmt.Sprintf("unknown background color name \"%s\"", bg)))
+			errStack = errors.Join(errStack, fmt.Errorf("unknown background color name \"%s\"", bg))
 		}
 		bgColor = StringToColor(bg)
 	}
@@ -242,7 +242,7 @@ func StringToStyle(str string) (tcell.Style, error) {
 		} else if v == StyleBold {
 			style = style.Bold(true)
 		} else if v != "" {
-			errStack = errors.Join(errStack, errors.New(fmt.Sprintf("unknown style \"%s\"", v)))
+			errStack = errors.Join(errStack, fmt.Errorf("unknown style \"%s\"", v))
 		}
 	}
 	return style, errStack
@@ -320,19 +320,19 @@ func readColors() error {
 	if Config.Colorscheme != "" {
 		yamlColors, err := os.ReadFile(Config.Colorscheme)
 		if err != nil {
-			return errors.New(fmt.Sprintf("cannot read color scheme file: %s", Config.Colorscheme))
+			return fmt.Errorf("cannot read color scheme file: %s", Config.Colorscheme)
 		}
 		colorsBackup := Config.Colors
 		err = yaml.Unmarshal(yamlColors, &Config.Colors)
 		if err != nil {
-			log.Println(fmt.Sprintf("errors during read of color scheme file: %s", Config.Colorscheme))
-			log.Println(fmt.Sprintf("yaml unmarshal errors: %v", err))
+			log.Printf("errors during read of color scheme file: %s", Config.Colorscheme)
+			log.Printf("yaml unmarshal errors: %v", err)
 			Config.Colors = colorsBackup
 		} else {
-			log.Println(fmt.Sprintf("color scheme read successfully from file: %s", Config.Colorscheme))
+			log.Printf("color scheme read successfully from file: %s", Config.Colorscheme)
 		}
 	}
 	StyleDefault = GetElementStyle(ColorAreaDefault, ColorElementText)
-	StyleDefault.Attributes(tcell.AttrNone)
+	// ??? StyleDefault.Attributes(tcell.AttrNone)
 	return nil
 }

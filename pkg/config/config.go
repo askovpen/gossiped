@@ -109,7 +109,10 @@ func Read(fn string) error {
 		return errors.New("Config.CityPath not defined")
 	}
 	Config.CityPath = tryPath(rootPath, Config.CityPath)
-	readCity()
+	err = readCity()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

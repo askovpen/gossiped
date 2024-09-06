@@ -7,15 +7,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func readCity() {
+func readCity() error {
 	yamlFile, err := os.ReadFile(Config.CityPath)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	err = yaml.Unmarshal(yamlFile, &city)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 // GetCity return city
