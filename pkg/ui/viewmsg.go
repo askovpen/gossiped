@@ -90,8 +90,11 @@ func (a *App) ViewMsg(area *msgapi.AreaPrimitive, msgNum uint32) (string, tview.
 			a.Pages.AddPage(a.ViewMsgHelp())
 		} else if event.Key() == tcell.KeyRight {
 			if msgNum == (*area).GetCount() {
-	                        a.RefreshAreaList()
-                                a.CurrentArea = &msgapi.Areas[0]
+                                var areasSortingMode, _ = config.Config.Sorting["areas"]
+                                if (areasSortingMode == msgapi.AreasSortingUnread) && (msgapi.AreaHasUnreadMessages(&msgapi.Areas[0])) {
+	                                a.RefreshAreaList()
+                                        a.CurrentArea = &msgapi.Areas[0]
+                                }
 				a.SwitchToAreaListPage()
 				go (func() {
 					a.Pages.RemovePage(fmt.Sprintf("ViewMsg-%s-%d", (*area).GetName(), msgNum))
