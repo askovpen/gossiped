@@ -91,9 +91,11 @@ func (a *App) ViewMsg(area *msgapi.AreaPrimitive, msgNum uint32) (string, tview.
 		} else if event.Key() == tcell.KeyRight {
 			if msgNum == (*area).GetCount() {
                                 var areasSortingMode, _ = config.Config.Sorting["areas"]
-                                if (areasSortingMode == msgapi.AreasSortingUnread) && (msgapi.AreaHasUnreadMessages(&msgapi.Areas[0])) {
+                                if areasSortingMode == msgapi.AreasSortingUnread {
 	                                a.RefreshAreaList()
-                                        a.CurrentArea = &msgapi.Areas[0]
+                                        if msgapi.AreaHasUnreadMessages(&msgapi.Areas[0]) {
+                                                a.CurrentArea = &msgapi.Areas[0]
+                                        }
                                 }
 				a.SwitchToAreaListPage()
 				go (func() {
