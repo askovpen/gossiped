@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 )
 
 var (
@@ -34,6 +35,15 @@ func tryFindConfig() string {
 func main() {
 	if len(commit) > 8 {
 		commit = commit[0:8]
+	}
+	if commit == "dev" {
+		if info, ok := debug.ReadBuildInfo(); ok {
+			for _, setting := range info.Settings {
+				if setting.Key == "vcs.revision" {
+					commit += "-" + setting.Value[0:8]
+				}
+			}
+		}
 	}
 	config.Version = version + "-" + commit
 	config.InitVars()
