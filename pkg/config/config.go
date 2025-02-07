@@ -113,7 +113,7 @@ func Read(fn string) error {
 	Config.CityPath = tryPath(rootPath, Config.CityPath)
 	err = readCity()
         Config.NodelistPath = tryPath(rootPath, Config.NodelistPath)
-        err = nodelist.Read(Config.NodelistPath)
+        nodelist.Read(Config.NodelistPath)
 	if err != nil {
 		return err
 	}

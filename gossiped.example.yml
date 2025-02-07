@@ -24,3 +24,4 @@ sorting:
 statusbar:
   clock: true
 citypath: ./city.yml
+nodelistpath: ''
