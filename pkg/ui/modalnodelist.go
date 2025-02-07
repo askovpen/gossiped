@@ -53,7 +53,6 @@ func NewModalNodeList() *ModalNodeList {
 	m.table.SetCell(
 		0, 1, tview.NewTableCell("Sysop").
 			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
-			SetExpansion(1).
 			SetSelectable(false))
 	m.table.SetCell(
 		0, 2, tview.NewTableCell("City").
@@ -62,17 +61,16 @@ func NewModalNodeList() *ModalNodeList {
 	m.table.SetCell(
 		0, 3, tview.NewTableCell("BBS").
 			SetTextColor(fgHeader).SetBackgroundColor(bgHeader).SetAttributes(attrHeader).
+			SetExpansion(1).
 			SetSelectable(false))
 	for i, node := range nodelist.Nodelist {
 		m.table.SetCell(i+1, 0, tview.NewTableCell(node.Address.String()).
-			SetAlign(tview.AlignRight).SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
+			SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
 		m.table.SetCell(i+1, 1, tview.NewTableCell(node.Sysop).
 			SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
 		m.table.SetCell(i+1, 2, tview.NewTableCell(node.City).
-			SetAlign(tview.AlignRight).
 			SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
 		m.table.SetCell(i+1, 3, tview.NewTableCell(node.BBS).
-			SetAlign(tview.AlignRight).
 			SetTextColor(fgItem).SetBackgroundColor(bgItem).SetAttributes(attrItem))
 	}
 	return m
