@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/askovpen/gossiped/pkg/types"
+	"github.com/askovpen/gossiped/pkg/nodelist"
 	"github.com/gdamore/tcell/v2"
 	"gopkg.in/yaml.v3"
 )
@@ -45,6 +46,7 @@ type (
 		Sorting  SortTypeMap
 		Colors   map[string]ColorMap
 		CityPath string
+                NodelistPath string
 	}
 )
 
@@ -110,6 +112,8 @@ func Read(fn string) error {
 	}
 	Config.CityPath = tryPath(rootPath, Config.CityPath)
 	err = readCity()
+        Config.NodelistPath = tryPath(rootPath, Config.NodelistPath)
+        err = nodelist.Read(Config.NodelistPath)
 	if err != nil {
 		return err
 	}
