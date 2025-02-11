@@ -2,11 +2,12 @@ package areasconfig
 
 import (
 	"bufio"
-	"github.com/askovpen/gossiped/pkg/msgapi"
-	"io/ioutil"
+	"io"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/askovpen/gossiped/pkg/msgapi"
 )
 
 func crashmailConfigRead(fn string) error {
@@ -15,7 +16,7 @@ func crashmailConfigRead(fn string) error {
 	if err != nil {
 		return err
 	}
-	b, err := ioutil.ReadAll(file)
+	b, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}

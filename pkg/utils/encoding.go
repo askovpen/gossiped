@@ -1,12 +1,10 @@
 package utils
 
 import (
-	//"io/ioutil"
 	"strings"
 
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
-	//"golang.org/x/text/transform"
 )
 
 var (

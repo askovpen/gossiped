@@ -3,9 +3,10 @@ package msgapi
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
+
 	//"errors"
-	"github.com/askovpen/gossiped/pkg/utils"
-	"io/ioutil"
+
 	"log"
 	"os"
 	"path/filepath"
@@ -13,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/askovpen/gossiped/pkg/utils"
 )
 
 // MSG struct
@@ -110,7 +113,7 @@ func (m *MSG) GetMsg(position uint32) (*Message, error) {
 		return nil, err
 	}
 	defer f.Close()
-	msg, err := ioutil.ReadAll(f)
+	msg, err := io.ReadAll(f)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +158,7 @@ func (m *MSG) GetLast() uint32 {
 	if err != nil {
 		return 0
 	}
-	b, _ := ioutil.ReadAll(file)
+	b, _ := io.ReadAll(file)
 	if len(b) != 2 {
 		return 0
 	}
@@ -212,7 +215,7 @@ func (m *MSG) SetLast(l uint32) {
 		log.Print(err)
 		return
 	}
-	err = ioutil.WriteFile(filepath.Join(m.AreaPath, "lastread"), buf.Bytes(), 0644)
+	err = os.WriteFile(filepath.Join(m.AreaPath, "lastread"), buf.Bytes(), 0644)
 	if err != nil {
 		log.Print(err)
 		return
@@ -250,12 +253,12 @@ func (m *MSG) SaveMsg(tm *Message) error {
 		return err
 	}
 	if len(m.messageNums) == 0 {
-		err = ioutil.WriteFile(
+		err = os.WriteFile(
 			filepath.Join(m.AreaPath, "1.msg"),
 			buf.Bytes(),
 			0644)
 	} else {
-		err = ioutil.WriteFile(
+		err = os.WriteFile(
 			filepath.Join(m.AreaPath, strconv.FormatUint(uint64(m.messageNums[len(m.messageNums)-1]+1), 10)+".msg"),
 			buf.Bytes(),
 			0644)
