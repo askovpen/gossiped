@@ -1,9 +1,10 @@
 package ui
 
 import (
+	"time"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/rivo/tview"
-	"time"
 )
 
 // StatusBar struct

@@ -2,9 +2,10 @@ package msgapi
 
 import (
 	"cmp"
-	"github.com/askovpen/gossiped/pkg/config"
 	"slices"
 	"strings"
+
+	"github.com/askovpen/gossiped/pkg/config"
 )
 
 // EchoAreaMsgType Area msg base type

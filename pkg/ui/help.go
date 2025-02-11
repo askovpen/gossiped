@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"

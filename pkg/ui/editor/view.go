@@ -1,9 +1,9 @@
 package editor
 
 import (
-	"github.com/askovpen/gossiped/pkg/config"
 	"strings"
 
+	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )

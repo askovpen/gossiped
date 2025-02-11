@@ -2,11 +2,12 @@ package ui
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"strconv"
 )
 
 // AreaListQuit exit app

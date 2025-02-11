@@ -1,12 +1,13 @@
 package msgapi
 
 import (
-	"github.com/askovpen/gossiped/pkg/types"
-	. "github.com/franela/goblin"
 	"os"
 	"testing"
 	"time"
 	"unsafe"
+
+	"github.com/askovpen/gossiped/pkg/types"
+	. "github.com/franela/goblin"
 )
 
 func TestSquishBufHash32(t *testing.T) {

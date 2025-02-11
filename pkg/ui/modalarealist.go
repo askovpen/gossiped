@@ -1,11 +1,12 @@
 package ui
 
 import (
+	"strconv"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"strconv"
 )
 
 // ModalAreaList is a centered message window used to inform the user or prompt them

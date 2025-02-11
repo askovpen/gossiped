@@ -2,12 +2,12 @@ package ui
 
 import (
 	"fmt"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/ui/editor"
 	"github.com/rivo/tview"
-	//"log"
 )
 
 const (

@@ -14,7 +14,6 @@ import (
 
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/utils"
-	//"unicode"
 )
 
 // SquishAttrs Squish Attributes

@@ -3,13 +3,11 @@ package areasconfig
 import (
 	"bufio"
 	"io"
-
-	"github.com/askovpen/gossiped/pkg/msgapi"
-
-	//"log"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/askovpen/gossiped/pkg/msgapi"
 )
 
 func squishConfigRead(fn string) error {
