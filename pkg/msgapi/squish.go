@@ -6,14 +6,14 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/askovpen/gossiped/pkg/types"
-	"github.com/askovpen/gossiped/pkg/utils"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/askovpen/gossiped/pkg/types"
+	"github.com/askovpen/gossiped/pkg/utils"
 	//"unicode"
 )
 
@@ -339,7 +339,7 @@ func (s *Squish) SetLast(l uint32) {
 	if err != nil {
 		log.Print(err)
 	}
-	err = ioutil.WriteFile(s.AreaPath+".sql", buf.Bytes(), 0644)
+	err = os.WriteFile(s.AreaPath+".sql", buf.Bytes(), 0644)
 	if err != nil {
 		log.Print(err)
 	}

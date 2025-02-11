@@ -2,8 +2,10 @@ package areasconfig
 
 import (
 	"bufio"
+	"io"
+
 	"github.com/askovpen/gossiped/pkg/msgapi"
-	"io/ioutil"
+
 	//"log"
 	"os"
 	"regexp"
@@ -16,7 +18,7 @@ func squishConfigRead(fn string) error {
 	if err != nil {
 		return err
 	}
-	b, err := ioutil.ReadAll(file)
+	b, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}

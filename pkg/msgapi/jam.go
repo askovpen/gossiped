@@ -5,12 +5,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/utils"
+
 	//"hash/crc32"
 	"io"
-	"io/ioutil"
+
 	//"log"
 	"os"
 	// "sort"
@@ -437,7 +439,7 @@ func (j *JAM) SetLast(l uint32) {
 	if err != nil {
 		return
 	}
-	err = ioutil.WriteFile(j.AreaPath+".jlr", buf.Bytes(), 0644)
+	err = os.WriteFile(j.AreaPath+".jlr", buf.Bytes(), 0644)
 	if err != nil {
 		return
 	}

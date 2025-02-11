@@ -3,13 +3,14 @@ package areasconfig
 import (
 	"bufio"
 	"errors"
-	"github.com/askovpen/gossiped/pkg/config"
-	"github.com/askovpen/gossiped/pkg/msgapi"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/askovpen/gossiped/pkg/msgapi"
 )
 
 var (
@@ -68,7 +69,7 @@ func readFile(fn string) error {
 	if err != nil {
 		return err
 	}
-	b, err := ioutil.ReadAll(file)
+	b, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}
