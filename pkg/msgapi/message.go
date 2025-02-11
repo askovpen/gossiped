@@ -1,16 +1,15 @@
 package msgapi
 
 import (
-	// "errors"
 	"fmt"
-	"github.com/askovpen/gossiped/pkg/config"
-	"github.com/askovpen/gossiped/pkg/types"
-	"github.com/askovpen/gossiped/pkg/utils"
-	//"log"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/askovpen/gossiped/pkg/types"
+	"github.com/askovpen/gossiped/pkg/utils"
 )
 
 // MessageListItem struct

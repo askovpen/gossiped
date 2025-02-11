@@ -4,13 +4,12 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
-
-	"regexp"
 
 	runewidth "github.com/mattn/go-runewidth"
 )

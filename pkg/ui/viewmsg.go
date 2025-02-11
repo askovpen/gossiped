@@ -1,15 +1,14 @@
 package ui
 
 import (
-	//"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/ui/editor"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"strconv"
-	//"strings"
 )
 
 func (a *App) SwitchToAreaListPage() {

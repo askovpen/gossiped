@@ -3,8 +3,6 @@ package ui
 import (
 	"math"
 	"regexp"
-	//"sort"
-	//"log"
 	"strconv"
 
 	"github.com/gdamore/tcell/v2"

@@ -1,10 +1,11 @@
 package areasconfig
 
 import (
-	"github.com/askovpen/gossiped/pkg/msgapi"
-	. "github.com/franela/goblin"
 	"os"
 	"testing"
+
+	"github.com/askovpen/gossiped/pkg/msgapi"
+	. "github.com/franela/goblin"
 )
 
 func TestFidoConfig(t *testing.T) {

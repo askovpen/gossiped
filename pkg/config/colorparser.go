@@ -29,10 +29,10 @@ func ParseColorscheme(text string) ColorScheme {
 			link := string(matches[1])
 			colors := string(matches[2])
 			style, _ := StringToStyle(colors)
-			c[link] = style
 			if link == "default" {
 				style = StyleDefault
 			}
+			c[link] = style
 		} else {
 			log.Println("Color-link statement is not valid:", line)
 		}

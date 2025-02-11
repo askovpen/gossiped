@@ -2,12 +2,13 @@ package ui
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/utils"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"strconv"
 )
 
 // ModalMessageList is a centered message window used to inform the user or prompt them

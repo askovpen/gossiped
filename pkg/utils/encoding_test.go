@@ -1,8 +1,9 @@
 package utils
 
 import (
-	. "github.com/franela/goblin"
 	"testing"
+
+	. "github.com/franela/goblin"
 )
 
 func TestCharmapEqual(t *testing.T) {

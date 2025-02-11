@@ -2,7 +2,6 @@ package editor
 
 import (
 	"time"
-	//	dmp "github.com/sergi/go-diff/diffmatchpatch"
 )
 
 const (

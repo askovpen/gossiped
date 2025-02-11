@@ -1,15 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"github.com/askovpen/gossiped/pkg/areasconfig"
-	"github.com/askovpen/gossiped/pkg/config"
-	"github.com/askovpen/gossiped/pkg/ui"
-	"github.com/askovpen/gossiped/pkg/utils"
 	"log"
 	"os"
 	"path/filepath"
 	"runtime/debug"
+
+	"github.com/askovpen/gossiped/pkg/areasconfig"
+	"github.com/askovpen/gossiped/pkg/config"
+	"github.com/askovpen/gossiped/pkg/ui"
+	"github.com/askovpen/gossiped/pkg/utils"
 )
 
 var (
@@ -63,7 +63,7 @@ func main() {
 			return
 		}
 	}
-	log.Println(fmt.Sprintf("reading configuration from %s", fn))
+	log.Printf("reading configuration from %s\n", fn)
 	err := config.Read(fn)
 	if err != nil {
 		log.Println(err)

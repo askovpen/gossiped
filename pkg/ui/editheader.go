@@ -5,8 +5,6 @@ import (
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	//"github.com/mattn/go-runewidth"
-	//"log"
 )
 
 type coords struct {

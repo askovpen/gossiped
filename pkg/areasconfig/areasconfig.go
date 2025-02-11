@@ -2,10 +2,10 @@ package areasconfig
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
-
-	"strings"
 )
 
 // Read area configs

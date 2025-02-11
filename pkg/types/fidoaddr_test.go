@@ -2,9 +2,10 @@ package types
 
 import (
 	"errors"
+	"testing"
+
 	. "github.com/franela/goblin"
 	"gopkg.in/yaml.v3"
-	"testing"
 )
 
 func TestFidoAddr(t *testing.T) {

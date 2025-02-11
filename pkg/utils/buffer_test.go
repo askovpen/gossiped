@@ -3,8 +3,9 @@ package utils
 import (
 	"bytes"
 	"errors"
-	. "github.com/franela/goblin"
 	"testing"
+
+	. "github.com/franela/goblin"
 )
 
 type TS struct {

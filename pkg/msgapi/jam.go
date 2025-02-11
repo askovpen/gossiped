@@ -5,19 +5,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"io"
+	"os"
+	"time"
 
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/utils"
-
-	//"hash/crc32"
-	"io"
-
-	//"log"
-	"os"
-	// "sort"
-	//"strings"
-	"time"
 )
 
 // JAM struct

@@ -1,9 +1,10 @@
 package areasconfig
 
 import (
+	"testing"
+
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	. "github.com/franela/goblin"
-	"testing"
 )
 
 func TestAreasbbsConfig(t *testing.T) {
