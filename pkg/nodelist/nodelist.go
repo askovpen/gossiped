@@ -3,7 +3,7 @@ package nodelist
 import (
         "github.com/askovpen/gossiped/pkg/types"
         "bufio"
-	"io/ioutil"
+	"io"
 	"os"
 	"regexp"
 	"strings"
@@ -28,7 +28,7 @@ func Read(fn string) error {
 		return err
 	}
         defer file.Close()
-	b, err := ioutil.ReadAll(file)
+	b, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}
