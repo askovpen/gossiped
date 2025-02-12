@@ -98,9 +98,9 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
                         if (e.sIndex == 2 || e.sIndex == 3) {
                                 e.app.Pages.AddPage(e.showNodeList())
                                 e.app.Pages.ShowPage("NodeListModal")
-                                e.sIndex = 3
+                        } else {
+			        e.sIndex++
                         }
-			e.sIndex++
 			if e.sIndex == 5 {
 				e.sIndex = 0
 			} else if (*e.msg.AreaObject).GetType() != msgapi.EchoAreaTypeNetmail && e.sIndex == 3 {
@@ -151,10 +151,13 @@ func (e *EditHeader) SetDoneFunc(handler func([5][]rune)) *EditHeader {
 func (e *EditHeader) showNodeList() (string, tview.Primitive, bool, bool) {
 	modal := NewModalNodeList().
 		SetDoneFunc(func(buttonIndex int) {
-                        if buttonIndex > 0 {
+                        if (buttonIndex > 0) && (len(nodelist.Nodelist) > 0) {
                                 e.sInputs[2] = []rune(nodelist.Nodelist[buttonIndex-1].Sysop)
-                                e.sInputs[3] = []rune(nodelist.Nodelist[buttonIndex-1].Address.String())
-                        }
+                                if (*e.msg.AreaObject).GetType() == msgapi.EchoAreaTypeNetmail {
+                                        e.sInputs[3] = []rune(nodelist.Nodelist[buttonIndex-1].Address.String())
+                                }
+                                e.sIndex = 4
+                        } 
 			e.app.Pages.HidePage("NodeListModal")
 			e.app.Pages.RemovePage("NodeListModal")
 			e.app.App.SetFocus(e.app.Pages)
