@@ -91,7 +91,7 @@ func (a *App) InsertMsg(area *msgapi.AreaPrimitive, msgType int) (string, tview.
 	}
 	_, boxBg, _ := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementWindow).Decompose()
 	mhStyle := config.GetElementStyle(config.ColorAreaMessageHeader, config.ColorElementTitle)
-	a.im.eh = NewEditHeader(a.im.newMsg)
+	a.im.eh = NewEditHeader(a, a.im.newMsg)
 	a.im.eh.SetBackgroundColor(boxBg)
 	a.im.eh.SetBorder(true).
 		SetTitle(config.FormatTextWithStyle(" "+(*a.im.postArea).GetName()+" ", mhStyle)).
