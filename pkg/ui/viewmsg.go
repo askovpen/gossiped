@@ -205,7 +205,7 @@ func (a *App) showMessageList(area *msgapi.AreaPrimitive) (string, tview.Primiti
 func (a *App) showAreaList(area *msgapi.AreaPrimitive, newMsgType int) (string, tview.Primitive, bool, bool) {
 	modal := NewModalAreaList().
 		SetDoneFunc(func(buttonIndex int) {
-			a.im.postArea = area
+			a.im.postArea = &msgapi.Areas[buttonIndex-1]
 			a.Pages.HidePage("AreaListModal")
 			a.Pages.RemovePage("AreaListModal")
 			a.Pages.AddPage(a.InsertMsg(area, newMsgType))

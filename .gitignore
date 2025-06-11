@@ -4,3 +4,5 @@ gossiped.exe
 pkg/config/version.go
 config.yml
 coverage.txt
+.vscode
+test

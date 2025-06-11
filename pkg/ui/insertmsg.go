@@ -69,7 +69,7 @@ func (a *App) InsertMsg(area *msgapi.AreaPrimitive, msgType int) (string, tview.
 	if a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeAnswer {
 		a.im.postArea = area
 	}
-	a.im.newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaObject: area}
+	a.im.newMsg = &msgapi.Message{From: config.Config.Username, FromAddr: config.Config.Address, AreaObject: a.im.postArea}
 	a.im.newMsg.Kludges = make(map[string]string)
 	a.im.newMsg.Kludges["PID:"] = config.PID
 	a.im.newMsg.Kludges["CHRS:"] = config.Config.Chrs.Default
