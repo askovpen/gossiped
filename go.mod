@@ -1,6 +1,6 @@
 module github.com/askovpen/gossiped
 
-go 1.23.0
+go 1.24.0
 
 toolchain go1.24.4
 
@@ -10,7 +10,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/rivo/tview v0.42.0
 	github.com/rivo/uniseg v0.4.7
-	golang.org/x/text v0.28.0
+	golang.org/x/text v0.29.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
