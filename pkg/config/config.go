@@ -8,8 +8,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/askovpen/gossiped/pkg/nodelist"
+	"github.com/askovpen/gossiped/pkg/types"
 	"github.com/gdamore/tcell/v2"
 	"gopkg.in/yaml.v3"
 )
@@ -43,10 +43,10 @@ type (
 		Statusbar struct {
 			Clock bool
 		}
-		Sorting  SortTypeMap
-		Colors   map[string]ColorMap
-		CityPath string
-                NodelistPath string
+		Sorting      SortTypeMap
+		Colors       map[string]ColorMap
+		CityPath     string
+		NodelistPath string
 	}
 )
 
@@ -103,7 +103,7 @@ func Read(fn string) error {
 	if len(Config.Tearline) == 0 {
 		Config.Tearline = LongPID
 	}
-	errColors := readColors()
+	errColors := readColors(rootPath)
 	if errColors != nil {
 		return errColors
 	}
@@ -112,8 +112,8 @@ func Read(fn string) error {
 	}
 	Config.CityPath = tryPath(rootPath, Config.CityPath)
 	err = readCity()
-        Config.NodelistPath = tryPath(rootPath, Config.NodelistPath)
-        nodelist.Read(Config.NodelistPath)
+	Config.NodelistPath = tryPath(rootPath, Config.NodelistPath)
+	nodelist.Read(Config.NodelistPath)
 	if err != nil {
 		return err
 	}

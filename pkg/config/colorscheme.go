@@ -315,10 +315,10 @@ func initColorAliases() {
 }
 
 // readColors()
-func readColors() error {
+func readColors(rootPath string) error {
 	initColorAliases()
 	if Config.Colorscheme != "" {
-		yamlColors, err := os.ReadFile(Config.Colorscheme)
+		yamlColors, err := os.ReadFile(tryPath(rootPath, Config.Colorscheme))
 		if err != nil {
 			return fmt.Errorf("cannot read color scheme file: %s", Config.Colorscheme)
 		}
