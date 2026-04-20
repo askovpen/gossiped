@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf
-	github.com/gdamore/tcell/v2 v2.13.8
+	github.com/gdamore/tcell/v2 v2.13.9
 	github.com/mattn/go-runewidth v0.0.23
 	github.com/rivo/tview v0.42.0
 	github.com/rivo/uniseg v0.4.7
