@@ -67,6 +67,7 @@ func (a *App) InsertMsg(area *msgapi.AreaPrimitive, msgType int) (string, tview.
 	var omsg *msgapi.Message
 	a.im.curArea = area
 	a.im.newMsgType = msgType
+	a.im.bodyEdited = false
 	if a.im.newMsgType == 0 || a.im.newMsgType == newMsgTypeAnswer {
 		a.im.postArea = area
 	}
