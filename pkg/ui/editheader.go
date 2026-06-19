@@ -4,6 +4,7 @@ import (
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/msgapi"
 	"github.com/askovpen/gossiped/pkg/nodelist"
+	"github.com/askovpen/gossiped/pkg/ui/editor"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -83,6 +84,34 @@ func (e *EditHeader) Draw(screen tcell.Screen) {
 	}
 }
 
+// wordRight moves the cursor one word to the right
+func (e *EditHeader) wordRight() {
+	idx := e.sIndex
+	runes := e.sInputs[idx]
+	pos := e.sPosition[idx]
+	for pos < len(runes) && editor.IsWhitespace(runes[pos]) {
+		pos++
+	}
+	for pos < len(runes) && editor.IsWordChar(string(runes[pos])) {
+		pos++
+	}
+	e.sPosition[idx] = pos
+}
+
+// wordLeft moves the cursor one word to the left
+func (e *EditHeader) wordLeft() {
+	idx := e.sIndex
+	runes := e.sInputs[idx]
+	pos := e.sPosition[idx]
+	for pos > 0 && editor.IsWhitespace(runes[pos-1]) {
+		pos--
+	}
+	for pos > 0 && editor.IsWordChar(string(runes[pos-1])) {
+		pos--
+	}
+	e.sPosition[idx] = pos
+}
+
 // InputHandler event handler
 func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 	return e.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
@@ -110,11 +139,15 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				e.sIndex = 4
 			}
 		case tcell.KeyRight:
-			if e.sPosition[e.sIndex] < len(e.sInputs[e.sIndex]) {
+			if event.Modifiers() == tcell.ModAlt {
+				e.wordRight()
+			} else if e.sPosition[e.sIndex] < len(e.sInputs[e.sIndex]) {
 				e.sPosition[e.sIndex]++
 			}
 		case tcell.KeyLeft:
-			if e.sPosition[e.sIndex] > 0 {
+			if event.Modifiers() == tcell.ModAlt {
+				e.wordLeft()
+			} else if e.sPosition[e.sIndex] > 0 {
 				e.sPosition[e.sIndex]--
 			}
 		case tcell.KeyEnter:
@@ -140,6 +173,16 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				e.sPosition[e.sIndex]--
 			}
 		case tcell.KeyRune:
+			if event.Modifiers() == tcell.ModAlt {
+				switch event.Rune() {
+				case 'b':
+					e.wordLeft()
+					return
+				case 'f':
+					e.wordRight()
+					return
+				}
+			}
 			add(event.Rune())
 		}
 	})
