@@ -120,6 +120,20 @@ func (v *View) EndOfLine() bool {
 	return true
 }
 
+// WordLeft moves the cursor one word to the left
+func (v *View) WordLeft() bool {
+	v.deselect(0)
+	v.Cursor.WordLeft()
+	return true
+}
+
+// WordRight moves the cursor one word to the right
+func (v *View) WordRight() bool {
+	v.deselect(1)
+	v.Cursor.WordRight()
+	return true
+}
+
 // Retab changes all tabs to spaces or all spaces to tabs depending
 // on the user's settings
 func (v *View) Retab() bool {

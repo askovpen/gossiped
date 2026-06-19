@@ -15,6 +15,8 @@ const (
 	ActionCursorPageDown      = "CursorPageDown"
 	ActionCursorLeft          = "CursorLeft"
 	ActionCursorRight         = "CursorRight"
+	ActionWordLeft            = "WordLeft"
+	ActionWordRight           = "WordRight"
 	ActionCursorStart         = "CursorStart"
 	ActionCursorEnd           = "CursorEnd"
 	ActionInsertNewline       = "InsertNewline"
@@ -104,6 +106,8 @@ var bindingActions = map[string]func(*View) bool{
 	ActionCursorPageDown:      (*View).CursorPageDown,
 	ActionCursorLeft:          (*View).CursorLeft,
 	ActionCursorRight:         (*View).CursorRight,
+	ActionWordLeft:            (*View).WordLeft,
+	ActionWordRight:           (*View).WordRight,
 	ActionCursorStart:         (*View).CursorStart,
 	ActionCursorEnd:           (*View).CursorEnd,
 	ActionInsertNewline:       (*View).InsertNewline,
@@ -271,6 +275,10 @@ func init() {
 		"Down":      ActionCursorDown,
 		"Right":     ActionCursorRight,
 		"Left":      ActionCursorLeft,
+		"AltRight":  ActionWordRight,
+		"AltLeft":   ActionWordLeft,
+		"Altf":      ActionWordRight,
+		"Altb":      ActionWordLeft,
 		"Enter":     ActionInsertNewline,
 		"CtrlH":     ActionBackspace,
 		"Backspace": ActionBackspace,
