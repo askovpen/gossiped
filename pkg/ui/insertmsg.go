@@ -25,6 +25,7 @@ type IM struct {
 	postArea   *msgapi.AreaPrimitive
 	newMsgType int
 	buffer     *editor.Buffer
+	bodyEdited bool
 }
 
 // InsertMsgMenu modal menu
@@ -129,7 +130,16 @@ func (a *App) InsertMsg(area *msgapi.AreaPrimitive, msgType int) (string, tview.
 		/*
 			a.im.eb.SetText(mv, p)
 		}*/
+		a.im.bodyEdited = true
 		a.App.SetFocus(a.im.eb)
+	})
+	a.im.eh.SetCancelFunc(func() {
+		if a.im.bodyEdited {
+			return
+		}
+		a.Pages.SwitchToPage(fmt.Sprintf("ViewMsg-%s-%d", (*a.im.curArea).GetName(), (*a.im.curArea).GetLast()))
+		a.Pages.RemovePage(fmt.Sprintf("InsertMsg-%s", (*a.im.curArea).GetName()))
+		a.App.SetFocus(a.Pages)
 	})
 	layout := tview.NewFlex().
 		SetDirection(tview.FlexRow).
