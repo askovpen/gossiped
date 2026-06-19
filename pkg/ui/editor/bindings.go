@@ -253,7 +253,7 @@ var bindingKeys = map[string]tcell.Key{
 	"Esc":            tcell.KeyEsc,
 	"Escape":         tcell.KeyEscape,
 	"Enter":          tcell.KeyEnter,
-	"Backspace":      tcell.KeyBackspace,
+	"Backspace":      tcell.KeyBackspace2,
 	"OldBackspace":   tcell.KeyBackspace,
 
 	// I renamed these keys to PageUp and PageDown but I don't want to break someone's keybindings
@@ -274,6 +274,7 @@ func init() {
 		"Enter":     ActionInsertNewline,
 		"CtrlH":     ActionBackspace,
 		"Backspace": ActionBackspace,
+		"OldBackspace": ActionBackspace,
 		"Tab":       ActionIndentSelection + "," + ActionInsertTab,
 		"Backtab":   ActionOutdentSelection + "," + ActionOutdentLine,
 		"CtrlY":     ActionDeleteLine,
