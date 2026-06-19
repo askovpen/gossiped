@@ -22,6 +22,7 @@ type EditHeader struct {
 	sPosition [5]int
 	sCoords   [5]coords
 	done      func([5][]rune)
+	cancel    func()
 	msg       *msgapi.Message
         app       *App
 }
@@ -92,6 +93,10 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 			e.sPosition[e.sIndex]++
 		}
 		switch key := event.Key(); key {
+		case tcell.KeyEsc:
+			if e.cancel != nil {
+				e.cancel()
+			}
 		case tcell.KeyTab:
                         if (e.sIndex == 2 || e.sIndex == 3) {
                                 e.app.Pages.AddPage(e.showNodeList())
@@ -143,6 +148,12 @@ func (e *EditHeader) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 // SetDoneFunc callback
 func (e *EditHeader) SetDoneFunc(handler func([5][]rune)) *EditHeader {
 	e.done = handler
+	return e
+}
+
+// SetCancelFunc callback for cancel (Esc)
+func (e *EditHeader) SetCancelFunc(handler func()) *EditHeader {
+	e.cancel = handler
 	return e
 }
 
