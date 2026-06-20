@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/askovpen/gossiped/pkg/config"
 	"github.com/askovpen/gossiped/pkg/types"
@@ -235,6 +236,50 @@ func (m *Message) GetForward() []string {
 	return nm
 }
 
+// wrapQuoteLine wraps body to margin runes per segment with prefix prepended.
+// margin == 0 disables wrapping.
+func wrapQuoteLine(prefix, body string, margin int) []string {
+	avail := margin - utf8.RuneCountInString(prefix)
+	if margin <= 0 || avail <= 0 || utf8.RuneCountInString(body) <= avail {
+		return []string{prefix + body}
+	}
+	runes := []rune(body)
+	var segments []string
+	for len(runes) > avail {
+		cut := avail
+		spaceIdx := -1
+		for i := avail - 1; i > 0; i-- {
+			if runes[i] == ' ' {
+				spaceIdx = i
+				break
+			}
+		}
+		if spaceIdx > 0 {
+			cut = spaceIdx
+		}
+		segment := string(runes[:cut])
+		runes = runes[cut:]
+		for len(runes) > 0 && runes[0] == ' ' {
+			runes = runes[1:]
+		}
+		segments = append(segments, prefix+segment)
+	}
+	if len(runes) > 0 {
+		segments = append(segments, prefix+string(runes))
+	}
+	return segments
+}
+
+// splitSep extracts leading spaces from s as a separator and returns (sep, body).
+// If s has no leading spaces, sep defaults to a single space per FSC-0032.
+func splitSep(s string) (sep, body string) {
+	body = strings.TrimLeft(s, " ")
+	if len(body) == len(s) {
+		return " ", s
+	}
+	return s[:len(s)-len(body)], body
+}
+
 // GetQuote get quote
 func (m *Message) GetQuote() []string {
 	var nm []string
@@ -248,20 +293,34 @@ func (m *Message) GetQuote() []string {
 			continue
 		} else if len(l) > 8 && l[0:9] == "SEEN-BY: " {
 			continue
-		} else if ind := re.FindStringIndex(l); ind != nil {
+		}
+		ind := re.FindStringIndex(l)
+		// blank lines stay blank (no prefix).
+		if (ind == nil && strings.TrimSpace(l) == "") ||
+			(ind != nil && strings.TrimSpace(l[ind[1]:]) == "") {
+			nm = append(nm, "")
+			continue
+		}
+		var prefix, body string
+		if ind != nil {
 			ind2 := strings.Index(l, "<")
 			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
-				//				if (ind[1]-ind[0])%2 == 0 {
-				//					nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
-				//				} else {
-				nm = append(nm, l[0:ind[0]+1]+">"+l[ind[0]+1:])
-				//				}
+				initials := strings.TrimLeft(l[0:ind[0]], " ")
+				markerSeq := l[ind[0]:ind[1]]
+				sep, b := splitSep(l[ind[1]:])
+				prefix = " " + initials + markerSeq + ">" + sep
+				body = b
 			} else {
-				nm = append(nm, " "+from+"> "+l)
+				sep, b := splitSep(l)
+				prefix = " " + from + ">" + sep
+				body = b
 			}
 		} else {
-			nm = append(nm, " "+from+"> "+l)
+			sep, b := splitSep(l)
+			prefix = " " + from + ">" + sep
+			body = b
 		}
+		nm = append(nm, wrapQuoteLine(prefix, body, *config.Config.QuoteMargin)...)
 	}
 	//log.Print(from)
 	return nm
