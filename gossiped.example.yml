@@ -23,5 +23,7 @@ sorting:
   areas: unread   # unread, default
 statusbar:
   clock: true
+# quote margin in characters; 0 disables wrapping (default: 72)
+#quotemargin: 72
 citypath: ./city.yml
 nodelistpath: ''

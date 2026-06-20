@@ -36,6 +36,7 @@ type (
 		Origin      string
 		Tearline    string
 		Template    string
+		QuoteMargin *int
 		Chrs        struct {
 			Default string
 			IBMPC   string
@@ -102,6 +103,10 @@ func Read(fn string) error {
 	readTemplate(tpl)
 	if len(Config.Tearline) == 0 {
 		Config.Tearline = LongPID
+	}
+	if Config.QuoteMargin == nil {
+		qm := 72
+		Config.QuoteMargin = &qm
 	}
 	errColors := readColors(rootPath)
 	if errColors != nil {
