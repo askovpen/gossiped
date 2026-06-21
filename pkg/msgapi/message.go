@@ -237,7 +237,10 @@ func (m *Message) GetForward() []string {
 }
 
 // wrapQuoteLine wraps body to margin runes per segment with prefix prepended.
-// margin == 0 disables wrapping.
+// The prefix must already carry exactly one space separator after the quote
+// marker (FSC-0032); callers strip one leading space from body via
+// strings.TrimPrefix so the separator is not doubled. margin == 0 disables
+// wrapping.
 func wrapQuoteLine(prefix, body string, margin int) []string {
 	avail := margin - utf8.RuneCountInString(prefix)
 	if margin <= 0 || avail <= 0 || utf8.RuneCountInString(body) <= avail {
@@ -270,16 +273,6 @@ func wrapQuoteLine(prefix, body string, margin int) []string {
 	return segments
 }
 
-// splitSep extracts leading spaces from s as a separator and returns (sep, body).
-// If s has no leading spaces, sep defaults to a single space per FSC-0032.
-func splitSep(s string) (sep, body string) {
-	body = strings.TrimLeft(s, " ")
-	if len(body) == len(s) {
-		return " ", s
-	}
-	return s[:len(s)-len(body)], body
-}
-
 // GetQuote get quote
 func (m *Message) GetQuote() []string {
 	var nm []string
@@ -307,18 +300,15 @@ func (m *Message) GetQuote() []string {
 			if (ind2 == -1 || ind2 > ind[1]) && ind[0] < 6 {
 				initials := strings.TrimLeft(l[0:ind[0]], " ")
 				markerSeq := l[ind[0]:ind[1]]
-				sep, b := splitSep(l[ind[1]:])
-				prefix = " " + initials + markerSeq + ">" + sep
-				body = b
+				prefix = " " + initials + markerSeq + "> "
+				body = strings.TrimPrefix(l[ind[1]:], " ")
 			} else {
-				sep, b := splitSep(l)
-				prefix = " " + from + ">" + sep
-				body = b
+				prefix = " " + from + "> "
+				body = strings.TrimPrefix(l, " ")
 			}
 		} else {
-			sep, b := splitSep(l)
-			prefix = " " + from + ">" + sep
-			body = b
+			prefix = " " + from + "> "
+			body = strings.TrimPrefix(l, " ")
 		}
 		nm = append(nm, wrapQuoteLine(prefix, body, *config.Config.QuoteMargin)...)
 	}
