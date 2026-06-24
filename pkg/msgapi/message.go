@@ -250,15 +250,17 @@ func wrapQuoteLine(prefix, body string, margin int) []string {
 	var segments []string
 	for len(runes) > avail {
 		cut := avail
-		spaceIdx := -1
-		for i := avail - 1; i > 0; i-- {
-			if runes[i] == ' ' {
-				spaceIdx = i
-				break
+		if runes[avail] != ' ' {
+			spaceIdx := -1
+			for i := avail - 1; i > 0; i-- {
+				if runes[i] == ' ' {
+					spaceIdx = i
+					break
+				}
 			}
-		}
-		if spaceIdx > 0 {
-			cut = spaceIdx
+			if spaceIdx > 0 {
+				cut = spaceIdx
+			}
 		}
 		segment := string(runes[:cut])
 		runes = runes[cut:]
