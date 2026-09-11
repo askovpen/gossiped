@@ -1,6 +1,6 @@
 module github.com/askovpen/gossiped
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf
@@ -8,7 +8,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.29
 	github.com/rivo/tview v0.42.0
 	github.com/rivo/uniseg v0.4.7
-	golang.org/x/text v0.41.0
+	golang.org/x/text v0.42.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
